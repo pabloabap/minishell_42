@@ -2031,25 +2031,9 @@ rl_complete_internal (int what_to_do)
 
   text = rl_copy_text (start, end);
   matches = gen_completion_matches (text, start, end, our_func, found_quote, quote_char);
-  /* If TEXT contains quote characters, it will be dequoted as part of
-     generating the matches, and the matches will not contain any quote
-     characters. We need to dequote TEXT before performing the comparison.
-     Since compare_match performs the dequoting, and we only want to do it
-     once, we don't call compare_matches after dequoting TEXT; we call
-     strcmp directly. */
   /* nontrivial_lcd is set if the common prefix adds something to the word
      being completed. */
-  if (rl_filename_completion_desired && rl_filename_quoting_desired &&
-      rl_completion_found_quote && rl_filename_dequoting_function)
-    {
-      char *t;
-      t = (*rl_filename_dequoting_function) (text, rl_completion_quote_character);
-      xfree (text);
-      text = t;
-      nontrivial_lcd = matches && strcmp (text, matches[0]) != 0;
-    }
-  else
-    nontrivial_lcd = matches && strcmp (text, matches[0]) != 0;
+  nontrivial_lcd = matches && compare_match (text, matches[0]) != 0;
   if (what_to_do == '!' || what_to_do == '@')
     tlen = strlen (text);
   xfree (text);
@@ -2542,8 +2526,7 @@ rl_filename_completion_function (const char *text, int state)
 	  temp = tilde_expand (dirname);
 	  xfree (dirname);
 	  dirname = temp;
-	  if (*dirname != '~')
-	    tilde_dirname = 1;	/* indicate successful tilde expansion */
+	  tilde_dirname = 1;
 	}
 
       /* We have saved the possibly-dequoted version of the directory name
@@ -2562,16 +2545,11 @@ rl_filename_completion_function (const char *text, int state)
 	  xfree (users_dirname);
 	  users_dirname = savestring (dirname);
 	}
-      else if (rl_completion_found_quote && rl_filename_dequoting_function)
+      else if (tilde_dirname == 0 && rl_completion_found_quote && rl_filename_dequoting_function)
 	{
-	  /* We already ran users_dirname through the dequoting function.
-	     If tilde_dirname == 1, we successfully performed tilde expansion
-	     on dirname. Now we need to reconcile those results. We either
-	     just copy the already-dequoted users_dirname or tilde expand it
-	     if we tilde-expanded dirname. */
-	  temp = tilde_dirname ? tilde_expand (users_dirname) : savestring (users_dirname);
+	  /* delete single and double quotes */
 	  xfree (dirname);
-	  dirname = temp;
+	  dirname = savestring (users_dirname);
 	}
       directory = opendir (dirname);
 

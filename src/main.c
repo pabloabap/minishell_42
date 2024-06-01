@@ -9,12 +9,17 @@
 /*   Updated: 2024/05/29 18:12:34 by pabad-ap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#ifndef READLINE_LIB
-# define READLINE_LIB
-#endif
+
+#include "../include/main.h"
+//#ifndef READLINE_LIBRARY
+//# define READLINE_LIBRARY
+//#endif
+//#include <stdio.h>
+////#include "../lib/readline/history.h"
+////#include "../lib/readline/readline.h"
+//#include <readline/readline.h>
+//#include <readline/history.h>
+
 int main(void)
 {
 	char *text;

@@ -151,9 +151,7 @@ int rl_timeout_remaining (unsigned int *, unsigned int *);
 
 int _rl_timeout_init (void);
 int _rl_timeout_sigalrm_handler (void);
-#if defined (RL_TIMEOUT_USE_SELECT)
 int _rl_timeout_select (int, fd_set *, fd_set *, fd_set *, const struct timeval *, const sigset_t *);
-#endif
 
 static void _rl_timeout_handle (void);
 #if defined (RL_TIMEOUT_USE_SIGALRM)
@@ -250,7 +248,7 @@ rl_gather_tyi (void)
   register int tem, result;
   int chars_avail, k;
   char input;
-#if defined (HAVE_PSELECT) || defined (HAVE_SELECT)
+#if defined(HAVE_SELECT)
   fd_set readfds, exceptfds;
   struct timeval timeout;
 #endif
@@ -804,10 +802,10 @@ rl_read_key (void)
 int
 rl_getc (FILE *stream)
 {
-  int result, ostate, osig;
+  int result;
   unsigned char c;
   int fd;
-#if defined (HAVE_PSELECT) || defined (HAVE_SELECT)
+#if defined (HAVE_PSELECT)
   sigset_t empty_set;
   fd_set readfds;
 #endif
@@ -815,21 +813,7 @@ rl_getc (FILE *stream)
   fd = fileno (stream);
   while (1)
     {
-      osig = _rl_caught_signal;
-      ostate = rl_readline_state;
-
       RL_CHECK_SIGNALS ();
-
-#if defined (READLINE_CALLBACKS)
-      /* Do signal handling post-processing here, but just in callback mode
-	 for right now because the signal cleanup can change some of the
-	 callback state, and we need to either let the application have a
-	 chance to react or abort some current operation that gets cleaned
-	 up by rl_callback_sigcleanup(). If not, we'll just run through the
-	 loop again. */
-      if (osig != 0 && (ostate & RL_STATE_CALLBACK))
-	goto postproc_signal;
-#endif
 
       /* We know at this point that _rl_caught_signal == 0 */
 
@@ -894,9 +878,6 @@ rl_getc (FILE *stream)
 /* fprintf(stderr, "rl_getc: result = %d errno = %d\n", result, errno); */
 
 handle_error:
-      osig = _rl_caught_signal;
-      ostate = rl_readline_state;
-
       /* If the error that we received was EINTR, then try again,
 	 this is simply an interrupted system call to read ().  We allow
 	 the read to be interrupted if we caught SIGHUP, SIGTERM, or any
@@ -937,17 +918,8 @@ handle_error:
         RL_CHECK_SIGNALS ();
 #endif  /* SIGALRM */
 
-postproc_signal:
-      /* POSIX says read(2)/pselect(2)/select(2) don't return EINTR for any
-	 reason other than being interrupted by a signal, so we can safely
-	 call the application's signal event hook. */
       if (rl_signal_event_hook)
 	(*rl_signal_event_hook) ();
-#if defined (READLINE_CALLBACKS)
-      else if (osig == SIGINT && (ostate & RL_STATE_CALLBACK) && (ostate & (RL_STATE_ISEARCH|RL_STATE_NSEARCH|RL_STATE_NUMERICARG)))
-        /* just these cases for now */
-        _rl_abort_internal ();
-#endif
     }
 }
 

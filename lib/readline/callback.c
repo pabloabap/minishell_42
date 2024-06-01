@@ -115,10 +115,7 @@ rl_callback_handler_install (const char *prompt, rl_vcpfunc_t *linefunc)
 #define CALLBACK_READ_RETURN() \
   do { \
     if (rl_persistent_signal_handlers == 0) \
-      { \
-        rl_clear_signals (); \
-        if (_rl_caught_signal) _rl_signal_handler (_rl_caught_signal); \
-      } \
+      rl_clear_signals (); \
     return; \
   } while (0)
 #else
