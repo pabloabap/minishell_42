@@ -21,6 +21,5 @@
 # include "../lib/libft/libft.h"
 
 int	is_whitespace(char c);
-void print_lexem_list(t_lexem *lexems_list_iter);
 
 #endif

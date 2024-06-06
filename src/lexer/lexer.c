@@ -75,7 +75,7 @@ t_lexem	*new_lexem(char **str, t_lexem *lexem_list_last)
  * @param quote_type The starting quote type, it could be simple or double.
  * @param str Puntero al str de readline para poder leer leer caracteres
  *          hasta cierre de comillas y devolverlo apuntando al siguiente char.
- * @param lexem_item Puntero al puntero de la estrucura lexema para
+ * @param lexem_item Puntero al puntero de la estrucura lexem para
  *         modificarlo desde la función.
  *
  * @returns Nada. Modifica el puntero del str para que apunte al character
@@ -100,6 +100,18 @@ void	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 }
 
 // SEPARADORES: espacios (' ', 8-13), |, &, (, ), <, >)
+/** Crea la estructura lexem para los casos no entrecomillados.
+ * Si son pipes o redirecciones se procesaran de una forma y
+ * si son palabras de otra.
+ *
+ * @param str Puntero al str de readline para poder leer leer caracteres
+ *          hasta cierre de comillas y devolverlo apuntando al siguiente char.
+ * @param lexem_item Puntero al puntero de la estrucura lexem para
+ *         modificarlo desde la función.
+ *
+ * @returns Nada. Modifica el puntero del str para que apunte al character
+ * posterior al string tratado.
+ **/
 void	unquoted_lexer(char **str, t_lexem **lexem_item)
 {
 	char *delimiters;
@@ -117,13 +129,35 @@ void	unquoted_lexer(char **str, t_lexem **lexem_item)
 		(*lexem_item)->str = ft_substr(*str, 0, i);
 		(*lexem_item)->token = WORD;
 		printf("_STR: %s\n", (*lexem_item)->str);
+		*str += i;
 	}
-	*str += i;
 }
 
+/** Rellena las struct s_lexem de los lexemas especiales 
+ * (pipes y redirecciones), en adelante ITEM.
+ * 
+ * @param lexem_item Puntero al puntero de la estrucura lexem para
+ *         modificarlo desde la función.
+ 
+ * @returns Nada. Modifica el puntero del str para que apunte al character
+ * posterior al cierre de comillas.
+ **/
 void	token_lexem(char **str, t_lexem **lexem_item)
 {
-//	if (**str)
+	int chr_count;
+
+	chr_count = 0;
+	if (ft_strnstr(*str, ">>",2))
+		chr_count = token_lex_fill(">>", lexem_item, APPEND_REDIR);
+	else if (ft_strnstr(*str, ">",2))
+		chr_count = token_lex_fill(">", lexem_item, OUT_REDIR);
+	else if (ft_strnstr(*str, "<<",2))
+		chr_count = token_lex_fill("<<", lexem_item, HERE_DOC);
+	else if (ft_strnstr(*str, "<",2))
+		chr_count = token_lex_fill("<", lexem_item, IN_REDIR);
+	else if (ft_strnstr(*str, "|",2))
+		chr_count = token_lex_fill("|", lexem_item, PIPE);
+	*str += chr_count;
 	return ;
 }
 
