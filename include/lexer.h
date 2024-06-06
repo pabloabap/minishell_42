@@ -15,11 +15,13 @@ typedef enum e_tokens
     APPEND_REDIR
 }   t_tokens;
 
-typedef struct  s_lexer
+typedef struct  s_lexem
 {
-    char    *str; //word or token
-    int     index; //position of the item in the global string
-    int     token; //define the end of a command (0 = end of line)
-}   t_lexer;
+    char            *str; //word or token
+    int             token; //classify the item
+    struct s_lexem  *prev; //Pointer to previous item of lexer list
+    struct s_lexem  *next; //Pointer to next item of lexer list
+    
+}   t_lexem;
 
 #endif

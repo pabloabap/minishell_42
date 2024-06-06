@@ -22,9 +22,17 @@
 
 int main(void)
 {
-	char *text;
+    char *input;
 
-	text = readline("Introduce texto");
-	printf("HAS ESCRITO: %s\n", text);
-	return (0);
+    while (1)
+    {
+        input = readline("\033[31mMinishell\033[0m > ");
+        add_history(input);
+        if (*input)
+        {
+            lexer(input);
+            free(input);
+        }
+    }
+    return (0);
 }
