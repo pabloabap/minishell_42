@@ -68,9 +68,11 @@ t_lexem	*new_lexem(char **str, t_lexem *lexem_list_last)
 /** Crea la estructura lexem para los casos en que un parametro está
  *  entre comillas simples o dobles.
  *
- * Primero detecta donde está la comilla de cierre. Si no existe
- * anuncia error y salie con EXIST_FAILURE; y si existe añade
- * la substring a la structuram y clasifica el token como WORD.
+ * Detecta donde está la comilla de cierre. Si no existe
+ * anuncia error y sale con EXIST_FAILURE; y si existe añade
+ * la substring a la structura y clasifica el token como DOUBLE_QUOTES
+ * en caso de comillas dobles para tener en cuenta que hay que identificar
+ * el caracter especial $ en el futuro o WORD en caso de comillas simples.
  *
  * @param quote_type The starting quote type, it could be simple or double.
  * @param str Puntero al str de readline para poder leer leer caracteres
@@ -90,11 +92,14 @@ void	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 	if (end_quote == NULL)
 	{
 		printf("STRERROR - %s\n", strerror(EINVAL)); // ERROR DE ARGUMENTO INVALIDO
-		perror("EINVAL");	// REVISAR SI HAY QUE METERLO EN STDERR
+		perror("EINVAL"); // REVISAR SI HAY QUE METERLO EN STDERR
 		exit(EXIT_FAILURE);
 	}
 	(*lexem_item)->str = ft_substr(*str, 0, end_quote - *str);
-	(*lexem_item)->token = WORD;
+	if (quote_type == '"')
+		(*lexem_item)->token = DOUBLE_QUOTES;
+	else
+		(*lexem_item)->token = WORD;
 	*str = (*str + (end_quote - *str + 1)); // Mueve el puntero str al caracter posterior al cierre de comillas
 	printf("POST - str: %s  | ITEM: %s\n", *str, (*lexem_item)->str);
 }
@@ -114,15 +119,15 @@ void	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
  **/
 void	unquoted_lexer(char **str, t_lexem **lexem_item)
 {
-	char *delimiters;
+	char	*delimiters;
 	int		i;
 
 	delimiters = "|<>";
 	i = 0;
-
-	if(ft_strchr(delimiters, **str))
+	if (ft_strchr(delimiters, **str))
 		token_lexem(str, lexem_item);
-	else{
+	else
+	{
 		while ((*str)[i] && !(is_whitespace((*str)[i])) \
 		&& !(ft_strchr(delimiters, (*str)[i])))
 			i++;
@@ -144,36 +149,41 @@ void	unquoted_lexer(char **str, t_lexem **lexem_item)
  **/
 void	token_lexem(char **str, t_lexem **lexem_item)
 {
-	int chr_count;
+	int	chr_count;
 
 	chr_count = 0;
-	if (ft_strnstr(*str, ">>",2))
+	if (ft_strnstr(*str, ">>", 2))
 		chr_count = token_lex_fill(">>", lexem_item, APPEND_REDIR);
-	else if (ft_strnstr(*str, ">",2))
+	else if (ft_strnstr(*str, ">", 2))
 		chr_count = token_lex_fill(">", lexem_item, OUT_REDIR);
-	else if (ft_strnstr(*str, "<<",2))
+	else if (ft_strnstr(*str, "<<", 2))
 		chr_count = token_lex_fill("<<", lexem_item, HERE_DOC);
-	else if (ft_strnstr(*str, "<",2))
+	else if (ft_strnstr(*str, "<", 2))
 		chr_count = token_lex_fill("<", lexem_item, IN_REDIR);
-	else if (ft_strnstr(*str, "|",2))
+	else if (ft_strnstr(*str, "|", 2))
 		chr_count = token_lex_fill("|", lexem_item, PIPE);
 	*str += chr_count;
 	return ;
 }
-
+/*
 int	main(void)
 {
 	char	*input;
+	t_lexem	*lexem_list;
+	int iters=0;
 
-	while (1)
+	while (iters < 2)
 	{
 		input = readline("\033[31mMinishell\033[0m > ");
 		add_history(input);
 		if (*input)
 		{
-			lexer(input);
+			lexem_list = lexer(input);
 			free(input);
+			free_cleaner(lexem_list);
 		}
+		iters ++;
 	}
 	return (0);
 }
+*/

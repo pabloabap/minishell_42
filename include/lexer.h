@@ -8,6 +8,7 @@
 typedef enum e_tokens
 {
     WORD        ,
+	DOUBLE_QUOTES,
     PIPE        ,
     IN_REDIR    ,
     OUT_REDIR   ,
@@ -27,5 +28,6 @@ typedef struct  s_lexem
 
 int	token_lex_fill (char *str, t_lexem **lexem_item, t_tokens token);
 void print_lexem_list(t_lexem *lexems_list_iter);
+void	free_cleaner(t_lexem *list_lexem);
 
 #endif

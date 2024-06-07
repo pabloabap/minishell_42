@@ -44,10 +44,26 @@ void	print_lexem_list(t_lexem *lexems_list_iter)
  **/
 int	token_lex_fill(char *str, t_lexem **lexem_item, t_tokens token)
 {
-	int chars;
+	int	chars;
 
 	chars = ft_strlen(str);
 	(*lexem_item)->str = str;
 	(*lexem_item)->token = token;
 	return (chars);
+}
+
+void	free_cleaner(t_lexem *list_lexem)
+{
+	t_lexem	*tmp;
+
+	while (list_lexem)
+	{
+		tmp = list_lexem;
+		free(list_lexem->str);
+		list_lexem = list_lexem->next;
+		tmp->prev = NULL;
+		tmp->next = NULL;
+		free(tmp);
+		tmp = NULL;
+	}
 }
