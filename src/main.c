@@ -9,17 +9,30 @@
 /*   Updated: 2024/05/29 18:12:34 by pabad-ap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-#include <stdio.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#ifndef READLINE_LIB
-# define READLINE_LIB
-#endif
+
+#include "../include/main.h"
+//#ifndef READLINE_LIBRARY
+//# define READLINE_LIBRARY
+//#endif
+//#include <stdio.h>
+////#include "../lib/readline/history.h"
+////#include "../lib/readline/readline.h"
+//#include <readline/readline.h>
+//#include <readline/history.h>
+
 int main(void)
 {
-	char *text;
+    char *input;
 
-	text = readline("Introduce texto");
-	printf("HAS ESCRITO: %s\n", text);
-	return (0);
+    while (1)
+    {
+        input = readline("\033[31mMinishell\033[0m > ");
+        add_history(input);
+        if (*input)
+        {
+            lexer(input);
+            free(input);
+        }
+    }
+    return (0);
 }
