@@ -115,7 +115,7 @@ void	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 	if (quote_type == '"')
 		(*lexem_item)->token = DOUBLE_QUOTES;
 	else
-		(*lexem_item)->token = WORD;
+		(*lexem_item)->token = SINGLE_QUOTES;
 	*str = (*str + (end_quote - *str + 1)); // Mueve el puntero str al caracter posterior al cierre de comillas
 	printf("POST - str: %s  | ITEM: %s\n", *str, (*lexem_item)->str);
 }

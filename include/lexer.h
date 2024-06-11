@@ -7,12 +7,13 @@
 /*Enumeración de posibles tokens a utilizar*/
 typedef enum e_tokens
 {
-    WORD        ,
-	DOUBLE_QUOTES,
-    PIPE        ,
-    IN_REDIR    ,
-    OUT_REDIR   ,
-    HERE_DOC    ,
+    WORD        	,
+	SINGLE_QUOTES	,
+	DOUBLE_QUOTES	,
+    PIPE        	,
+    IN_REDIR    	,
+    OUT_REDIR   	,
+    HERE_DOC    	,
     APPEND_REDIR
 }   t_tokens;
 
