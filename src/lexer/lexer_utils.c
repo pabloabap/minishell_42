@@ -60,6 +60,7 @@ void	free_cleaner(t_lexem *list_lexem)
 	{
 		tmp = list_lexem;
 		list_lexem = list_lexem->next;
+		free(tmp->str);
 		tmp->prev = NULL;
 		tmp->next = NULL;
 		free(tmp);
