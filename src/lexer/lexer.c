@@ -12,7 +12,12 @@ void	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item);
 void	unquoted_lexer(char **str, t_lexem **lexem_item);
 void	token_lexem(char **str, t_lexem **lexem_item);
 
-/** Separa la str de readline en una lista de lexemas.
+/* ___Separa la str de readline en una lista de lexemas.___
+ * 
+ * Creamos trim_str para eliminar espacios a principio y final.
+ * Como las funciones mueven el puntero trim_str a siguientes caracteres
+ * creamos la variable head_trim para no perder la cabecera y poder
+ * liberar el malloc que se ha creado con ft_strtrim. 
  *
  * @param str Char * con el input dado por la función readline
  *
@@ -23,13 +28,24 @@ t_lexem	*lexer(char *str)
 	t_lexem	*lexems_list_first;
 	t_lexem	*lexems_list_last;
 	t_lexem	*lexems_list_iter;
+	char	*trim_str;
+	char	*head_trim;
 
-	lexems_list_first = new_lexem(&str, NULL);
-	lexems_list_iter = lexems_list_first;
-	lexems_list_last = lexems_list_first;
-	while (*str)
-		lexems_list_last = new_lexem(&str, lexems_list_last);
-	print_lexem_list(lexems_list_iter);
+	trim_str = ft_strtrim(str, " \f\n\r\t\v");
+	head_trim = trim_str;
+	if (!trim_str)
+		exit(EXIT_FAILURE);
+	if (*trim_str)
+	{
+		lexems_list_first = new_lexem(&trim_str, NULL);
+		lexems_list_iter = lexems_list_first;
+		lexems_list_last = lexems_list_first;
+		while (*trim_str)
+			lexems_list_last = new_lexem(&trim_str, lexems_list_last);
+		if (lexems_list_iter)
+			print_lexem_list(lexems_list_iter);
+	}
+	free(head_trim);
 	return (lexems_list_first);
 }
 
