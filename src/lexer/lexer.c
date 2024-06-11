@@ -7,7 +7,6 @@
 */
 #include "../../include/minishell.h"
 #include "../../include/lexer.h"
-// SEPARADORES: espacios (' ', 8-13), |, &, (, ), <, >)
 
 t_lexem	*new_lexem(char **str, t_lexem *lexem_list_last);
 void	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item);
@@ -104,7 +103,6 @@ void	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 	printf("POST - str: %s  | ITEM: %s\n", *str, (*lexem_item)->str);
 }
 
-// SEPARADORES: espacios (' ', 8-13), |, &, (, ), <, >)
 /** Crea la estructura lexem para los casos no entrecomillados.
  * Si son pipes o redirecciones se procesaran de una forma y
  * si son palabras de otra.
@@ -165,7 +163,7 @@ void	token_lexem(char **str, t_lexem **lexem_item)
 	*str += chr_count;
 	return ;
 }
-/*
+
 int	main(void)
 {
 	char	*input;
@@ -186,4 +184,3 @@ int	main(void)
 	}
 	return (0);
 }
-*/

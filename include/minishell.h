@@ -18,6 +18,7 @@
 # include <errno.h>             //Define la varibale entera errno con el numero de un error
 
 # include "lexer.h"
+# include "parser.h"
 # include "../lib/libft/libft.h"
 
 int	is_whitespace(char c);

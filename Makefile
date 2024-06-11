@@ -32,8 +32,9 @@ OBJS		=	$(addprefix $(OBJS_DIR), \
 				$(notdir $(patsubst %.c, %.o, $(SRC))))
 
 # Header files
-HEADERS		=	./include/lexer.h \
-				./include/minishell.h
+HEADERS		=	./include/minishell.h \
+				./include/lexer.h \
+				./include/parser.h	
 
 all: $(NAME)
 
