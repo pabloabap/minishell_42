@@ -7,14 +7,15 @@
 /*Enumeración de posibles tokens a utilizar*/
 typedef enum e_tokens
 {
-	WORD			,
+    WORD        	,
+	SINGLE_QUOTES	,
 	DOUBLE_QUOTES	,
-	PIPE			,
-	IN_REDIR		,
-	OUT_REDIR		,
-	HERE_DOC		,
-	APPEND_REDIR
-}	t_tokens;
+    PIPE        	,
+    IN_REDIR    	,
+    OUT_REDIR   	,
+    HERE_DOC    	,
+    APPEND_REDIR
+}   t_tokens;
 
 /*Estructures para almacenar info de los lexemas*/
 typedef struct s_lexem
