@@ -6,7 +6,6 @@
 	función getenv para obtener estas variables
 */
 #include "../../include/minishell.h"
-#include "../../include/lexer.h"
 
 t_lexem	*new_lexem(char **str, t_lexem *lexem_list_last);
 void	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item);
@@ -162,25 +161,4 @@ void	token_lexem(char **str, t_lexem **lexem_item)
 		chr_count = token_lex_fill("|", lexem_item, PIPE);
 	*str += chr_count;
 	return ;
-}
-
-int	main(void)
-{
-	char	*input;
-	t_lexem	*lexem_list;
-	int iters=0;
-
-	while (iters < 2)
-	{
-		input = readline("\033[31mMinishell\033[0m > ");
-		add_history(input);
-		if (*input)
-		{
-			lexem_list = lexer(input);
-			free(input);
-			free_cleaner(lexem_list);
-		}
-		iters ++;
-	}
-	return (0);
 }

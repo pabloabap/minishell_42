@@ -10,29 +10,25 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/main.h"
-//#ifndef READLINE_LIBRARY
-//# define READLINE_LIBRARY
-//#endif
-//#include <stdio.h>
-////#include "../lib/readline/history.h"
-////#include "../lib/readline/readline.h"
-//#include <readline/readline.h>
-//#include <readline/history.h>
+#include "../include/minishell.h"
 
-int main(void)
+int	main(void)
 {
-    char *input;
+	char	*input;
+	t_lexem	*lexem_list;
+	int iters=0;
 
-    while (1)
-    {
-        input = readline("\033[31mMinishell\033[0m > ");
-        add_history(input);
-        if (*input)
-        {
-            lexer(input);
-            free(input);
-        }
-    }
-    return (0);
+	while (iters < 2)
+	{
+		input = readline("\033[31mMinishell\033[0m > ");
+		add_history(input);
+		if (*input)
+		{
+			lexem_list = lexer(input);
+			free(input);
+			free_cleaner(lexem_list);
+		}
+		iters ++;
+	}
+	return (0);
 }

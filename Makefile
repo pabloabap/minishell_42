@@ -25,7 +25,8 @@ INCLUDE		= -Iinclude -I$(LIBFT_DIR)
 
 # Source files
 SRC			=	src/lexer/lexer.c \
-				src/lexer/lexer_utils.c
+				src/lexer/lexer_utils.c \
+				main.c
 
 # Object files
 OBJS		=	$(addprefix $(OBJS_DIR), \
@@ -49,8 +50,13 @@ $(OBJS_DIR):
 $(PROGRAM_DIR):
 	mkdir $(PROGRAM_DIR)
 
-# Objects compiler
-$(OBJS_DIR)%.o: $(LEX_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+# Lexer objects compiler
+$(OBJS_DIR)%.o: $(LEX_SRC_DIR)%.c  $(HEADERS) | $(OBJS_DIR)
+	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
+	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
+
+# main objects compiler
+$(OBJS_DIR)%.o: ./src/main.c $(HEADERS) | $(OBJS_DIR)
 	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 

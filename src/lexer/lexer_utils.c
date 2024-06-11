@@ -1,7 +1,6 @@
 // CABECERA
 
 #include "../../include/minishell.h"
-#include "../../include/lexer.h"
 
 /** Comprueba si el caracter del argumento es algún tipo de espacio.
  * 
