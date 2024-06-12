@@ -6,49 +6,53 @@
 	función getenv para obtener estas variables
 */
 #include "../../include/minishell.h"
-#include "../../include/lexer.h"
-// SEPARADORES: espacios (' ', 8-13), |, &, (, ), <, >)
 
-t_lexem	*new_lexem(char **str, t_lexem *lexem_list_last);
-void	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item);
-void	unquoted_lexer(char **str, t_lexem **lexem_item);
-void	token_lexem(char **str, t_lexem **lexem_item);
+static int	new_lexem(char **str, t_lexem **lexem_list_last);
+static int	quoted_lexer(char quote_type, char **str, \
+	t_lexem **lexem_item);
+static int	unquoted_lexer(char **str, t_lexem **lexem_item);
+static void	token_lexem(char **str, t_lexem **lexem_item);
 
-/* ___Separa la str de readline en una lista de lexemas.___
+/** ___Separa la str de readline en una lista de lexemas.___
  * 
  * Creamos trim_str para eliminar espacios a principio y final.
  * Como las funciones mueven el puntero trim_str a siguientes caracteres
  * creamos la variable head_trim para no perder la cabecera y poder
- * liberar el malloc que se ha creado con ft_strtrim. 
- *
+ * liberar el malloc que se ha creado con ft_strtrim.
+ * 
  * @param str Char * con el input dado por la función readline
+ * @param head_lex_list Puntero al puntero del primer elemento de
+ * 			la lista de lexemas. Se va moviendo cuando se añaden
+ * 			nuevos nodos a la lista. Por ello se almacena la posición
+ * 			inicial el lex_list_fst para al final de la ejecución
+ * 			reubicarlo al principio de la lista.
  *
- * @return Puntero al primer elemento de la lista acabada en NULL
+ * @return Estado de salida de la función.
  **/
-t_lexem	*lexer(char *str)
+int	lexer(char *str, t_lexem **head_lex_list)
 {
-	t_lexem	*lexems_list_first;
-	t_lexem	*lexems_list_last;
-	t_lexem	*lexems_list_iter;
+	int		status;
+	t_lexem	*lex_list_fst;
 	char	*trim_str;
 	char	*head_trim;
 
+	status = EXIT_SUCCESS;
 	trim_str = ft_strtrim(str, " \f\n\r\t\v");
 	head_trim = trim_str;
-	if (!trim_str)
-		exit(EXIT_FAILURE);
+	if (!trim_str || *trim_str == '\0')
+		return(free(trim_str), EXIT_FAILURE);
 	if (*trim_str)
 	{
-		lexems_list_first = new_lexem(&trim_str, NULL);
-		lexems_list_iter = lexems_list_first;
-		lexems_list_last = lexems_list_first;
-		while (*trim_str)
-			lexems_list_last = new_lexem(&trim_str, lexems_list_last);
-		if (lexems_list_iter)
-			print_lexem_list(lexems_list_iter);
+		status = new_lexem(&trim_str, head_lex_list);
+		lex_list_fst = (*head_lex_list);
+		while (*trim_str && status == EXIT_SUCCESS)
+			status = new_lexem(&trim_str, head_lex_list);
+		if (lex_list_fst && status == EXIT_SUCCESS)
+			print_lexem_list(lex_list_fst);
 	}
 	free(head_trim);
-	return (lexems_list_first);
+	(*head_lex_list) = lex_list_fst;
+	return (status);
 }
 
 /** Configura el lexema y lo añade a la lista de lexemas.
@@ -57,49 +61,55 @@ t_lexem	*lexer(char *str)
  *
  * @param lexem_list Puntero al puntero al primer elemento de la lista.
  *
- * @return No hay. El resultado se aplica directamente
- * a los punteros de los argumentos.
+ * @return Estado de salida de la función. Añade el nuevo nodo al final
+ * de la lista de lexemas.
  * */
-t_lexem	*new_lexem(char **str, t_lexem *lexem_list_last)
+static int	new_lexem(char **str, t_lexem **lexem_list_last)
 {
 	t_lexem	*lexem_item;
+	int		status;
 
 	lexem_item = (t_lexem *)malloc(sizeof(t_lexem));
+	status = EXIT_SUCCESS;
 	if (lexem_item == NULL)
-		exit(EXIT_FAILURE);
+	{
+		perror("Minishell: t_lexem malloc fails");
+		return(EXIT_FAILURE);
+	}
 	while (is_whitespace(**str))
 		(*str)++;
 	if (*str && (**str == '"' || **str == '\''))
-		quoted_lexer(**str, str, &lexem_item);
+		status = quoted_lexer(**str, str, &lexem_item);
 	else if (*str)
-		unquoted_lexer(str, &lexem_item);
-	if (lexem_list_last)
-		lexem_list_last->next = lexem_item;
-	lexem_item->prev = lexem_list_last;
+		status = unquoted_lexer(str, &lexem_item);
+	if ((*lexem_list_last))
+		(*lexem_list_last)->next = lexem_item;
+	lexem_item->prev = (*lexem_list_last);
 	lexem_item->next = NULL;
+	(*lexem_list_last) = lexem_item;
 	printf("??POST - str: %s\n", *str);
-	return (lexem_item);
+	return (status);
 }
 
 /** Crea la estructura lexem para los casos en que un parametro está
  *  entre comillas simples o dobles.
  *
  * Detecta donde está la comilla de cierre. Si no existe
- * anuncia error y sale con EXIST_FAILURE; y si existe añade
- * la substring a la structura y clasifica el token como DOUBLE_QUOTES
- * en caso de comillas dobles para tener en cuenta que hay que identificar
- * el caracter especial $ en el futuro o WORD en caso de comillas simples.
- *
- * @param quote_type The starting quote type, it could be simple or double.
+ * imprime un mensaje de error STDERR_FILENO, apunta el atribute str a NULL
+ * y returna EXIST_FAILURE; y si existe añade la substring a la structura y 
+ * clasifica el token como DOUBLE_QUOTES o SINGLE_QUOTES.
+ * En caso de comillas dobles hay que identificar el caracter especial $.
+ * 
+ * @param quote_type Tipo de comilla de inicio, puede ser simple o doble.
  * @param str Puntero al str de readline para poder leer leer caracteres
  *          hasta cierre de comillas y devolverlo apuntando al siguiente char.
  * @param lexem_item Puntero al puntero de la estrucura lexem para
- *         modificarlo desde la función.
+ *         modificarla desde la función.
  *
- * @returns Nada. Modifica el puntero del str para que apunte al character
- * posterior al cierre de comillas.
+ * @returns Estado de salida de la función.  Modifica el puntero del str para que 
+ * apunte al character posterior al cierre de comillas.
  **/
-void	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
+static int	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 {
 	char	*end_quote;
 
@@ -107,9 +117,8 @@ void	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 	printf("quote_type: %c | str: %s | end_quote: %p \n", quote_type, *str, end_quote);
 	if (end_quote == NULL)
 	{
-		printf("STRERROR - %s\n", strerror(EINVAL)); // ERROR DE ARGUMENTO INVALIDO
-		perror("EINVAL"); // REVISAR SI HAY QUE METERLO EN STDERR
-		exit(EXIT_FAILURE);
+		ft_putendl_fd("minishell: syntax error: quotes not closed", STDERR_FILENO); // Cambiarlo pa
+		return((*lexem_item)->str = NULL, EXIT_FAILURE);
 	}
 	(*lexem_item)->str = ft_substr(*str, 0, end_quote - *str);
 	if (quote_type == '"')
@@ -118,9 +127,9 @@ void	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 		(*lexem_item)->token = SINGLE_QUOTES;
 	*str = (*str + (end_quote - *str + 1)); // Mueve el puntero str al caracter posterior al cierre de comillas
 	printf("POST - str: %s  | ITEM: %s\n", *str, (*lexem_item)->str);
+	return (EXIT_SUCCESS);
 }
 
-// SEPARADORES: espacios (' ', 8-13), |, &, (, ), <, >)
 /** Crea la estructura lexem para los casos no entrecomillados.
  * Si son pipes o redirecciones se procesaran de una forma y
  * si son palabras de otra.
@@ -130,10 +139,10 @@ void	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
  * @param lexem_item Puntero al puntero de la estrucura lexem para
  *         modificarlo desde la función.
  *
- * @returns Nada. Modifica el puntero del str para que apunte al character
- * posterior al string tratado.
+ * @returns Resultado de la ejecuccion. Modifica el puntero del str para que apunte 
+ * al character posterior al string tratado.
  **/
-void	unquoted_lexer(char **str, t_lexem **lexem_item)
+static int	unquoted_lexer(char **str, t_lexem **lexem_item)
 {
 	char	*delimiters;
 	int		i;
@@ -151,7 +160,13 @@ void	unquoted_lexer(char **str, t_lexem **lexem_item)
 		(*lexem_item)->token = WORD;
 		printf("_STR: %s\n", (*lexem_item)->str);
 		*str += i;
+		if( (*lexem_item)->str == NULL)
+		{
+			ft_putendl_fd("minishell: ft_substr fail", STDERR_FILENO);
+			return (EXIT_FAILURE);
+		}
 	}
+	return (EXIT_SUCCESS);
 }
 
 /** Rellena las struct s_lexem de los lexemas especiales 
@@ -163,7 +178,7 @@ void	unquoted_lexer(char **str, t_lexem **lexem_item)
  * @returns Nada. Modifica el puntero del str para que apunte al character
  * posterior al cierre de comillas.
  **/
-void	token_lexem(char **str, t_lexem **lexem_item)
+static void	token_lexem(char **str, t_lexem **lexem_item)
 {
 	int	chr_count;
 
@@ -180,25 +195,4 @@ void	token_lexem(char **str, t_lexem **lexem_item)
 		chr_count = token_lex_fill("|", lexem_item, PIPE);
 	*str += chr_count;
 	return ;
-}
-
-int	main(void)
-{
-	char	*input;
-	t_lexem	*lexem_list;
-	int iters=0;
-
-	while (iters < 2)
-	{
-		input = readline("\033[31mMinishell\033[0m > ");
-		add_history(input);
-		if (*input)
-		{
-			lexem_list = lexer(input);
-			free(input);
-			free_cleaner(lexem_list);
-		}
-		iters ++;
-	}
-	return (0);
 }

@@ -10,29 +10,27 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/main.h"
-//#ifndef READLINE_LIBRARY
-//# define READLINE_LIBRARY
-//#endif
-//#include <stdio.h>
-////#include "../lib/readline/history.h"
-////#include "../lib/readline/readline.h"
-//#include <readline/readline.h>
-//#include <readline/history.h>
+#include "../include/minishell.h"
 
-int main(void)
+int	main(void)
 {
-    char *input;
+	t_data	*data;
+	int iters=0; //ELIMINAR ANTES DE ENTREGAR, SOLO PARA TEST
+	int status;
 
-    while (1)
-    {
-        input = readline("\033[31mMinishell\033[0m > ");
-        add_history(input);
-        if (*input)
-        {
-            lexer(input);
-            free(input);
-        }
-    }
-    return (0);
+	status = init_data(&data);
+	while (iters < 5)
+	{
+		data->input = readline("\033[31mMinishell\033[0m > ");
+		add_history(data->input);
+		if (data->input && *(data->input) != '\0' && status == EXIT_SUCCESS)
+		{
+			status = lexer(data->input, &(data->head_lex_list));
+			//cmd_list = ft_cmd_list_builder (&lexem_list);
+			//print_cmd(cmd_list);
+		}
+		clean_data(data);
+		iters ++;
+	}
+	return (status);
 }

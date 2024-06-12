@@ -3,7 +3,7 @@
 # después de los ficheros a compilar en gcc
 
 # Name of the program
-NAME 		= ./bin/minishell
+NAME 		= minishell
 
 # Custom libraries archives
 LIBFT_AR	= ./lib/libft/libft.a
@@ -16,6 +16,9 @@ LIBFT		= -L./lib/libft -lft
 
 # Directories
 LEX_SRC_DIR	= ./src/lexer/
+PAR_SRC_DIR	= ./src/parser/
+DEB_SRC_DIR	= ./src/debug/
+UTL_SRC_DIR	= ./src/utils/
 LIBFT_DIR	= ./lib/libft/
 OBJS_DIR	= ./build/
 PROGRAM_DIR	= ./bin
@@ -24,16 +27,22 @@ PROGRAM_DIR	= ./bin
 INCLUDE		= -Iinclude -I$(LIBFT_DIR)
 
 # Source files
-SRC			=	src/lexer/lexer.c \
-				src/lexer/lexer_utils.c
+SRC			=	src/debug/debug.c \
+				src/lexer/lexer.c \
+				src/lexer/lexer_utils.c \
+				src/utils/initializer.c \
+				src/utils/clean_memory.c \
+				src/main.c
+#				src/parser/expander.c \
 
 # Object files
 OBJS		=	$(addprefix $(OBJS_DIR), \
 				$(notdir $(patsubst %.c, %.o, $(SRC))))
 
 # Header files
-HEADERS		=	./include/lexer.h \
-				./include/minishell.h
+HEADERS		=	./include/minishell.h \
+				./include/lexer.h \
+				./include/parser.h	
 
 all: $(NAME)
 
@@ -48,10 +57,31 @@ $(OBJS_DIR):
 $(PROGRAM_DIR):
 	mkdir $(PROGRAM_DIR)
 
-# Objects compiler
+# Debuger
+$(OBJS_DIR)%.o: $(DEB_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
+	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
+
+# Utils objects compiler
+$(OBJS_DIR)%.o: $(UTL_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
+	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
+
+# Lexer objects compiler
 $(OBJS_DIR)%.o: $(LEX_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
 	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
+
+# Parser objects compiler
+$(OBJS_DIR)%.o: $(PAR_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
+	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
+
+# main objects compiler
+$(OBJS_DIR)%.o: ./src/main.c $(HEADERS) | $(OBJS_DIR)
+	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
+	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
+
 
 # Libft make
 $(LIBFT_AR):
@@ -64,7 +94,7 @@ clean:
 
 # Object + program cleaner
 fclean: clean
-	rm -rf ./bin
+	rm minishell
 	make fclean -C $(LIBFT_DIR)
 
 # Remake

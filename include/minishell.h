@@ -18,8 +18,21 @@
 # include <errno.h>             //Define la varibale entera errno con el numero de un error
 
 # include "lexer.h"
+# include "parser.h"
 # include "../lib/libft/libft.h"
 
+/**Estructura principal desde la que podamos liberar
+ * memoría alojada dinámicamente.
+*/
+typedef struct s_data
+{
+	t_lexem			*head_lex_list;
+	t_single_cmd	*head_cmd_list;
+	char			*input;	
+}	t_data;
+
+int init_data(t_data **data);
 int	is_whitespace(char c);
+void clean_data(t_data *data);
 
 #endif
