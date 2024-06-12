@@ -14,21 +14,23 @@
 
 int	main(void)
 {
-	char	*input;
-	t_lexem	*lexem_list;
-	int iters=0;
+	t_data	*data;
+	int iters=0; //ELIMINAR ANTES DE ENTREGAR, SOLO PARA TEST
+	int status;
 
-	while (iters < 2)
+	status = init_data(&data);
+	while (iters < 5)
 	{
-		input = readline("\033[31mMinishell\033[0m > ");
-		add_history(input);
-		if (*input)
+		data->input = readline("\033[31mMinishell\033[0m > ");
+		add_history(data->input);
+		if (data->input && *(data->input) != '\0' && status == EXIT_SUCCESS)
 		{
-			lexem_list = lexer(input);
-			free(input);
-			free_cleaner(lexem_list);
+			status = lexer(data->input, &(data->head_lex_list));
+			//cmd_list = ft_cmd_list_builder (&lexem_list);
+			//print_cmd(cmd_list);
 		}
+		clean_data(data);
 		iters ++;
 	}
-	return (0);
+	return (status);
 }

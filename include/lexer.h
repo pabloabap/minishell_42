@@ -28,7 +28,6 @@ typedef struct s_lexem
 
 int		token_lex_fill(char *str, t_lexem **lexem_item, t_tokens token);
 void	print_lexem_list(t_lexem *lexems_list_iter);
-void	free_cleaner(t_lexem *list_lexem);
-t_lexem	*lexer(char *str);
+int	lexer(char *str, t_lexem **head_lex_list);
 
 #endif
