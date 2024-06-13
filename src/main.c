@@ -6,7 +6,7 @@
 /*   By: pabad-ap <pabad-ap@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 16:36:28 by pabad-ap          #+#    #+#             */
-/*   Updated: 2024/05/29 18:12:34 by pabad-ap         ###   ########.fr       */
+/*   Updated: 2024/06/13 12:37:20 by pabad-ap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,15 @@ int	main(void)
 	int status;
 
 	status = init_data(&data);
-	while (iters < 5)
+	while (iters < 5 && EXIT_SUCCESS == status)
 	{
 		data->input = readline("\033[31mMinishell\033[0m > ");
 		add_history(data->input);
-		if (data->input && *(data->input) != '\0' && status == EXIT_SUCCESS)
+		if (data->input && *(data->input) != '\0')
 		{
-			status = lexer(data->input, &(data->head_lex_list));
-			//cmd_list = ft_cmd_list_builder (&lexem_list);
+			if(EXIT_SUCCESS == lexer(data->input, &(data->head_lex_list)))
+				printf("OK\n");
+			//	cmd_list = ft_cmd_list_builder (&lexem_list);
 			//print_cmd(cmd_list);
 		}
 		clean_data(data);

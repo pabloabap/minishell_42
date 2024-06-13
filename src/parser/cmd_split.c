@@ -1,29 +1,36 @@
-// CABECERA!!!
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cmd_split.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/13 14:23:11 by pabad-ap          #+#    #+#             */
+/*   Updated: 2024/06/13 14:23:15 by pabad-ap         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
-static void ft_add_cmd(t_lexem **lex_list, t_single_cmd **cmd_list);
+static int ft_add_cmd(t_lexem **lex_list, t_single_cmd **cmd_list);
 static void ft_handle_redirections(t_lexem **lex_list, \
 t_single_cmd *lst_cmd);
 static void ft_handle_str(t_lexem **lex_list, \
 t_single_cmd *lst_cmd);
 
-t_single_cmd *ft_cmd_list_builder(t_lexem **lex_list)
+int	ft_cmd_list_builder(t_lexem *lex_list, t_single_cmd **cmd)
 {
 	t_single_cmd	*cmds_head;
-	t_lexem			*fst_lex;
 
-	fst_lex = *lex_list;
-	cmds_head = NULL;
-	if (*lex_list)
+	if (grammar_checks(lex_list) == EXIT_SUCCESS)
 	{
-		while (*lex_list && (*lex_list)->token != PIPE)
+		while (lex_list && lex_list->token != PIPE)
 		{
 			ft_add_cmd(lex_list, &cmds_head);
 			///?(*lex_list) = (*lex_list)->next;
 		}
 	}
-	(*lex_list) = fst_lex;
+	(*cmd) = fst_lex;
 	return (cmds_head);
 }
 
@@ -36,34 +43,33 @@ t_single_cmd *ft_cmd_list_builder(t_lexem **lex_list)
  * 
  * @return No devuelve nada. Modifica el contenido de cmd_list.
  */
-static void ft_add_cmd(t_lexem **lex_list, t_single_cmd **cmd_list)
+static int ft_add_cmd(t_lexem **lex_list, t_single_cmd **cmd_list)
 {
 	t_single_cmd	*new_cmd;
-	t_single_cmd	*lst_cmd;
+	t_single_cmd	*fst_cmd;
 
 	new_cmd = (t_single_cmd *)malloc(sizeof(t_single_cmd));
 	if(!new_cmd)
-		exit(EXIT_FAILURE);
+		return(err_malloc_fail(), EXIT_FAILURE);
 	new_cmd->next = NULL;
 	if ((*cmd_list) == NULL)
 	{
-		lst_cmd = new_cmd;
-		lst_cmd->redirection = NULL;
-		(*cmd_list) = lst_cmd;
+		new_cmd->redirection = NULL;
+		(*cmd_list) = new_cmd;
 	}
 	else
 	{
-		lst_cmd = ft_lstcmd(*cmd_list);
-		lst_cmd->next = new_cmd;
-		lst_cmd = lst_cmd->next;
+		fst_cmd = (*cmd_list);
+		(*cmd_list) = ft_lstcmd(*cmd_list);
+		(*cmd_list)->next = new_cmd;
+		(*cmd_list) = lst_cmd->next;
 	}
-	if ((*lex_list)->token == IN_REDIR \
-		|| (*lex_list)->token == OUT_REDIR \
-		|| (*lex_list)->token == HERE_DOC \
-		|| (*lex_list)->token == APPEND_REDIR)
+	if ((*lex_list)->token >= IN_REDIR \
+		&& (*lex_list)->token <= APPEND_REDIR)
 		ft_handle_redirections(lex_list, lst_cmd);
 	else
 		ft_handle_str(lex_list, lst_cmd);
+	(*cmd_list) = fst_cmd;
 }
 
 static void ft_handle_redirections(t_lexem **lex_list, \
