@@ -34,6 +34,7 @@ SRC			=	src/debug/debug.c \
 				src/parser/cmd_split.c \
 				src/utils/initializer.c \
 				src/utils/clean_memory.c \
+				src/utils/error.c \
 				src/main.c
 #				src/parser/expander.c \
 

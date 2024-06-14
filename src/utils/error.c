@@ -14,8 +14,8 @@
 
 void err_red_no_file(void)
 {
-	ft_putendl_fd("Minishell: Redirections must be followed \
-		by a file name or delimiter.", STDERR_FILENO);
+	ft_putendl_fd("Minishell: Redirection without file or delimiter", \
+	STDERR_FILENO);
 }
 
 void err_pipe_start(void)
@@ -25,5 +25,5 @@ void err_pipe_start(void)
 
 void err_malloc_fail(void)
 {
-	ft_putendl_fd("Minishell: malloc fail. Out of memorry", STDERR_FILENO);
+	perror("Minishell: t_lexem malloc fails");
 }

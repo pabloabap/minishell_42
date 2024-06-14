@@ -41,3 +41,12 @@ int	token_lex_fill(char *str, t_lexem **lexem_item, t_tokens token)
 	(*lexem_item)->token = token;
 	return (chars);
 }
+
+t_lexem	*ft_lstlex(t_lexem *lst)
+{
+	if (lst == NULL)
+		return (NULL);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
+}

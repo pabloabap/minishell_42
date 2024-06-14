@@ -27,28 +27,50 @@ void	ft_add_redirection(t_single_cmd *cmd, t_lexem *r)
 		cmd->redirection = r;
 	else
 	{
-		while(cmd->redirection)
-		{
-			cmd->redirection->next = r;
-			cmd->redirection->next->prev = cmd->redirection;
-			cmd->redirection = cmd->redirection->next;
-		}
+		cmd->redirection = ft_lstlex(cmd->redirection);
+		cmd->redirection->next = r;
+		r->prev = cmd->redirection;
 	}
 }
 
 int	grammar_checks(t_lexem *lex_list)
 {
 	if (!lex_list)
-		eturn(EXIT_FAILURE);
+		return(EXIT_FAILURE);
 	if (lex_list->token == PIPE)
 		return (err_pipe_start(), EXIT_FAILURE);
 	while (lex_list)
 	{
-		if ((lex_list->str >= IN_REDIR \
-			&& lex_list->str <= APPEND_REDIR) \
+		if ((lex_list->token >= IN_REDIR \
+			&& lex_list->token <= APPEND_REDIR) \
 			&& (!(lex_list->next) || \
-			lex_list->next->str > DOUBLE_QUOTES))
+			lex_list->next->token > DOUBLE_QUOTES))
 			return (err_red_no_file(), EXIT_FAILURE);
+		lex_list = lex_list->next;
 	}
 	return (EXIT_SUCCESS);
+}
+
+int cmd_len(t_lexem *lex_list)
+{
+	int	red_count;
+	int	cmd_count;
+	
+	red_count = 0;
+	cmd_count = 0;
+	while (lex_list && lex_list->token != PIPE)
+	{
+		if (lex_list->token > DOUBLE_QUOTES)
+		{
+			red_count ++;
+			lex_list = lex_list->next->next;
+		}
+		else
+		{
+			cmd_count ++;
+			lex_list = lex_list->next;
+		}
+	}
+	printf("REDIRS: %i	|	CMDS: %i\n", red_count, cmd_count);
+	return (cmd_count);
 }

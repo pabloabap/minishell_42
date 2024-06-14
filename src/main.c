@@ -27,8 +27,8 @@ int	main(void)
 		{
 			if(EXIT_SUCCESS == lexer(data->input, &(data->head_lex_list)))
 				printf("OK\n");
-			//	cmd_list = ft_cmd_list_builder (&lexem_list);
-			//print_cmd(cmd_list);
+			ft_cmd_list_builder (data->head_lex_list, &(data->head_cmd_list));
+			print_cmd(data->head_cmd_list);
 		}
 		clean_data(data);
 		iters ++;
