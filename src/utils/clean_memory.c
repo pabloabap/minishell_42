@@ -62,9 +62,10 @@ static void	clean_cmd_list(t_single_cmd *cmd)
 	while (cmd)
 	{
 		tmp = cmd;
+		
 		cmd = cmd->next;
-		while (cmd->redirection)
-			clean_lex_list(cmd->redirection, 1);
+		if (tmp && tmp->redirection)
+			clean_lex_list(tmp->redirection, 1);
 		tmp->prev = NULL;
 		tmp->next = NULL;
 		free(tmp);

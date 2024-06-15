@@ -48,6 +48,7 @@ void clean_data(t_data *data);
 //Error handling
 void err_red_no_file(void);
 void err_pipe_start(void);
+void err_pipe(void);
 void err_malloc_fail(void);
 
 

@@ -23,13 +23,16 @@ t_single_cmd	*ft_lstcmd(t_single_cmd *lst)
 
 void	ft_add_redirection(t_single_cmd *cmd, t_lexem *r)
 {
+	t_lexem *iter_redir;
+	
+	iter_redir = cmd->redirection;
 	if (cmd->redirection == NULL)
 		cmd->redirection = r;
 	else
 	{
-		cmd->redirection = ft_lstlex(cmd->redirection);
-		cmd->redirection->next = r;
-		r->prev = cmd->redirection;
+		iter_redir = ft_lstlex(cmd->redirection);
+		iter_redir->next = r;
+		r->prev = iter_redir;
 	}
 }
 
@@ -46,6 +49,8 @@ int	grammar_checks(t_lexem *lex_list)
 			&& (!(lex_list->next) || \
 			lex_list->next->token > DOUBLE_QUOTES))
 			return (err_red_no_file(), EXIT_FAILURE);
+		if (lex_list->token == PIPE && !(lex_list->next))
+			return (err_pipe(), EXIT_FAILURE);
 		lex_list = lex_list->next;
 	}
 	return (EXIT_SUCCESS);
