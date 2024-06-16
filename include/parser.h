@@ -35,4 +35,5 @@ t_single_cmd	*ft_lstcmd(t_single_cmd *lst);
 void	ft_add_redirection(t_single_cmd *cmd, t_lexem *r);
 int	grammar_checks(t_lexem *lex_list);
 int cmd_len(t_lexem *lex_list);
+int ft_lex_to_cmd(t_lexem **head_lex_list, t_single_cmd **cmd);
 #endif

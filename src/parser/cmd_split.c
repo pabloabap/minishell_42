@@ -34,6 +34,7 @@ int	ft_cmd_list_builder(t_lexem *lex_list, t_single_cmd **cmd)
 				lex_list = lex_list->next;
 		}
 		(*cmd) = cmds_head;
+		return (EXIT_SUCCESS);
 	}
 	return (EXIT_FAILURE);
 }
@@ -45,6 +46,7 @@ static int ft_create_cmd(t_single_cmd **cmd_list)
 	new_cmd = (t_single_cmd *)malloc(sizeof(t_single_cmd));
 	if(!new_cmd)
 		return(err_malloc_fail(), EXIT_FAILURE);
+	new_cmd->prev = NULL;
 	new_cmd->next = NULL;
 	new_cmd->redirection = NULL;
 	new_cmd->str = NULL;
@@ -94,6 +96,8 @@ t_single_cmd *lst_cmd)
 		if ((*lex_list)->prev)
 			(*lex_list)->prev->next = (*lex_list);
 	}
+	if (redirection_lexem->prev)
+		redirection_lexem->prev->next = NULL;
 	redirection_lexem->str = ft_strdup(redirection_lexem->next->str); //Trae el str del fichero de redirección al nodo con el token de redirección para unificarlos en un solo nodo;
 	redirection_lexem->prev = NULL; //Definimos la redirecicón previa a NULL
 	free(redirection_lexem->next->str); //Libera memoria dinámica reservada para el str del fichero de redireccionamiento.
@@ -116,10 +120,12 @@ static int ft_handle_str(t_lexem **lex_list, t_single_cmd *lst_cmd)
 			* (cmds_count + 1));
 		if(lst_cmd->str == NULL)
 			return(err_malloc_fail(), EXIT_FAILURE);
-		while (i < cmds_count)
+		while (i < cmds_count + 1)
 			(lst_cmd->str)[i++] = NULL;
 		i = 0;
 	}
+	while ((lst_cmd->str)[i] != NULL)
+		i ++;
 	while ((*lex_list) && (*lex_list)->token <= DOUBLE_QUOTES)
 	{
 		(lst_cmd->str)[i++] = (*lex_list)->str;

@@ -79,3 +79,25 @@ int cmd_len(t_lexem *lex_list)
 	printf("REDIRS: %i	|	CMDS: %i\n", red_count, cmd_count);
 	return (cmd_count);
 }
+
+
+/** Función para gestionar los casos en los que los escrito en el 
+ * terminal empiece con redirección.
+ */
+int ft_lex_to_cmd(t_lexem **lex_list, t_single_cmd **cmd)
+{
+	t_lexem *cmds_start;
+
+	cmds_start = *lex_list;
+	if (grammar_checks(*lex_list) == EXIT_SUCCESS)
+	{
+		while (cmds_start && cmds_start->token >= IN_REDIR \
+		&& cmds_start->next->token <= DOUBLE_QUOTES)
+			cmds_start = cmds_start->next->next;
+		if (ft_cmd_list_builder (*lex_list, cmd) == EXIT_FAILURE)
+			return (EXIT_FAILURE);
+		*lex_list = cmds_start;
+		return (EXIT_SUCCESS);
+	}
+	return (EXIT_FAILURE);
+}

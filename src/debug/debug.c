@@ -17,15 +17,19 @@
 void print_cmd(t_single_cmd *cmd_list)
 {
 	t_lexem			*red;
+	int 	i = 0;
 
 	while (cmd_list)
 	{
 		red = cmd_list->redirection;
-		while (red)
+		while (cmd_list->redirection && red)
 		{
 			printf("STR: %s | TOKEN: %d\n", red->str, red->token);
 			red = red->next;
 		}
+		while (cmd_list->str && cmd_list->str[i])
+			printf("STR: %s\n", cmd_list->str[i++]);
+		i = 0;
 		cmd_list = cmd_list->next;
 	}
 
