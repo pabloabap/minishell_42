@@ -1,4 +1,14 @@
-// CABECERA
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/13 14:22:57 by pabad-ap          #+#    #+#             */
+/*   Updated: 2024/06/13 14:23:01 by pabad-ap         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
@@ -30,4 +40,13 @@ int	token_lex_fill(char *str, t_lexem **lexem_item, t_tokens token)
 	(*lexem_item)->str = str;
 	(*lexem_item)->token = token;
 	return (chars);
+}
+
+t_lexem	*ft_lstlex(t_lexem *lst)
+{
+	if (lst == NULL)
+		return (NULL);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
 }

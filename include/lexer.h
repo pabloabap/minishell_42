@@ -1,4 +1,14 @@
-// CABECERA !!!
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/13 14:21:05 by pabad-ap          #+#    #+#             */
+/*   Updated: 2024/06/13 14:21:12 by pabad-ap         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef LEXER_H
 # define LEXER_H
@@ -28,6 +38,7 @@ typedef struct s_lexem
 
 int		token_lex_fill(char *str, t_lexem **lexem_item, t_tokens token);
 void	print_lexem_list(t_lexem *lexems_list_iter);
-int	lexer(char *str, t_lexem **head_lex_list);
+int		lexer(char *str, t_lexem **head_lex_list);
+t_lexem	*ft_lstlex(t_lexem *lst);
 
 #endif

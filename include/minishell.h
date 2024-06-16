@@ -1,4 +1,14 @@
-// CABECERA!!!
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.h                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/06/13 14:21:20 by pabad-ap          #+#    #+#             */
+/*   Updated: 2024/06/13 14:21:28 by pabad-ap         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
@@ -34,5 +44,12 @@ typedef struct s_data
 int init_data(t_data **data);
 int	is_whitespace(char c);
 void clean_data(t_data *data);
+
+//Error handling
+void err_red_no_file(void);
+void err_pipe_start(void);
+void err_pipe(void);
+void err_malloc_fail(void);
+
 
 #endif
