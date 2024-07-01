@@ -30,6 +30,8 @@ INCLUDE		= -Iinclude -I$(LIBFT_DIR)
 SRC			=	src/debug/debug.c \
 				src/lexer/lexer.c \
 				src/lexer/lexer_utils.c \
+				src/parser/parser_utils.c \
+				src/parser/cmd_split.c \
 				src/utils/initializer.c \
 				src/utils/clean_memory.c \
 				src/utils/error.c \
