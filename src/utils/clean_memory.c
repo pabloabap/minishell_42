@@ -66,6 +66,7 @@ static void	clean_cmd_list(t_single_cmd *cmd)
 		cmd = cmd->next;
 		if (tmp && tmp->redirection)
 			clean_lex_list(tmp->redirection, 1);
+		free(tmp->str); 
 		tmp->prev = NULL;
 		tmp->next = NULL;
 		free(tmp);
