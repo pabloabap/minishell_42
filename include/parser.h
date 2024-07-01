@@ -22,9 +22,6 @@ typedef struct s_single_cmd
 //	char				(*build_func)(<param1Typte> <param1Name>, ...) BUILDING FUNCTION. PDTE DE DEFINIRLAS
 	t_lexem				*redirection;
 //	char				*hd_file_name; Pendiente de confirmar si lo necesitaremos
-	int					_stdin; //Input file descriptor
-	int					_stdout; //Output file descriptor
-	int					_stderr; //Stderr file descriptor
 	struct s_single_cmd	*prev; //Pointer to prev item of cmd list
 	struct s_single_cmd	*next; //Pointer to next item of cmd list
 }	t_single_cmd;
