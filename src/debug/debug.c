@@ -18,9 +18,11 @@ void print_cmd(t_single_cmd *cmd_list)
 {
 	t_lexem			*red;
 	int 	i = 0;
+	int		cmd_num = 1;
 
 	while (cmd_list)
 	{
+		printf("____CMD %d___", cmd_num);
 		red = cmd_list->redirection;
 		while (cmd_list->redirection && red)
 		{
@@ -31,6 +33,7 @@ void print_cmd(t_single_cmd *cmd_list)
 			printf("STR: %s\n", cmd_list->str[i++]);
 		i = 0;
 		cmd_list = cmd_list->next;
+		cmd_num++;
 	}
 
 }
