@@ -31,6 +31,9 @@
 # include "parser.h"
 # include "../lib/libft/libft.h"
 
+/*Variable global que almacena el exit status del último comando ejecutado*/
+int	last_exit;
+
 /**Estructura principal desde la que podamos liberar
  * memoría alojada dinámicamente.
 */

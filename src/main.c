@@ -18,6 +18,7 @@ int	main(void)
 	int iters=0; //ELIMINAR ANTES DE ENTREGAR, SOLO PARA TEST
 	int status;
 
+	last_exit = 0;
 	status = init_data(&data);
 	while (iters < 5 && EXIT_SUCCESS == status)
 	{
