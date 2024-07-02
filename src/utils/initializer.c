@@ -18,7 +18,7 @@
 
 #include "../../include/minishell.h"
 
-int init_data(t_data **data)
+int	init_data(t_data **data)
 {
 	(*data) = (t_data *)malloc(sizeof(t_data));
 	if (!(*data))
@@ -29,5 +29,5 @@ int init_data(t_data **data)
 	(*data)->head_lex_list = NULL;
 	(*data)->head_cmd_list = NULL;
 	(*data)->input = NULL;
-	return (EXIT_SUCCESS);	
+	return (EXIT_SUCCESS);
 }

@@ -12,11 +12,11 @@
 
 #include "../../include/minishell.h"
 
-static int ft_create_cmd(t_single_cmd **cmd_list);
-static int ft_fill_cmd(t_lexem **lex_list, t_single_cmd *cmd_list);
-static int ft_handle_redirections(t_lexem **lex_list, \
+static int	ft_create_cmd(t_single_cmd **cmd_list);
+static int	ft_fill_cmd(t_lexem **lex_list, t_single_cmd *cmd_list);
+static int	ft_handle_redirections(t_lexem **lex_list, \
 t_single_cmd *lst_cmd);
-static int ft_handle_str(t_lexem **lex_list, t_single_cmd *lst_cmd);
+static int	ft_handle_str(t_lexem **lex_list, t_single_cmd *lst_cmd);
 
 int	ft_cmd_list_builder(t_lexem *lex_list, t_single_cmd **cmd)
 {
@@ -25,12 +25,13 @@ int	ft_cmd_list_builder(t_lexem *lex_list, t_single_cmd **cmd)
 	if (grammar_checks(lex_list) == EXIT_SUCCESS)
 	{
 		while (lex_list && ft_create_cmd(cmd) == EXIT_SUCCESS)
-		{		
+		{
 			if ((*cmd) && (*cmd)->prev == NULL)
 				cmds_head = (*cmd);
 			while (lex_list && lex_list->token != PIPE && \
-			ft_fill_cmd(&lex_list, *cmd) == EXIT_SUCCESS);
-			if(lex_list && lex_list->token == PIPE)
+			ft_fill_cmd(&lex_list, *cmd) == EXIT_SUCCESS)
+				;
+			if (lex_list && lex_list->token == PIPE)
 				lex_list = lex_list->next;
 		}
 		(*cmd) = cmds_head;
@@ -39,13 +40,13 @@ int	ft_cmd_list_builder(t_lexem *lex_list, t_single_cmd **cmd)
 	return (EXIT_FAILURE);
 }
 
-static int ft_create_cmd(t_single_cmd **cmd_list)
+static int	ft_create_cmd(t_single_cmd **cmd_list)
 {
 	t_single_cmd	*new_cmd;
 
 	new_cmd = (t_single_cmd *)malloc(sizeof(t_single_cmd));
-	if(!new_cmd)
-		return(err_malloc_fail(), EXIT_FAILURE);
+	if (!new_cmd)
+		return (err_malloc_fail(), EXIT_FAILURE);
 	new_cmd->prev = NULL;
 	new_cmd->next = NULL;
 	new_cmd->redirection = NULL;
@@ -62,7 +63,6 @@ static int ft_create_cmd(t_single_cmd **cmd_list)
 	return (EXIT_SUCCESS);
 }
 
-
 /** Funcion para crear la lista de comandos simples pasados
  *  por el usuario. 
  * 
@@ -72,23 +72,23 @@ static int ft_create_cmd(t_single_cmd **cmd_list)
  * 
  * @return No devuelve nada. Modifica el contenido de cmd_list.
  */
-static int ft_fill_cmd(t_lexem **lex_list, t_single_cmd *cmd_list)
+static int	ft_fill_cmd(t_lexem **lex_list, t_single_cmd *cmd_list)
 {
 	if ((*lex_list)->token >= IN_REDIR \
 		&& (*lex_list)->token <= APPEND_REDIR)
-		return(ft_handle_redirections(lex_list, cmd_list));
+		return (ft_handle_redirections(lex_list, cmd_list));
 	else
-		return(ft_handle_str(lex_list, cmd_list));
+		return (ft_handle_str(lex_list, cmd_list));
 }
 
-static int ft_handle_redirections(t_lexem **lex_list, \
+static int	ft_handle_redirections(t_lexem **lex_list, \
 t_single_cmd *lst_cmd)
 {
-	t_lexem			*redirection_lexem;
+	t_lexem	*redirection_lexem;
 
 	redirection_lexem = (*lex_list); //Crea un puntero para no perder la referencia del nodo de redireccionamiento.
 	if (redirection_lexem->next->token > DOUBLE_QUOTES)
-		return(err_red_no_file(), EXIT_FAILURE);
+		return (err_red_no_file(), EXIT_FAILURE);
 	(*lex_list) = (*lex_list)->next->next;
 	if (*lex_list)
 	{
@@ -104,22 +104,22 @@ t_single_cmd *lst_cmd)
 	free(redirection_lexem->next); //Libera memoria dinámica del nodo asignado al fichero de redireccionamineto.
 	redirection_lexem->next = NULL; //Definimos la redirecicón siguiente a NULL
 	ft_add_redirection(lst_cmd, redirection_lexem); //añadie redirección a la lista de redirecciones.
-	return(EXIT_SUCCESS);
+	return (EXIT_SUCCESS);
 }
 
-static int ft_handle_str(t_lexem **lex_list, t_single_cmd *lst_cmd)
+static int	ft_handle_str(t_lexem **lex_list, t_single_cmd *lst_cmd)
 {
-	int i;
-	int cmds_count;
+	int	i;
+	int	cmds_count;
 
 	i = 0;
 	cmds_count = cmd_len(*lex_list);
 	if (lst_cmd->str == NULL)
 	{
-		lst_cmd->str = (char **)malloc(sizeof(char*) \
+		lst_cmd->str = (char **)malloc(sizeof(char *) \
 			* (cmds_count + 1));
-		if(lst_cmd->str == NULL)
-			return(err_malloc_fail(), EXIT_FAILURE);
+		if (lst_cmd->str == NULL)
+			return (err_malloc_fail(), EXIT_FAILURE);
 		while (i < cmds_count + 1)
 			(lst_cmd->str)[i++] = NULL;
 		i = 0;
