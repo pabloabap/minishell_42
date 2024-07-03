@@ -68,7 +68,7 @@ int	ft_cmd_list_builder(t_lexem *lex_list, t_single_cmd **cmd)
  * estructura y next de la estructura que anteriormente era la 
  * última de la lista.
  **/
-static int ft_create_cmd(t_single_cmd **cmd_list)
+static int	ft_create_cmd(t_single_cmd **cmd_list)
 {
 	t_single_cmd	*new_cmd;
 
@@ -90,7 +90,6 @@ static int ft_create_cmd(t_single_cmd **cmd_list)
 	}
 	return (EXIT_SUCCESS);
 }
-
 
 /** Funcion para rellenar los atributos de una estructura comando.
  * 
