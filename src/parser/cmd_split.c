@@ -18,6 +18,19 @@ static int ft_handle_redirections(t_lexem **lex_list, \
 t_single_cmd *lst_cmd);
 static int ft_handle_str(t_lexem **lex_list, t_single_cmd *lst_cmd);
 
+/** Constructor de la lista de estructuras de comandos.
+ * En cada estructura se apunta el comando y argumentos localizados
+ * en la lex_list. Y las redirecciones se sacan de la lex_list y
+ * se crea otra lex_list que contiene las redirecciones asociadas al
+ * commando.
+ * 
+ * @param lex_list Primer elemento de la lista de lexemas no procesado.
+ * @param cmd Puntero a puntero a la estructura t_single_cmd.
+ *
+ * @returns Estado de salida de la función.  Durante el proceso
+ * se modifica la lex_list para que solo tenga comandos y sus argumentos
+ * y se generan las estructuras de comandos en la lista de comandos.
+ **/
 int	ft_cmd_list_builder(t_lexem *lex_list, t_single_cmd **cmd)
 {
 	t_single_cmd	*cmds_head;
@@ -39,6 +52,21 @@ int	ft_cmd_list_builder(t_lexem *lex_list, t_single_cmd **cmd)
 	return (EXIT_FAILURE);
 }
 
+/** Constructor de nuevas estructuras t_single_cmd.
+ * Si no hay estructuras en la lista de estructuras de comandos,
+ * la nueva estructura será el primer elemento de la lista. 
+ * En caso contrario, se añadirá como último elemento de la lista.
+ * 
+ * @param cmd_list Doble puntero al primer elemento de la lista de
+ * comandos no procesado.
+ *
+ * @returns Estado de salida de la función. Durante el proceso
+ * se fijan los atributos de la nueva estructura a NULL para que 
+ * empicen vacios y en caso de que existir elementos en la lista
+ * de comandos damos valor a los punteros prev de la nueva 
+ * estructura y next de la estructura que anteriormente era la 
+ * última de la lista.
+ **/
 static int ft_create_cmd(t_single_cmd **cmd_list)
 {
 	t_single_cmd	*new_cmd;
@@ -63,14 +91,14 @@ static int ft_create_cmd(t_single_cmd **cmd_list)
 }
 
 
-/** Funcion para crear la lista de comandos simples pasados
- *  por el usuario. 
+/** Funcion para rellenar los atributos de una estructura comando.
  * 
- * @param lex_list lista de structuras de lexemas
- * @param cmd_list lista de structuras de comandos. Se modificará desde
- * dentro de la función.
+ * @param lex_list lista de structuras de lexemas.
+ * @param cmd_list lista de structuras de comandos. Se modificará 
+ * desde dentro de la función.
  * 
- * @return No devuelve nada. Modifica el contenido de cmd_list.
+ * @return Devuelve el estado de salida de la función. 
+ * Modifica el contenido de cmd_list.
  */
 static int ft_fill_cmd(t_lexem **lex_list, t_single_cmd *cmd_list)
 {
@@ -81,6 +109,16 @@ static int ft_fill_cmd(t_lexem **lex_list, t_single_cmd *cmd_list)
 		return(ft_handle_str(lex_list, cmd_list));
 }
 
+/** Rellena el atributo redirection de la estructura comando 
+ * apuntanda por `lst_cmd` y quita de `lex_list` los elementos 
+ * que componen la redireccion. 
+ * 
+ * @param lex_list Doble puntero al primer elemento de la lista de 
+ * lexemas no procesado.
+ * @param lst_cmd Puntero a item de la lista de t_single_cmd.
+ *
+ * @returns Estado de salida de la función.
+ **/
 static int ft_handle_redirections(t_lexem **lex_list, \
 t_single_cmd *lst_cmd)
 {
@@ -96,7 +134,7 @@ t_single_cmd *lst_cmd)
 		if ((*lex_list)->prev)
 			(*lex_list)->prev->next = (*lex_list);
 	}
-	if (redirection_lexem->prev)
+	else if (redirection_lexem->prev)
 		redirection_lexem->prev->next = NULL;
 	redirection_lexem->str = ft_strdup(redirection_lexem->next->str); //Trae el str del fichero de redirección al nodo con el token de redirección para unificarlos en un solo nodo;
 	redirection_lexem->prev = NULL; //Definimos la redirecicón previa a NULL
@@ -107,6 +145,19 @@ t_single_cmd *lst_cmd)
 	return(EXIT_SUCCESS);
 }
 
+/** Rellena el atributo **str de la estructura comando apuntanda por
+ * lst_cmd. Como es un array de strings, primero se reserva el
+ * espacio dinámico necesario y luego se apunta al comando y 
+ * argumentos localizados en la lex_list. 
+ * 
+ * @param lex_list Doble puntero al primer elemento de la lista de 
+ * lexemas no procesado.
+ * @param lst_cmd Puntero a item de la lista de t_single_cmd.
+ *
+ * @returns Estado de salida de la función.  Durante el proceso
+ * se van añadiendo punteros a strings de la lex_list en el
+ * array de t_single_cmd->str.
+ **/
 static int ft_handle_str(t_lexem **lex_list, t_single_cmd *lst_cmd)
 {
 	int i;
