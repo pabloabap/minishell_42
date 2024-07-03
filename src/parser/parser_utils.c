@@ -23,8 +23,8 @@ t_single_cmd	*ft_lstcmd(t_single_cmd *lst)
 
 void	ft_add_redirection(t_single_cmd *cmd, t_lexem *r)
 {
-	t_lexem *iter_redir;
-	
+	t_lexem	*iter_redir;
+
 	iter_redir = cmd->redirection;
 	if (cmd->redirection == NULL)
 		cmd->redirection = r;
@@ -39,7 +39,7 @@ void	ft_add_redirection(t_single_cmd *cmd, t_lexem *r)
 int	grammar_checks(t_lexem *lex_list)
 {
 	if (!lex_list)
-		return(EXIT_FAILURE);
+		return (EXIT_FAILURE);
 	if (lex_list->token == PIPE)
 		return (err_pipe_start(), EXIT_FAILURE);
 	while (lex_list)
@@ -56,11 +56,11 @@ int	grammar_checks(t_lexem *lex_list)
 	return (EXIT_SUCCESS);
 }
 
-int cmd_len(t_lexem *lex_list)
+int	cmd_len(t_lexem *lex_list)
 {
 	int	red_count;
 	int	cmd_count;
-	
+
 	red_count = 0;
 	cmd_count = 0;
 	while (lex_list && lex_list->token != PIPE)
@@ -80,13 +80,12 @@ int cmd_len(t_lexem *lex_list)
 	return (cmd_count);
 }
 
-
 /** Función para gestionar los casos en los que los escrito en el 
  * terminal empiece con redirección.
  */
-int ft_lex_to_cmd(t_lexem **lex_list, t_single_cmd **cmd)
+int	ft_lex_to_cmd(t_lexem **lex_list, t_single_cmd **cmd)
 {
-	t_lexem *cmds_start;
+	t_lexem	*cmds_start;
 
 	cmds_start = *lex_list;
 	if (grammar_checks(*lex_list) == EXIT_SUCCESS)

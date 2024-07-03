@@ -22,18 +22,15 @@ typedef struct s_single_cmd
 //	char				(*build_func)(<param1Typte> <param1Name>, ...) BUILDING FUNCTION. PDTE DE DEFINIRLAS
 	t_lexem				*redirection;
 //	char				*hd_file_name; Pendiente de confirmar si lo necesitaremos
-	int					_stdin; //Input file descriptor
-	int					_stdout; //Output file descriptor
-	int					_stderr; //Stderr file descriptor
 	struct s_single_cmd	*prev; //Pointer to prev item of cmd list
 	struct s_single_cmd	*next; //Pointer to next item of cmd list
 }	t_single_cmd;
 
-void print_cmd(t_single_cmd *cmd_list);
-int	ft_cmd_list_builder(t_lexem *lex_list, t_single_cmd **cmd);
+void			print_cmd(t_single_cmd *cmd_list);
+int				ft_cmd_list_builder(t_lexem *lex_list, t_single_cmd **cmd);
 t_single_cmd	*ft_lstcmd(t_single_cmd *lst);
-void	ft_add_redirection(t_single_cmd *cmd, t_lexem *r);
-int	grammar_checks(t_lexem *lex_list);
-int cmd_len(t_lexem *lex_list);
-int ft_lex_to_cmd(t_lexem **head_lex_list, t_single_cmd **cmd);
+void			ft_add_redirection(t_single_cmd *cmd, t_lexem *r);
+int				grammar_checks(t_lexem *lex_list);
+int				cmd_len(t_lexem *lex_list);
+int				ft_lex_to_cmd(t_lexem **head_lex_list, t_single_cmd **cmd);
 #endif

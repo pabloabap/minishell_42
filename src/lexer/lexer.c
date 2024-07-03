@@ -51,7 +51,7 @@ int	lexer(char *str, t_lexem **head_lex_list)
 	trim_str = ft_strtrim(str, " \f\n\r\t\v");
 	head_trim = trim_str;
 	if (!trim_str || *trim_str == '\0')
-		return(free(trim_str), EXIT_FAILURE);
+		return (free(trim_str), EXIT_FAILURE);
 	if (*trim_str)
 	{
 		status = new_lexem(&trim_str, head_lex_list);
@@ -85,7 +85,7 @@ static int	new_lexem(char **str, t_lexem **lexem_list_last)
 	if (lexem_item == NULL)
 	{
 		perror("Minishell: t_lexem malloc fails");
-		return(EXIT_FAILURE);
+		return (EXIT_FAILURE);
 	}
 	while (is_whitespace(**str))
 		(*str)++;
@@ -117,8 +117,8 @@ static int	new_lexem(char **str, t_lexem **lexem_list_last)
  * @param lexem_item Puntero al puntero de la estrucura lexem para
  *         modificarla desde la función.
  *
- * @returns Estado de salida de la función.  Modifica el puntero del str para que 
- * apunte al character posterior al cierre de comillas.
+ * @returns Estado de salida de la función.  Modifica el puntero del 
+ * str para que apunte al character posterior al cierre de comillas.
  **/
 static int	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 {
@@ -128,8 +128,9 @@ static int	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 	printf("quote_type: %c | str: %s | end_quote: %p \n", quote_type, *str, end_quote);
 	if (end_quote == NULL)
 	{
-		ft_putendl_fd("minishell: syntax error: quotes not closed", STDERR_FILENO); // Cambiarlo pa
-		return((*lexem_item)->str = NULL, EXIT_FAILURE);
+		ft_putendl_fd("minishell: syntax error: quotes not closed", \
+		STDERR_FILENO);
+		return ((*lexem_item)->str = NULL, EXIT_FAILURE);
 	}
 	(*lexem_item)->str = ft_substr(*str, 0, end_quote - *str);
 	if (quote_type == '"')
@@ -150,8 +151,8 @@ static int	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
  * @param lexem_item Puntero al puntero de la estrucura lexem para
  *         modificarlo desde la función.
  *
- * @returns Resultado de la ejecuccion. Modifica el puntero del str para que apunte 
- * al character posterior al string tratado.
+ * @returns Resultado de la ejecuccion. Modifica el puntero del str para 
+ * que apunte al character posterior al string tratado.
  **/
 static int	unquoted_lexer(char **str, t_lexem **lexem_item)
 {
@@ -171,7 +172,7 @@ static int	unquoted_lexer(char **str, t_lexem **lexem_item)
 		(*lexem_item)->token = WORD;
 		printf("_STR: %s\n", (*lexem_item)->str);
 		*str += i;
-		if( (*lexem_item)->str == NULL)
+		if ((*lexem_item)->str == NULL)
 		{
 			ft_putendl_fd("minishell: ft_substr fail", STDERR_FILENO);
 			return (EXIT_FAILURE);
