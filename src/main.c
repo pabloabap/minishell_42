@@ -12,13 +12,15 @@
 
 #include "../include/minishell.h"
 
+int	g_last_exit = 0;
+
 int	main(void)
 {
 	t_data	*data;
 	int iters=0; //ELIMINAR ANTES DE ENTREGAR, SOLO PARA TEST
 	int status;
 
-	last_exit = 0;
+	printf("%d\n", g_last_exit);
 	status = init_data(&data);
 	while (iters < 5 && EXIT_SUCCESS == status)
 	{
@@ -29,7 +31,7 @@ int	main(void)
 			if(EXIT_SUCCESS == lexer(data->input, &(data->head_lex_list)))
 				printf("OK\n");
 			ft_lex_to_cmd(&(data->head_lex_list), &(data->head_cmd_list));
-			print_cmd(data->head_cmd_list);
+			ft_expander(data->head_lex_list, data->head_cmd_list);
 		}
 		clean_data(data);
 		iters ++;
