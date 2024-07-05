@@ -29,10 +29,12 @@ int	ft_expansion_malloc(char **exp_malloc, char *str, int token)
 			i++;
 			chars ++;
 		}
-		if (str[i] == '$' && (token != SINGLE_QUOTES))
+		if (str[i] == '$')
 		{
 			i ++;
-			if (ft_expansion_logic(str, &i, &chars) == EXIT_FAILURE)
+			if (token == SINGLE_QUOTES || token > SINGLE_QUO_RED)
+				chars ++;
+			else if (ft_expansion_logic(str, &i, &chars) == EXIT_FAILURE)
 				return (EXIT_FAILURE);
 		}
 	}

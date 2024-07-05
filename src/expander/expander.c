@@ -41,9 +41,13 @@ static int	ft_str_expander(t_lexem *lex_list)
 	while (lex_list)
 	{
 		if (ft_has_expansion(lex_list->str))
+		{
 			if (ft_expansion_malloc(&exp_malloc, lex_list->str, \
-				lex_list->token == EXIT_FAILURE))
+				lex_list->token) == EXIT_FAILURE)
 				return (EXIT_FAILURE);
+			if (lex_list->token > SINGLE_QUO_RED)
+				lex_list->token -= SINGLE_QUO_RED;
+		}
 		lex_list = lex_list->next;
 		printf("_____\n");
 	}
