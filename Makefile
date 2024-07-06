@@ -38,6 +38,7 @@ SRC			=	src/debug/debug.c \
 				src/expander/expander.c \
 				src/expander/expander_utils.c \
 				src/expander/expansion_malloc.c \
+				src/expander/fill_expansion.c \
 				src/main.c
 
 # Object files

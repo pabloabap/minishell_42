@@ -36,14 +36,17 @@ int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list)
 static int	ft_str_expander(t_lexem *lex_list)
 {
 	char	*exp_malloc;
+	int		buffer;
 
 	exp_malloc = NULL;
 	while (lex_list)
 	{
 		if (ft_has_expansion(lex_list->str))
 		{
-			if (ft_expansion_malloc(&exp_malloc, lex_list->str, \
-				lex_list->token) == EXIT_FAILURE)
+			if ((ft_expansion_malloc(&exp_malloc, lex_list->str, \
+				lex_list->token, &buffer) == EXIT_FAILURE) || \
+				(ft_fill_expansion(exp_malloc, lex_list->str, \
+				lex_list->token, &buffer) == EXIT_FAILURE))
 				return (EXIT_FAILURE);
 			if (lex_list->token > SINGLE_QUO_RED)
 				lex_list->token -= SINGLE_QUO_RED;
