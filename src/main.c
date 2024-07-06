@@ -20,8 +20,8 @@ int	main(void)
 	int iters=0; //ELIMINAR ANTES DE ENTREGAR, SOLO PARA TEST
 	int status;
 
-	printf("%d\n", g_last_exit);
 	status = init_data(&data);
+	data->last_exit = 0;
 	while (iters < 1 && EXIT_SUCCESS == status)
 	{
 		data->input = readline("\033[31mMinishell\033[0m > ");

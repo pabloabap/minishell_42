@@ -42,7 +42,8 @@ typedef struct s_data
 {
 	t_lexem			*head_lex_list;
 	t_single_cmd	*head_cmd_list;
-	char			*input;	
+	char			*input;
+	int				last_exit;	
 }	t_data;
 
 int		init_data(t_data **data);

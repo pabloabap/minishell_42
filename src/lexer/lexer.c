@@ -6,16 +6,10 @@
 /*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:22:42 by pabad-ap          #+#    #+#             */
-/*   Updated: 2024/06/13 14:22:48 by pabad-ap         ###   ########.fr       */
+/*   Updated: 2024/07/06 21:19:46 by pabad-ap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-/*
-	Se puede usar el argumento envp para acceder
-	a las variables de entorno del sistema pero al
-	no ser un standar de C se recomenda usar la
-	función getenv para obtener estas variables
-*/
 #include "../../include/minishell.h"
 
 static int	new_lexem(char **str, t_lexem **lexem_list_last);

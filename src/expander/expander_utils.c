@@ -1,4 +1,14 @@
-// CABECERA !!!
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expander_utils.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/06 21:07:38 by pabad-ap          #+#    #+#             */
+/*   Updated: 2024/07/06 21:24:01 by pabad-ap         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
@@ -30,6 +40,14 @@ int	ft_has_expansion(char *str)
 	return (expansiones);
 }
 
+/** Reemplazo la string antigua por la string expandida y
+ * liberacion de la memoria reservada para la string antigua.
+ * 
+ * @param exp_malloc String expandida.  
+ * @param lex_list Estructura que contiene el string sin expandir.  
+ * 
+ * @returns Resultado de la funcion.
+ **/
 int	ft_expansion_replace(char *exp_malloc, t_lexem *lex_list)
 {
 	free(lex_list->str);
