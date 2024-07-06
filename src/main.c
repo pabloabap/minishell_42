@@ -12,7 +12,7 @@
 
 #include "../include/minishell.h"
 
-int	g_last_exit = 0;
+//int	g_last_exit = 0;
 
 int	main(void)
 {
@@ -28,13 +28,16 @@ int	main(void)
 		add_history(data->input);
 		if (data->input && *(data->input) != '\0')
 		{
-			if(EXIT_SUCCESS == lexer(data->input, &(data->head_lex_list)))
-				if(EXIT_SUCCESS == ft_lex_to_cmd(&(data->head_lex_list), \
-					&(data->head_cmd_list)))
-					ft_expander(data->head_lex_list, data->head_cmd_list);
+			if((EXIT_FAILURE == lexer(data->input, &(data->head_lex_list))) || \
+				(EXIT_FAILURE == ft_lex_to_cmd(&(data->head_lex_list), \
+					&(data->head_cmd_list))) ||
+				(EXIT_FAILURE == ft_expander(data->head_lex_list, \
+				data->head_cmd_list, data->last_exit)))
+				data->last_exit = EXIT_FAILURE;
 		}
 		clean_data(data);
 		iters ++;
 	}
+	free(data);
 	return (status);
 }

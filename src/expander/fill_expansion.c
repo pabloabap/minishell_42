@@ -13,39 +13,41 @@
 #include "../../include/minishell.h"
 
 static void	ft_regular_chars_fill(char *dst, char *src, int *i, int *chars);
-static int	ft_expansions_fill(char *dst, char *src, int *i, int *chars);
+static int	ft_exp_fill(char *dst, char *src, int *i, int *chars);
+static int	ft_exit_fill(char *dst, int *chars, int exit);
 static int	ft_fill_var(char *dst, char *src, int *i, int *chars);
 
 /** Rellena la memoria reservada para la string expandida.
  * 
  * @param dst Puntero al espacio de memoria reservado para la nueva string.
- * @param src Puntero al string original (con expansiones sin expandir).
- * @param token Indicador del tipo de string, para no expandir string de
- * 			tipo comillas simple.
+ * @param src Puntero a structura a a expandir.
  * @param buff Puntero a entero que almacena la cantidad de espacio reservado
  * para la nueva string.
+ * @param exit Exit status de la enterior ejecucion.
  *
  * @returns Estado de salida de la función. 
  **/
-int	ft_fill_expansion(char *dst, char *src, int token, int *buff)
+int	ft_fill_expansion(char *dst, t_lexem *src, int *buff, int exit)
 {
 	int	i;
 	int	chars;
 
 	i = 0;
 	chars = 0;
-	while (src && src[i])
+	while (src->str && src->str[i])
 	{
-		if (src[i] && src[i] != '$')
-			ft_regular_chars_fill(dst, (src + i), &i, &chars);
-		if (token < 0 && *buff < 0 && !(src[i]))
+		if (src->str[i] && src->str[i] != '$')
+			ft_regular_chars_fill(dst, (src->str + i), &i, &chars);
+		if (src->token < 0 && *buff < 0 && !(src->str[i]))
 			i++;
-		if (src[i] == '$')
+		if (src->str[i] == '$')
 		{
 			i ++;
-			if (token == SINGLE_QUOTES || token > SINGLE_QUO_RED)
+			if (src->token == SINGLE_QUOTES || src->token > SINGLE_QUO_RED)
 				ft_strlcat(dst, "$", ++chars + 1);
-			else if (ft_expansions_fill(dst, src, &i, &chars) == EXIT_FAILURE)
+			else if ('?' == src->str[i++])
+				ft_exit_fill(dst, &chars, exit);
+			else if (ft_exp_fill(dst, src->str, &i, &chars) == EXIT_FAILURE)
 				return (EXIT_FAILURE);
 		}
 	}
@@ -81,6 +83,30 @@ static void	ft_regular_chars_fill(char *dst, char *src, int *i, int *chars)
 	*i = *i + new_chars;
 }
 
+/** Gestor de las expansion $? (exit status de la anterior ejecucion.
+ * 
+ * @param dst Puntero al espacio de memoria reservado para la nueva string.
+ * @param src Puntero al string original (con expansiones sin expandir).
+ * @param chars Puntero al contador de caracteres ya existentes en destino.
+ * 			Se utilizará para sumar el número de nuevos caracteres añadidos
+ * 			en dst.
+ * @param exit Exit status de la enterior ejecucion.
+ *
+ * @returns Estado de salida de la función.
+ * */
+static int	ft_exit_fill(char *dst, int *chars, int exit)
+{
+	char	*lst_exit_to_char;
+
+	lst_exit_to_char = ft_itoa(exit);
+	if (!lst_exit_to_char)
+		return (err_malloc_fail(), EXIT_FAILURE);
+	*chars = *chars + ft_strlen(lst_exit_to_char);
+	ft_strlcat(dst, lst_exit_to_char, *chars + 1);
+	free(lst_exit_to_char);
+	return (EXIT_SUCCESS);
+}
+
 /** Gestor de las distintas opciones de expansión.
  * 
  * @param dst Puntero al espacio de memoria reservado para la nueva string.
@@ -94,27 +120,15 @@ static void	ft_regular_chars_fill(char *dst, char *src, int *i, int *chars)
  *
  * @returns Estado de salida de la función. 
  **/
-static int	ft_expansions_fill(char *dst, char *src, int *i, int *chars)
+static int	ft_exp_fill(char *dst, char *src, int *i, int *chars)
 {
-	char	*lst_exit_to_char;
-
-	lst_exit_to_char = ft_itoa(g_last_exit);
-	if (!lst_exit_to_char)
-		return (err_malloc_fail(), EXIT_FAILURE);
-	if (src[*i] == '?')
-	{
-		*chars = *chars + ft_strlen(lst_exit_to_char);
-		ft_strlcat(dst, lst_exit_to_char, *chars + 1);
-		*i = *i + 1;
-	}
-	else if (ft_isalnum(src[*i]) || src[*i] == '_')
+	if (ft_isalnum(src[*i]) || src[*i] == '_')
 		ft_fill_var(dst, src + *i, i, chars);
 	else if (!src[*i] || (!ft_isalnum(src[*i]) && src[*i] != '_'))
 	{
 		*chars = *chars + 1;
 		ft_strlcat(dst, "$", *chars + 1);
 	}
-	free(lst_exit_to_char);
 	return (EXIT_SUCCESS);
 }
 

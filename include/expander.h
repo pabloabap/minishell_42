@@ -17,10 +17,10 @@
 /*Funciones propias de la expansion*/
 
 //Expander
-int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list);
+int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list, int exit);
 int	ft_has_expansion(char *str);
-int	ft_expansion_malloc(char **exp_malloc, char *str, int token, int *buffer);
-int	ft_fill_expansion(char *new_str, char *old_str, int token, int *buff);
+int	ft_expansion_malloc(char **dst, t_lexem *src, int *buff, int exit);
+int	ft_fill_expansion(char *dst, t_lexem *src, int *buff, int exit);
 int	ft_expansion_replace(char *exp_malloc, t_lexem *lex_list);
 
 #endif

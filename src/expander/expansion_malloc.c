@@ -13,46 +13,45 @@
 #include "../../include/minishell.h"
 
 static void	ft_regular_char_count(int *i, int *chars);
-static int	ft_expansion_logic(char *str, int *i, int *chars);
-static int	ft_expansion_len(char *str, int *i, int *chars);
+static int	ft_exp_logic(char *str, int *i, int *chars, int exit);
+static int	ft_exp_len(char *str, int *i, int *chars);
 
 /** Aprovisiona memoria para la nueva string con expansiones expandida.
  * 
- * @param exp_malloc Puntero a un puntero char que se modificara para que
+ * @param dst Puntero a un puntero char que se modificara para que
  * apunte al espacio de memoria aprovisionado para la nueva string.
- * @param str String que contiene expansiones.
- * @param token Indicador del tipo de string, para no expandir string de
- * tipo comillas simple.
+ * @param src Puntero a structura a a expandir.
  * @param buffer Puntero a entero que almacena la cantidad de espacio reservado
  * para la nueva string.
+ * @param exit Exit status of the last execution.
  *
  * @returns Estado de salida de la función. 
  **/
-int	ft_expansion_malloc(char **exp_malloc, char *str, int token, int *buffer)
+int	ft_expansion_malloc(char **dst, t_lexem *src, int *buff, int exit)
 {
 	int	i;
 	int	chars;
 
 	i = 0;
 	chars = 0;
-	while (str && str[i])
+	while (src->str && src->str [i])
 	{
-		while (str[i] && str[i] != '$')
+		while (src->str [i] && src->str [i] != '$')
 			ft_regular_char_count(&i, &chars);
-		if (str[i] == '$')
+		if (src->str [i] == '$')
 		{
 			i ++;
-			if (token == SINGLE_QUOTES || token > SINGLE_QUO_RED)
+			if (src->token == SINGLE_QUOTES || src->token > SINGLE_QUO_RED)
 				chars ++;
-			else if (ft_expansion_logic(str, &i, &chars) == EXIT_FAILURE)
+			else if (ft_exp_logic(src->str, &i, &chars, exit) == EXIT_FAILURE)
 				return (EXIT_FAILURE);
 		}
 	}
 	printf("NEW STRING CHARS: %d\n", chars);
-	*exp_malloc = (char *)ft_calloc(chars + 1, sizeof(char));
-	if (!(*exp_malloc))
+	*dst = (char *)ft_calloc(chars + 1, sizeof(char));
+	if (!(*dst))
 		return (err_malloc_fail(), EXIT_FAILURE);
-	*buffer = chars;
+	*buff = chars;
 	return (EXIT_SUCCESS);
 }
 
@@ -76,11 +75,11 @@ static void	ft_regular_char_count(int *i, int *chars)
  *
  * @returns Estado de salida de la función. 
  **/
-static int	ft_expansion_logic(char *str, int *i, int *chars)
+static int	ft_exp_logic(char *str, int *i, int *chars, int exit)
 {
 	char	*lst_exit_to_char;
 
-	lst_exit_to_char = ft_itoa(g_last_exit);
+	lst_exit_to_char = ft_itoa(exit);
 	if (!lst_exit_to_char)
 		return (err_malloc_fail(), EXIT_FAILURE);
 	if (str[*i] == '?')
@@ -89,7 +88,7 @@ static int	ft_expansion_logic(char *str, int *i, int *chars)
 		*i = *i + 1;
 	}
 	else if (ft_isalnum(str[*i]) || str[*i] == '_')
-		ft_expansion_len(str + *i, i, chars);
+		ft_exp_len(str + *i, i, chars);
 	else
 		*chars = *chars + 1;
 	free(lst_exit_to_char);
@@ -107,7 +106,7 @@ static int	ft_expansion_logic(char *str, int *i, int *chars)
  *
  * @returns Estado de salida de la función. 
  **/
-static int	ft_expansion_len(char *str, int *i, int *chars)
+static int	ft_exp_len(char *str, int *i, int *chars)
 {
 	int		j;
 	char	*var_name;

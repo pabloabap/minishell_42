@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static int	ft_str_expander(t_lexem *lex_list);
+static int	ft_str_expander(t_lexem *lex_list, int exit);
 
 /** Expansion de strings del atributo str de los t_single_cmd (equivalente
  *  a lex_list) y del atributo redirection (otra lex_list de redirecciones).
@@ -22,15 +22,15 @@ static int	ft_str_expander(t_lexem *lex_list);
  *
  * @returns Estado de salida de la función. 
  **/
-int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list)
+int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list, int exit)
 {
 	printf("___EXPANDIENDO STRS___\n");
-	if (ft_str_expander(lex_list) == EXIT_FAILURE)
+	if (ft_str_expander(lex_list, exit) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	printf("___EXPANDIENDO REDIRS___\n");
 	while (cmd_list)
 	{
-		if (ft_str_expander(cmd_list->redirection) \
+		if (ft_str_expander(cmd_list->redirection, exit) \
 		== EXIT_FAILURE)
 			return (EXIT_FAILURE);
 		cmd_list = cmd_list->next;
@@ -43,7 +43,7 @@ int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list)
  * 
  * @returns Estado de salida de la función. 
  **/
-static int	ft_str_expander(t_lexem *lex_list)
+static int	ft_str_expander(t_lexem *lex_list, int exit)
 {
 	char	*exp_malloc;
 	int		buffer;
@@ -53,10 +53,10 @@ static int	ft_str_expander(t_lexem *lex_list)
 	{
 		if (ft_has_expansion(lex_list->str))
 		{
-			if ((ft_expansion_malloc(&exp_malloc, lex_list->str, \
-				lex_list->token, &buffer) == EXIT_FAILURE) || \
-				(ft_fill_expansion(exp_malloc, lex_list->str, \
-				lex_list->token, &buffer) == EXIT_FAILURE) || \
+			if ((ft_expansion_malloc(&exp_malloc, lex_list, \
+				&buffer, exit) == EXIT_FAILURE) || \
+				(ft_fill_expansion(exp_malloc, lex_list, \
+				&buffer, exit) == EXIT_FAILURE) || \
 				(ft_expansion_replace(exp_malloc, lex_list) == EXIT_FAILURE))
 				return (EXIT_FAILURE);
 			if (lex_list->token > SINGLE_QUO_RED)

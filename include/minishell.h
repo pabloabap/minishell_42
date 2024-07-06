@@ -33,7 +33,7 @@
 # include "../lib/libft/libft.h"
 
 /*Variable global que almacena el exit status del último comando ejecutado*/
-extern int	g_last_exit;
+//extern int	g_last_exit;
 
 /**Estructura principal desde la que podamos liberar
  * memoría alojada dinámicamente.
