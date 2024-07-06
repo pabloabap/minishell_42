@@ -46,7 +46,8 @@ static int	ft_str_expander(t_lexem *lex_list)
 			if ((ft_expansion_malloc(&exp_malloc, lex_list->str, \
 				lex_list->token, &buffer) == EXIT_FAILURE) || \
 				(ft_fill_expansion(exp_malloc, lex_list->str, \
-				lex_list->token, &buffer) == EXIT_FAILURE))
+				lex_list->token, &buffer) == EXIT_FAILURE) || \
+				(ft_expansion_replace(exp_malloc, lex_list) == EXIT_FAILURE))
 				return (EXIT_FAILURE);
 			if (lex_list->token > SINGLE_QUO_RED)
 				lex_list->token -= SINGLE_QUO_RED;

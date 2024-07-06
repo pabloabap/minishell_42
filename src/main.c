@@ -22,16 +22,16 @@ int	main(void)
 
 	printf("%d\n", g_last_exit);
 	status = init_data(&data);
-	while (iters < 5 && EXIT_SUCCESS == status)
+	while (iters < 1 && EXIT_SUCCESS == status)
 	{
 		data->input = readline("\033[31mMinishell\033[0m > ");
 		add_history(data->input);
 		if (data->input && *(data->input) != '\0')
 		{
 			if(EXIT_SUCCESS == lexer(data->input, &(data->head_lex_list)))
-				printf("OK\n");
-			ft_lex_to_cmd(&(data->head_lex_list), &(data->head_cmd_list));
-			ft_expander(data->head_lex_list, data->head_cmd_list);
+				if(EXIT_SUCCESS == ft_lex_to_cmd(&(data->head_lex_list), \
+					&(data->head_cmd_list)))
+					ft_expander(data->head_lex_list, data->head_cmd_list);
 		}
 		clean_data(data);
 		iters ++;

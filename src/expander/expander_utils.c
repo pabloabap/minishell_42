@@ -29,3 +29,10 @@ int	ft_has_expansion(char *str)
 	}
 	return (expansiones);
 }
+
+int	ft_expansion_replace(char *exp_malloc, t_lexem *lex_list)
+{
+	free(lex_list->str);
+	lex_list->str = exp_malloc;
+	return (EXIT_SUCCESS);
+}
