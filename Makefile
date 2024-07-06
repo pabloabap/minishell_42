@@ -19,9 +19,9 @@ LEX_SRC_DIR	= ./src/lexer/
 PAR_SRC_DIR	= ./src/parser/
 DEB_SRC_DIR	= ./src/debug/
 UTL_SRC_DIR	= ./src/utils/
+EXP_SRC_DIR	= ./src/expander/
 LIBFT_DIR	= ./lib/libft/
 OBJS_DIR	= ./build/
-PROGRAM_DIR	= ./bin
 
 # Include folders
 INCLUDE		= -Iinclude -I$(LIBFT_DIR)
@@ -35,8 +35,11 @@ SRC			=	src/debug/debug.c \
 				src/utils/initializer.c \
 				src/utils/clean_memory.c \
 				src/utils/error.c \
+				src/expander/expander.c \
+				src/expander/expander_utils.c \
+				src/expander/expansion_malloc.c \
+				src/expander/fill_expansion.c \
 				src/main.c
-#				src/parser/expander.c \
 
 # Object files
 OBJS		=	$(addprefix $(OBJS_DIR), \
@@ -50,15 +53,12 @@ HEADERS		=	./include/minishell.h \
 all: $(NAME)
 
 # Program compiler
-$(NAME): $(LIBFT_AR) $(OBJS) $(HEADERS) | $(PROGRAM_DIR)
+$(NAME): $(LIBFT_AR) $(OBJS) $(HEADERS)
 	$(CC) $(CFLAGS) $(OBJS) $(LIBFT) -o $(NAME) $(READLINE)
 
 # Directories creation if not exist
 $(OBJS_DIR):
 	mkdir $(OBJS_DIR)
-
-$(PROGRAM_DIR):
-	mkdir $(PROGRAM_DIR)
 
 # Debuger
 $(OBJS_DIR)%.o: $(DEB_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
@@ -77,6 +77,11 @@ $(OBJS_DIR)%.o: $(LEX_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
 
 # Parser objects compiler
 $(OBJS_DIR)%.o: $(PAR_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
+	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
+
+# Expander objects compiler
+$(OBJS_DIR)%.o: $(EXP_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
 	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 

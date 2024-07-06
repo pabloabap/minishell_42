@@ -137,6 +137,8 @@ t_single_cmd *lst_cmd)
 	else if (redirection_lexem->prev)
 		redirection_lexem->prev->next = NULL;
 	redirection_lexem->str = ft_strdup(redirection_lexem->next->str); //Trae el str del fichero de redirección al nodo con el token de redirección para unificarlos en un solo nodo;
+	if (redirection_lexem->next->token == SINGLE_QUOTES)
+		redirection_lexem->token += SINGLE_QUO_RED;
 	redirection_lexem->prev = NULL; //Definimos la redirecicón previa a NULL
 	free(redirection_lexem->next->str); //Libera memoria dinámica reservada para el str del fichero de redireccionamiento.
 	free(redirection_lexem->next); //Libera memoria dinámica del nodo asignado al fichero de redireccionamineto.

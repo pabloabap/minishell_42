@@ -24,7 +24,8 @@ typedef enum e_tokens
 	IN_REDIR		,
 	OUT_REDIR		,
 	HERE_DOC		,
-	APPEND_REDIR
+	APPEND_REDIR	,
+	SINGLE_QUO_RED
 }	t_tokens;
 
 /*Estructures para almacenar info de los lexemas*/

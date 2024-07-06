@@ -32,5 +32,5 @@ void	err_pipe(void)
 
 void	err_malloc_fail(void)
 {
-	perror("Minishell: t_lexem malloc fails");
+	perror("Minishell: malloc fails");
 }
