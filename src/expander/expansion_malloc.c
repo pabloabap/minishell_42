@@ -41,9 +41,7 @@ int	ft_expansion_malloc(char **dst, t_lexem *src, int *buff, int exit)
 		if (src->str [i] == '$')
 		{
 			i ++;
-			if (src->token == SINGLE_QUOTES || src->token > SINGLE_QUO_RED)
-				chars ++;
-			else if (ft_exp_logic(src->str, &i, &chars, exit) == EXIT_FAILURE)
+			if (ft_exp_logic(src->str, &i, &chars, exit) == EXIT_FAILURE)
 				return (EXIT_FAILURE);
 		}
 	}

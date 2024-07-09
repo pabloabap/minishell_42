@@ -51,7 +51,9 @@ static int	ft_str_expander(t_lexem *lex_list, int exit)
 	exp_malloc = NULL;
 	while (lex_list)
 	{
-		if (ft_has_expansion(lex_list->str))
+		if ((lex_list->token != HERE_DOC && lex_list->token != SINGLE_QUOTES \
+			&& lex_list->token < SINGLE_QUO_RED) \
+			&& ft_has_expansion(lex_list->str))
 		{
 			if ((ft_expansion_malloc(&exp_malloc, lex_list, \
 				&buffer, exit) == EXIT_FAILURE) || \

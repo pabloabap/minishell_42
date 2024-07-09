@@ -23,8 +23,8 @@ typedef enum e_tokens
 	PIPE			,
 	IN_REDIR		,
 	OUT_REDIR		,
-	HERE_DOC		,
 	APPEND_REDIR	,
+	HERE_DOC		,
 	SINGLE_QUO_RED
 }	t_tokens;
 

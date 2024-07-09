@@ -32,6 +32,7 @@ SRC			=	src/debug/debug.c \
 				src/lexer/lexer_utils.c \
 				src/parser/parser_utils.c \
 				src/parser/cmd_split.c \
+				src/parser/redirection_utils.c \
 				src/utils/initializer.c \
 				src/utils/clean_memory.c \
 				src/utils/error.c \

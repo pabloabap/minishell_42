@@ -14,7 +14,7 @@
 
 static void	ft_regular_chars_fill(char *dst, char *src, int *i, int *chars);
 static int	ft_exp_fill(char *dst, char *src, int *i, int *chars);
-static int	ft_exit_fill(char *dst, int *chars, int exit);
+static int	ft_exit_fill(char *dst, int *chars, int exit, int *i);
 static int	ft_fill_var(char *dst, char *src, int *i, int *chars);
 
 /** Rellena la memoria reservada para la string expandida.
@@ -45,8 +45,8 @@ int	ft_fill_expansion(char *dst, t_lexem *src, int *buff, int exit)
 			i ++;
 			if (src->token == SINGLE_QUOTES || src->token > SINGLE_QUO_RED)
 				ft_strlcat(dst, "$", ++chars + 1);
-			else if ('?' == src->str[i++])
-				ft_exit_fill(dst, &chars, exit);
+			else if ('?' == src->str[i])
+				ft_exit_fill(dst, &chars, exit, &i);
 			else if (ft_exp_fill(dst, src->str, &i, &chars) == EXIT_FAILURE)
 				return (EXIT_FAILURE);
 		}
@@ -94,7 +94,7 @@ static void	ft_regular_chars_fill(char *dst, char *src, int *i, int *chars)
  *
  * @returns Estado de salida de la función.
  * */
-static int	ft_exit_fill(char *dst, int *chars, int exit)
+static int	ft_exit_fill(char *dst, int *chars, int exit, int *i)
 {
 	char	*lst_exit_to_char;
 
@@ -104,6 +104,7 @@ static int	ft_exit_fill(char *dst, int *chars, int exit)
 	*chars = *chars + ft_strlen(lst_exit_to_char);
 	ft_strlcat(dst, lst_exit_to_char, *chars + 1);
 	free(lst_exit_to_char);
+	*i = *i + 1;
 	return (EXIT_SUCCESS);
 }
 
