@@ -24,10 +24,10 @@ static int	ft_str_expander(t_lexem *lex_list, int exit);
  **/
 int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list, int exit)
 {
-	printf("___EXPANDIENDO STRS___\n");
+	//printf("___EXPANDIENDO STRS___\n");
 	if (ft_str_expander(lex_list, exit) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	printf("___EXPANDIENDO REDIRS___\n");
+	//printf("___EXPANDIENDO REDIRS___\n");
 	while (cmd_list)
 	{
 		if (ft_str_expander(cmd_list->redirection, exit) \
@@ -65,7 +65,7 @@ static int	ft_str_expander(t_lexem *lex_list, int exit)
 				lex_list->token -= SINGLE_QUO_RED;
 		}
 		lex_list = lex_list->next;
-		printf("_____\n");
+		//printf("_____\n");
 	}
 	return (EXIT_SUCCESS);
 }

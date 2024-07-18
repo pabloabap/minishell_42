@@ -76,7 +76,7 @@ int	cmd_len(t_lexem *lex_list)
 			lex_list = lex_list->next;
 		}
 	}
-	printf("REDIRS: %i	|	CMDS: %i\n", red_count, cmd_count);
+	//printf("REDIRS: %i	|	CMDS: %i\n", red_count, cmd_count);
 	return (cmd_count);
 }
 

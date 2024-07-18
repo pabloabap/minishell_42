@@ -1,0 +1,29 @@
+___MINISHELL TESTS___
+< t.txt wc
+wc < t.txt
+---
+DEBERIAN RETORNAR LO MISMO
+	cat t.txt
+	> t.txt cat
+	cat > t.txt 
+---
+NO TENDRIA QUE HACER CASO A LAS REDIRECIONES
+	< t.txt ls
+	ls > t.txt
+---
+DEVUELE TODO POR STDERR
+	mv
+	mv < t.txt
+	mv > t.txt
+---
+LEE INPUT Y ESCRIBE OUTPUT
+	sort
+---
+sort | grep ea
+
+----
+PROGRAM WITH REDIRECTIONS
+|_Create input file
+|	echo <list of colors repeated> > colors.txt
+|_CMD
+|	< colors.txt sort | uniq -c | sort -r | head -3 > favcolor.txt

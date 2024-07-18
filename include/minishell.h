@@ -30,6 +30,7 @@
 # include "lexer.h"
 # include "parser.h"
 # include "expander.h"
+# include "executor.h"
 # include "../lib/libft/libft.h"
 
 /*Variable global que almacena el exit status del último comando ejecutado*/
