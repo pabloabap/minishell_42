@@ -45,7 +45,6 @@ int	ft_expansion_malloc(char **dst, t_lexem *src, int *buff, int exit)
 				return (EXIT_FAILURE);
 		}
 	}
-	printf("NEW STRING CHARS: %d\n", chars);
 	*dst = (char *)ft_calloc(chars + 1, sizeof(char));
 	if (!(*dst))
 		return (err_malloc_fail(), EXIT_FAILURE);
@@ -118,12 +117,10 @@ static int	ft_exp_len(char *str, int *i, int *chars)
 		return (err_malloc_fail(), EXIT_FAILURE);
 	*i = *i + j;
 	j = 0;
-	printf("EXPANSION: %s LEN: %d\n", var_name, j);
 	var_value = getenv(var_name);
 	free(var_name);
 	while (var_value && var_value[j])
 		j++;
 	*chars = *chars + j;
-	printf("EXPANSION: %s LEN: %d\n", var_value, j);
 	return (EXIT_SUCCESS);
 }

@@ -60,12 +60,3 @@ char	*ft_itoa(int n)
 		p[0] = sign;
 	return (p);
 }
-/*
-#include <stdio.h>
-int	main(int argc, char **argv)
-{
-	if (argc == 2)
-		printf("%s", ft_itoa(ft_atoi(argv[1])));
-	return (0);
-}
-*/

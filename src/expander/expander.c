@@ -13,6 +13,7 @@
 #include "../../include/minishell.h"
 
 static int	ft_str_expander(t_lexem *lex_list, int exit);
+static void	ft_add_cmd_expansions(t_single_cmd *cmd_list, t_lexem **cmd_args);
 
 /** Expansion de strings del atributo str de los t_single_cmd (equivalente
  *  a lex_list) y del atributo redirection (otra lex_list de redirecciones).
@@ -24,12 +25,14 @@ static int	ft_str_expander(t_lexem *lex_list, int exit);
  **/
 int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list, int exit)
 {
-	//printf("___EXPANDIENDO STRS___\n");
+	t_lexem	*curr_cmd_args;
+
+	curr_cmd_args = lex_list;
 	if (ft_str_expander(lex_list, exit) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
-	//printf("___EXPANDIENDO REDIRS___\n");
 	while (cmd_list)
 	{
+		ft_add_cmd_expansions(cmd_list, &curr_cmd_args);
 		if (ft_str_expander(cmd_list->redirection, exit) \
 		== EXIT_FAILURE)
 			return (EXIT_FAILURE);
@@ -65,7 +68,32 @@ static int	ft_str_expander(t_lexem *lex_list, int exit)
 				lex_list->token -= SINGLE_QUO_RED;
 		}
 		lex_list = lex_list->next;
-		//printf("_____\n");
 	}
 	return (EXIT_SUCCESS);
+}
+
+/** Actualiza los argumentos del comando con expansiones a su expansion.
+ * 
+ * @param cmd_list Puntero al comando a transformar.
+ * @param cmd_args Puntero al primer arguento de la lista de comandos ya 
+ * expandidos
+ * 
+ * @return Nada, actualiza los valores del comando y de cmd_args a través
+ * de los punteros.
+ */
+static void	ft_add_cmd_expansions(t_single_cmd *cmd_list, t_lexem **cmd_args)
+{
+	int	i;
+	int	args_count;
+
+	i = 0;
+	if ((*cmd_args)->token == PIPE)
+		(*cmd_args) = (*cmd_args)->next;
+	args_count = cmd_len(*cmd_args);
+	while (i < args_count)
+	{
+		cmd_list->str[i] = (*cmd_args)->str;
+		(*cmd_args) = (*cmd_args)->next;
+		i ++;
+	}
 }

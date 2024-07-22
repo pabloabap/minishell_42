@@ -130,7 +130,6 @@ int	ft_prepare_redirections(int *fd_in, int *fd_out, t_lexem *redirs)
 {
 	while (redirs)
 	{
-		print("___ENTRA EN BUCLE PREPARACION___\n");
 		if (redirs->token == IN_REDIR || redirs->token >= HERE_DOC)
 		{	
 			if (*fd_in != 0)
@@ -141,7 +140,6 @@ int	ft_prepare_redirections(int *fd_in, int *fd_out, t_lexem *redirs)
 		}	
 		else if (redirs->token == OUT_REDIR || redirs->token >= APPEND_REDIR)
 		{	
-			printf("FD_OUT - %i\n", *fd_out);
 			if (*fd_out != 1)
 				if (-1 == close(*fd_out))
 					return (perror("11_Minishell "), EXIT_FAILURE);

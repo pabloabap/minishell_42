@@ -39,20 +39,3 @@ int	ft_atoi(const char *str)
 	}
 	return (num);
 }
-/*
-#include <stdio.h>
-#include <stdlib.h>
-int	main(int argc, char **argv)
-{
-	if (argc == 2)
-		printf("%i\n", ft_atoi(argv[1]));
-		printf("%i\n", atoi(argv[1]));
-	return (0);
-}
-
-int	main(void)
-{
-	printf("%i", ft_atoi("\n\t\v\f\r --+-12"));
-	return (0);
-}
-*/

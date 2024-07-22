@@ -52,8 +52,6 @@ int	lexer(char *str, t_lexem **head_lex_list)
 		lex_list_fst = (*head_lex_list);
 		while (*trim_str && status == EXIT_SUCCESS)
 			status = new_lexem(&trim_str, head_lex_list);
-		//if (lex_list_fst && status == EXIT_SUCCESS)
-		//	print_lexem_list(lex_list_fst);
 	}
 	free(head_trim);
 	(*head_lex_list) = lex_list_fst;
@@ -92,7 +90,6 @@ static int	new_lexem(char **str, t_lexem **lexem_list_last)
 	lexem_item->prev = (*lexem_list_last);
 	lexem_item->next = NULL;
 	(*lexem_list_last) = lexem_item;
-	//printf("??POST - str: %s\n", *str);
 	return (status);
 }
 
@@ -119,7 +116,6 @@ static int	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 	char	*end_quote;
 
 	end_quote = ft_strchr(++(*str), quote_type);
-	printf("quote_type: %c | str: %s | end_quote: %p \n", quote_type, *str, end_quote);
 	if (end_quote == NULL)
 	{
 		ft_putendl_fd("minishell: syntax error: quotes not closed", \
@@ -132,7 +128,6 @@ static int	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 	else
 		(*lexem_item)->token = SINGLE_QUOTES;
 	*str = (*str + (end_quote - *str + 1)); // Mueve el puntero str al caracter posterior al cierre de comillas
-	printf("POST - str: %s  | ITEM: %s\n", *str, (*lexem_item)->str);
 	return (EXIT_SUCCESS);
 }
 
@@ -164,7 +159,6 @@ static int	unquoted_lexer(char **str, t_lexem **lexem_item)
 			i++;
 		(*lexem_item)->str = ft_substr(*str, 0, i);
 		(*lexem_item)->token = WORD;
-		//printf("_STR: %s\n", (*lexem_item)->str);
 		*str += i;
 		if ((*lexem_item)->str == NULL)
 		{
