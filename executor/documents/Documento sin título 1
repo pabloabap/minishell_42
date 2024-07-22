@@ -1,0 +1,75 @@
+# Executor en un Shell Personalizado
+
+La lógica del `executor` en un shell personalizado se centra en gestionar la ejecución de comandos ingresados por el usuario. Esto incluye tanto comandos simples (como `ls`, `pwd`, etc.) como comandos compuestos que pueden involucrar redirecciones de entrada/salida o tuberías (pipes). La idea es interpretar estos comandos, determinar si son internos (built-in) o externos, y ejecutarlos adecuadamente, manejando cualquier comunicación entre procesos si es necesario.
+
+## Explicación General
+
+El `executor` realiza las siguientes tareas principales:
+
+1. **Determinar el Tipo de Comando**: Decide si el comando es simple o compuesto (por ejemplo, si usa tuberías).
+2. **Ejecución de Comandos Simples**: Si el comando es simple, verifica si es un comando interno (built-in) o externo. Los comandos internos se ejecutan directamente en el shell, mientras que los comandos externos se ejecutan creando un nuevo proceso.
+3. **Ejecución de Comandos Compuestos**: Si el comando es compuesto, gestiona la creación de tuberías entre los comandos y la ejecución de cada uno en su propio proceso, asegurando que la salida de un comando se pase correctamente como entrada al siguiente.
+4. **Manejo de Procesos**: Para los comandos externos y compuestos, el shell debe crear procesos hijos usando `fork()`, ejecutar el comando en el proceso hijo con `execvp()`, y esperar a que el proceso hijo termine con `wait()`.
+
+## Explicaciones Detalladas
+
+### Determinación del Tipo de Comando
+
+Antes de la ejecución, el `executor` necesita identificar si el comando es simple o compuesto. Esta lógica no se muestra directamente en el código proporcionado, pero se asume que existe una función que analiza la entrada del usuario y determina la estructura del comando.
+
+### Ejecución de Comandos Simples
+
+- **Comandos Internos (Built-in)**: Estos comandos, como `cd` o `exit`, se ejecutan directamente en el proceso del shell. No se crea ningún proceso hijo.
+- **Comandos Externos**: Para estos comandos, el shell crea un proceso hijo usando `fork()`. El proceso hijo ejecuta el comando externo con `execvp()`, que reemplaza la imagen del proceso hijo con el programa solicitado. El proceso padre (el shell) espera a que el hijo termine con `wait()`.
+
+### Ejecución de Comandos Compuestos
+
+- **Creación de Pipes**: Para cada par de comandos que necesitan comunicarse, se crea un pipe. Un pipe es básicamente un canal que conecta la salida estándar de un proceso con la entrada estándar de otro.
+- **Forking y Ejecución**: Para cada comando en la cadena, el shell hace un `fork()` para crear un proceso hijo. Dependiendo de la posición del comando en la cadena, puede necesitar redirigir su entrada, su salida, o ambas, usando `dup2()`.
+- **Redirección de I/O**: Antes de ejecutar el comando con `execvp()`, el proceso hijo ajusta sus descriptores de archivo para asegurar que lea y escriba en los lugares correctos. Esto puede implicar leer de un pipe, escribir en otro, o ambos.
+- **Cierre de Pipes y Espera**: Después de configurar las redirecciones y lanzar los comandos, el shell cierra todos los descriptores de archivo de pipe que no necesita. Luego espera a que todos los procesos hijos terminen.
+
+### Manejo de Procesos
+
+El manejo de procesos es crucial para la ejecución de comandos externos y compuestos. El uso de `fork()` permite al shell crear una copia de sí mismo. En el proceso hijo, `execvp()` reemplaza la imagen del proceso con el nuevo programa a ejecutar. Mientras tanto, el proceso padre puede continuar ejecutando el shell, esperando a que el hijo termine si es necesario, para mantener la sincronización y evitar zombies.
+
+# Función `execve`
+
+La función `execve` es una llamada al sistema en entornos Unix y POSIX que se utiliza para ejecutar un programa. Es parte de la familia de funciones `exec`, que también incluye `execl`, `execp`, `execle`, `execlp`, `execv`, y `execvp`. Estas funciones reemplazan la imagen del proceso actual con un nuevo programa, lo que significa que el nuevo programa se ejecuta en el contexto del proceso llamador y utiliza el mismo PID. La función `execve` es la más fundamental de esta familia, ya que todas las demás funciones de `exec` eventualmente llaman a `execve`.
+
+## Sintaxis
+
+```c
+#include <unistd.h>
+
+int execve(const char *pathname, char *const argv[], char *const envp[]);
+```
+
+- **`pathname`**: Es una cadena de caracteres que especifica la ruta del archivo ejecutable que se va a ejecutar.
+- **`argv`**: Es un arreglo de punteros a cadenas, terminado en `NULL`, que representa los argumentos que se pasan al programa. `argv[0]` suele ser el nombre del programa.
+- **`envp`**: Es un arreglo de punteros a cadenas, terminado en `NULL`, que representa las variables de entorno para el nuevo programa.
+
+## Valor de Retorno
+
+- **Éxito**: La función `execve` no retorna si tiene éxito, ya que la imagen del proceso actual es reemplazada por el nuevo programa.
+- **Error**: Retorna `-1` y establece la variable `errno` para indicar el error.
+
+## Ejemplo de Uso
+
+```c
+char *args[] = {"/bin/ls", "-l", NULL};
+char *env[] = {NULL};
+
+if (execve("/bin/ls", args, env) == -1) {
+    perror("execve");
+    exit(EXIT_FAILURE);
+}
+```
+
+Este ejemplo intenta ejecutar el comando `ls -l` en el directorio actual. Si `execve` falla, imprime el error y termina el proceso.
+
+## Consideraciones
+
+- **Reemplazo del Proceso**: Dado que `execve` reemplaza la imagen del proceso actual, cualquier código después de una llamada exitosa a `execve` no se ejecutará. Por esta razón, `execve` y otras funciones `exec` se suelen llamar después de un `fork()` en programación de sistemas, permitiendo al proceso padre continuar su ejecución y manejar el proceso hijo.
+- **Variables de Entorno**: A través del parámetro `envp`, `execve` permite especificar el entorno del nuevo programa. Esto es útil para controlar las variables de entorno que el nuevo programa heredará.
+- **Seguridad**: Al especificar el entorno y los argumentos, es importante considerar las implicaciones de seguridad, especialmente cuando se ejecutan programas en contextos donde los argumentos o el entorno pueden ser controlados por un usuario o por entradas no confiables.
