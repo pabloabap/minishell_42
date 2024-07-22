@@ -27,3 +27,6 @@ PROGRAM WITH REDIRECTIONS
 |	echo <list of colors repeated> > colors.txt
 |_CMD
 |	< colors.txt sort | uniq -c | sort -r | head -3 > favcolor.txt
+---
+cat -> Tiene que esperar a que introduzcas argumentos
+cat | cat | ls

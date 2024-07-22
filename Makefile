@@ -43,6 +43,7 @@ SRC			=	src/debug/debug.c \
 				src/expander/fill_expansion.c \
 				src/executor/ft_executor.c \
 				src/executor/ft_mng_redirs.c \
+				src/executor/ft_mng_cmds.c \
 				src/main.c
 
 # Object files
