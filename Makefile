@@ -20,6 +20,7 @@ PAR_SRC_DIR	= ./src/parser/
 DEB_SRC_DIR	= ./src/debug/
 UTL_SRC_DIR	= ./src/utils/
 EXP_SRC_DIR	= ./src/expander/
+EXE_SRC_DIR	= ./src/executor/
 LIBFT_DIR	= ./lib/libft/
 OBJS_DIR	= ./build/
 
@@ -40,6 +41,9 @@ SRC			=	src/debug/debug.c \
 				src/expander/expander_utils.c \
 				src/expander/expansion_malloc.c \
 				src/expander/fill_expansion.c \
+				src/executor/ft_executor.c \
+				src/executor/ft_mng_redirs.c \
+				src/executor/ft_mng_cmds.c \
 				src/main.c
 
 # Object files
@@ -49,7 +53,9 @@ OBJS		=	$(addprefix $(OBJS_DIR), \
 # Header files
 HEADERS		=	./include/minishell.h \
 				./include/lexer.h \
-				./include/parser.h	
+				./include/parser.h \
+				./include/expander.h \
+				./include/executor.h
 
 all: $(NAME)
 
@@ -83,6 +89,11 @@ $(OBJS_DIR)%.o: $(PAR_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
 
 # Expander objects compiler
 $(OBJS_DIR)%.o: $(EXP_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
+	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
+
+# Executor objects compiler
+$(OBJS_DIR)%.o: $(EXE_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
 	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 

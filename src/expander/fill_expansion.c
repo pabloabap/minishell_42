@@ -159,7 +159,7 @@ static int	ft_fill_var(char *dst, char *src, int *i, int *chars)
 	if (var_name == NULL)
 		return (err_malloc_fail(), EXIT_FAILURE);
 	*i = *i + j;
-	printf("EXPANSION: %s LEN: %d\n", var_name, j);
+	//printf("EXPANSION: %s LEN: %d\n", var_name, j);
 	j = 0;
 	var_value = getenv(var_name);
 	free(var_name);
@@ -168,6 +168,6 @@ static int	ft_fill_var(char *dst, char *src, int *i, int *chars)
 	*chars = *chars + j;
 	if (var_value)
 		ft_strlcat(dst, var_value, *chars + 1);
-	printf("EXPANSION: %s LEN: %d\n", dst, *i);
+	//printf("EXPANSION: %s LEN: %d\n", dst, *i);
 	return (EXIT_SUCCESS);
 }
