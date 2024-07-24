@@ -1,4 +1,14 @@
-//CABECERA
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_executor.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/07/24 20:22:37 by pabad-ap          #+#    #+#             */
+/*   Updated: 2024/07/24 20:22:43 by pabad-ap         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
@@ -19,7 +29,6 @@ int	ft_executor(t_single_cmd *head, char **envp)
 {
 	int	main_out;
 	int	pid;
-	//int wstatus; - Hay que añadirlo para gestionar las salidas de los procesos hijos.
 
 	if (EXIT_FAILURE == ft_prepare_exec(head, &main_out))
 		return (EXIT_FAILURE);
@@ -92,9 +101,10 @@ static int	ft_child_mng(t_single_cmd *cmd, int main_out, char **envp)
 static int	ft_parent_mng(t_single_cmd **cmd)
 {
 	t_single_cmd	*tmp;
+	int				wstatus;
 
 	tmp = *cmd;
-	wait(NULL);
+	wait(&wstatus);
 	if (tmp->next)
 		if (-1 == close(tmp->pipe_fd[1]))
 			return (perror("Minishell "), EXIT_FAILURE);
