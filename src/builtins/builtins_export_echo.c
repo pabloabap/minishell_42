@@ -1,4 +1,4 @@
-#include "builtins.h"
+#include "../../include/minishell.h"
 
 // Implementación del comando 'export'
 void builtin_export(char **args) {

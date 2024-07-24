@@ -21,6 +21,7 @@ DEB_SRC_DIR	= ./src/debug/
 UTL_SRC_DIR	= ./src/utils/
 EXP_SRC_DIR	= ./src/expander/
 EXE_SRC_DIR	= ./src/executor/
+BUI_SRC_DIR	= ./src/builtins/
 LIBFT_DIR	= ./lib/libft/
 OBJS_DIR	= ./build/
 
@@ -44,6 +45,10 @@ SRC			=	src/debug/debug.c \
 				src/executor/ft_executor.c \
 				src/executor/ft_mng_redirs.c \
 				src/executor/ft_mng_cmds.c \
+				src/builtins/builtins_cd_pwd.c \
+				src/builtins/builtins_export_echo.c \
+				src/builtins/builtins_unset_exit_env.c \
+				src/builtins/builtins.c \
 				src/main.c
 
 # Object files
@@ -55,7 +60,8 @@ HEADERS		=	./include/minishell.h \
 				./include/lexer.h \
 				./include/parser.h \
 				./include/expander.h \
-				./include/executor.h
+				./include/executor.h \
+				./include/builtins.h
 
 all: $(NAME)
 
@@ -94,6 +100,11 @@ $(OBJS_DIR)%.o: $(EXP_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
 
 # Executor objects compiler
 $(OBJS_DIR)%.o: $(EXE_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
+	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
+
+# Builtins objects compiler
+$(OBJS_DIR)%.o: $(BUI_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
 	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 

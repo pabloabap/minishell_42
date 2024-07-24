@@ -1,4 +1,4 @@
-#include "builtins_unset_exit_env.h"
+#include "../../include/minishell.h"
 
 // Implementación del comando 'unset'
 void builtin_unset(char **args) {
@@ -10,13 +10,15 @@ void builtin_unset(char **args) {
 }
 
 // Implementación del comando 'exit'
-void builtin_exit(char **args) {
+//void builtin_exit(char **args) {
+void builtin_exit(void) {
     exit(0);
 }
 
 // Implementación del comando 'env'
-void builtin_env(char **args) {
-    extern char **environ;
+//void builtin_env(char **args) {
+void builtin_env(char **environ) {
+    //extern char **environ;
     char **env = environ;
     while (*env) {
         printf("%s\n", *env);

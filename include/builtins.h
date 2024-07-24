@@ -1,17 +1,13 @@
 #ifndef BUILTINS_H
-#define BUILTINS_H
-
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
+# define BUILTINS_H
+# include "minishell.h"
 
 // Declaraciones de las funciones internas
 void builtin_cd(char **args);
-void builtin_pwd(char **args);
+void builtin_pwd(void);
 void builtin_unset(char **args);
-void builtin_exit(char **args);
-void builtin_env(char **args);
+void builtin_exit(void);
+void builtin_env(char **environ);
 void builtin_export(char **args);
 void builtin_echo(char **args);
 

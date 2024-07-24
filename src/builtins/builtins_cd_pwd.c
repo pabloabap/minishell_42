@@ -1,4 +1,4 @@
-#include "builtins.h"
+#include "../../include/minishell.h"
 
 // Implementación del comando 'cd'
 void builtin_cd(char **args) {
@@ -12,7 +12,8 @@ void builtin_cd(char **args) {
 }
 
 // Implementación del comando 'pwd'
-void builtin_pwd(char **args) {
+//void builtin_pwd(char **args) {
+void builtin_pwd(void) {
     char cwd[1024];
     if (getcwd(cwd, sizeof(cwd)) != NULL) {
         printf("%s\n", cwd);
