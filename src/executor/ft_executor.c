@@ -17,8 +17,11 @@ static int	ft_child_mng(t_single_cmd *cmd, int main_out, char **envp);
 static int	ft_parent_mng(t_single_cmd **cmd);
 static char	*ft_path_finder(char *cmd_name);
 
-/** Funcion principalexecutor. Crea un proceso hijo por comando 
- * a ejecutar y configura su entrada, salida y redirecciones.
+/** Funcion principal executor. Crea un proceso hijo por comando 
+ * a ejecutar y configura su entrada, salida y redirecciones. 
+ * El padre espera la finalizacion del proceso hijo, recoge su
+ * estado de salida y mueve head al siguiente comando a ejecutar 
+ * si la ejecucion ha ido bien.
  * 
  * @param head Puntero al primer comando de la lista de comandos
  * @param envp Variables de entorno aplicables.
@@ -39,8 +42,8 @@ int	ft_executor(t_single_cmd *head, char **envp)
 			return (perror("02_Minishell"), EXIT_FAILURE);
 		if (pid == 0)
 			ft_child_mng(head, main_out, envp);
-		else
-			ft_parent_mng(&head);
+		if(EXIT_FAILURE == ft_parent_mng(&head))
+			return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
 }
@@ -84,7 +87,7 @@ static int	ft_child_mng(t_single_cmd *cmd, int main_out, char **envp)
 	if (EXIT_FAILURE == ft_prepare_redirections(cmd->redirection))
 		return (EXIT_FAILURE);
 	if (execve(ft_path_finder(cmd->str[0]), cmd->str, envp) < 0)
-		perror("1_EXEC_Minishell ");
+		return(perror("1_EXEC_Minishell "), EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
@@ -112,6 +115,8 @@ static int	ft_parent_mng(t_single_cmd **cmd)
 		if (-1 == close(tmp->prev->pipe_fd[0]))
 			return (perror("Minishell "), EXIT_FAILURE);
 	*cmd = tmp->next;
+	if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) != 0)
+		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
