@@ -32,3 +32,14 @@ void	ft_redirection_quotes(t_lexem *lex_list)
 		&& lex_list->next->token == DOUBLE_QUOTES))
 		lex_list->token += SINGLE_QUO_RED;
 }
+
+int		ft_red_err(t_lexem *lex_list)
+{
+	if(lex_list->token > PIPE && lex_list->token < HERE_DOC \
+	&& lex_list->next->next == NULL)
+	{
+		ft_putendl_fd("Minishell: Unsuported", STDERR_FILENO);
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}

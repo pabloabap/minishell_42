@@ -87,7 +87,7 @@ static void	ft_add_cmd_expansions(t_single_cmd *cmd_list, t_lexem **cmd_args)
 	int	args_count;
 
 	i = 0;
-	if ((*cmd_args)->token == PIPE)
+	if ((*cmd_args) && (*cmd_args)->token == PIPE)
 		(*cmd_args) = (*cmd_args)->next;
 	args_count = cmd_len(*cmd_args);
 	while (i < args_count)

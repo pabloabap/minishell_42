@@ -26,7 +26,7 @@ int	main(int argc, char **argv, char **envp)
 		data->last_exit = 0;
 		while (iters < 10 && EXIT_SUCCESS == status)
 		{
-			data->input = readline("Minishell > ");
+			data->input = readline("Minishell% ");
 			add_history(data->input);
 			if (data->input && *(data->input) != '\0')
 			{
