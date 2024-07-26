@@ -2,13 +2,35 @@
 #include "../../include/minishell.h"
 #include <stdio.h>
 
+
+static int	ft_heredoc_creation(t_lexem *redir);
 int main(void)
 {
 	char	*text;
 	int		counter;
+	int		fd;
+//----------CMD 1----------//	
+	t_lexem *redirs1;
+	t_lexem r1;
+//------CMD 1 FILL---------//
+	r1.str = "$USER";
+	r1.token = HERE_DOC;
+	r1.next = NULL;
+	r1.prev = NULL;
+	redirs1 = &r1;
+//----------CMD 2----------//	
+	t_lexem *redirs2;
+	t_lexem r2;
+//------CMD 2 FILL---------//
+	r2.str = "$USER";
+	r2.token = HERE_DOC + SINGLE_QUO_RED;
+	r2.next = NULL;
+	r2.prev = NULL;
+	redirs2 = &r2;
 
 	counter = 0;
-	while (1)
+	fd = ft_heredoc_creation(redirs1);
+	while (1 && redirs2)
 	{	
 		//Muestra el texto del argumento por pantalla
 		// y almacena el output en text.
@@ -34,4 +56,13 @@ int main(void)
 		counter ++;
 	}
 	return (0);
+}
+
+static int	ft_heredoc_creation(t_lexem *redir)
+{
+	int	fd;
+
+	fd = open(redir->str, O_RDWR);
+	printf ("HDOC DEL - %s\n", redir->str);
+	return (EXIT_FAILURE);
 }
