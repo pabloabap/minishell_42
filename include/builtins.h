@@ -3,7 +3,7 @@
 # include "minishell.h"
 
 // Declaraciones de las funciones internas
-void builtin_cd(char **args);
+void builtin_cd(char **args, char **envp);
 void builtin_pwd(void);
 void builtin_unset(char **args, char **envp);
 void builtin_exit(void);
