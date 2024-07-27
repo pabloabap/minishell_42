@@ -66,3 +66,25 @@ static int	ft_heredoc_creation(t_lexem *redir)
 	printf ("HDOC DEL - %s\n", redir->str);
 	return (EXIT_FAILURE);
 }
+
+/** Checkea si la linea escrita es EOF.
+ * 	`len_eof` es un caracter más larga que la
+ * 	longitud de EOF porque también queremos que se
+ * 	compruebe el `\0` (por si str fuera más larga). 
+ *  @param eof String que representa el EOF
+ *  @param str String escrita en readline.
+ * 	
+ *  @return Resultado de la comprobación. Si es cero es que 
+ *  las strings son iguales.
+*/
+static int	eof_check(char *eof, char *str)
+{
+	int	len_eof;
+	int	diff;
+
+	len_eof = ft_strlen(eof) + 1;
+	diff = ft_strncmp(eof, str, sizeof(char) * len_eof);
+	return (diff);
+}
+
+
