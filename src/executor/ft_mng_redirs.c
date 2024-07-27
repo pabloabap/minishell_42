@@ -14,7 +14,6 @@
 
 static int	ft_open_redirs(t_lexem *redir, int *err_n);
 static int	ft_dup_manage(int fd, t_lexem *redir, int *err_n);
-static int	ft_heredoc_creation(t_lexem *redir, int *err_n);
 
 /** Función principal de gestion de las redirecciones.
  * 
@@ -97,21 +96,4 @@ static int	ft_dup_manage(int fd, t_lexem *redir, int *err_n)
 	}
 	close (fd);
 	return (EXIT_SUCCESS);
-}
-
-/** Función para tratar los heredoc.
- *  
- * @param redir Puntero a la redirección a tratar.
- * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
- * para modificar el valor si es necesario.
- * 
- * @return Resultado de la ejecución.
- */
-
-static int	ft_heredoc_creation(t_lexem *redir, int *err_n)
-{
-	printf ("HDOC DEL - %s\n", redir->str);
-	if (*err_n > 0)
-		return (EXIT_FAILURE);
-	return (EXIT_FAILURE);
 }

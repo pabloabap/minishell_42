@@ -6,7 +6,7 @@
 /*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:21:36 by pabad-ap          #+#    #+#             */
-/*   Updated: 2024/06/13 14:21:42 by pabad-ap         ###   ########.fr       */
+/*   Updated: 2024/07/27 23:24:15 by pabad-ap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,6 @@ void			ft_add_redirection(t_single_cmd *cmd, t_lexem *r);
 int				grammar_checks(t_lexem *lex_list);
 int				cmd_len(t_lexem *lex_list);
 int				ft_lex_to_cmd(t_lexem **head_lex_list, t_single_cmd **cmd);
-void			ft_redirection_quotes (t_lexem *lex_list);
+void			ft_redirection_quotes(t_lexem *lex_list);
 int				ft_red_err(t_lexem *lex_list);
 #endif

@@ -36,6 +36,7 @@ SRC			=	src/debug/debug.c \
 				src/parser/cmd_split.c \
 				src/parser/redirection_utils.c \
 				src/utils/initializer.c \
+				src/utils/utils.c \
 				src/utils/clean_memory.c \
 				src/utils/error.c \
 				src/expander/expander.c \
@@ -45,6 +46,7 @@ SRC			=	src/debug/debug.c \
 				src/executor/ft_executor.c \
 				src/executor/ft_mng_redirs.c \
 				src/executor/ft_mng_cmds.c \
+				src/executor/ft_hdoc.c \
 				src/builtins/builtins_cd_pwd.c \
 				src/builtins/builtins_export_echo.c \
 				src/builtins/builtins_unset_exit_env.c \
