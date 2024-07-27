@@ -12,23 +12,25 @@
 
 #include "../../include/minishell.h"
 
-static int	ft_open_redirs(t_lexem *redir);
-static int	ft_dup_manage(int fd, t_lexem *redir);
-static int	ft_heredoc_creation(t_lexem *redir);
+static int	ft_open_redirs(t_lexem *redir, int *err_n);
+static int	ft_dup_manage(int fd, t_lexem *redir, int *err_n);
+static int	ft_heredoc_creation(t_lexem *redir, int *err_n);
 
 /** Función principal de gestion de las redirecciones.
  * 
  * @param redirs Puntero a la cabecera de la lista `t_lexem`
  * que contine las redirecciones a aplicar a un comando.
+ * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
+ * para modificar el valor si es necesario.
  * 
  * @return Resultado de ejecución de la función.
  */
 
-int	ft_prepare_redirections(t_lexem *redirs)
+int	ft_prepare_redirections(t_lexem *redirs, int *err_n)
 {
 	while (redirs)
 	{
-		if (EXIT_FAILURE == ft_open_redirs(redirs))
+		if (EXIT_FAILURE == ft_open_redirs(redirs, err_n))
 			return (EXIT_FAILURE);
 		redirs = redirs->next;
 	}
@@ -39,10 +41,12 @@ int	ft_prepare_redirections(t_lexem *redirs)
  * especificas para cada uno.
  * 
  * @param redirs Puntero la redirecci'on a tratar.
- *  * 
+ * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
+ * para modificar el valor si es necesario.
+ *  
  * @return Resultado de ejecución e impresioón de error si existe. 
  */
-static int	ft_open_redirs(t_lexem *redir)
+static int	ft_open_redirs(t_lexem *redir, int *err_n)
 {
 	int	fd;
 
@@ -55,13 +59,13 @@ static int	ft_open_redirs(t_lexem *redir)
 		fd = open(redir->str, O_WRONLY | O_CREAT | O_APPEND, \
 			S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
 	if (redir->token >= HERE_DOC)
-		fd = ft_heredoc_creation(redir);
+		fd = ft_heredoc_creation(redir, err_n);
 	if (fd < 0)
-		return (perror("12_Minishell "), EXIT_FAILURE);
+		return (perror("12_Minishell "), *err_n = errno, EXIT_FAILURE);
 	else
 	{
-		if (EXIT_FAILURE == ft_dup_manage(fd, redir))
-			return (EXIT_FAILURE);
+		if (EXIT_FAILURE == ft_dup_manage(fd, redir, err_n))
+			return (*err_n = errno, EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
 }
@@ -71,21 +75,25 @@ static int	ft_open_redirs(t_lexem *redir)
  * 
  * @param fd File descriptor del que duplicar la referencia.
  * @param redirs Puntero la redirecci'on a tratar.
+ * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
+ * para modificar el valor si es necesario.
  * 
  * @return Resultado de ejecución de la función.
  */
 
-static int	ft_dup_manage(int fd, t_lexem *redir)
+static int	ft_dup_manage(int fd, t_lexem *redir, int *err_n)
 {
 	if (redir->token == IN_REDIR || redir->token >= HERE_DOC)
 	{
 		if (0 > dup2(fd, STDIN_FILENO))
-			return (close (fd), perror("13_Minishell "), EXIT_FAILURE);
+			return (close (fd), perror("13_Minishell "), \
+				*err_n = errno, EXIT_FAILURE);
 	}
 	else if (redir->token == OUT_REDIR || redir->token >= APPEND_REDIR)
 	{
 		if (0 > dup2(fd, STDOUT_FILENO))
-			return (close (fd), perror("14_Minishell "), EXIT_FAILURE);
+			return (close (fd), perror("14_Minishell "), \
+				*err_n = errno, EXIT_FAILURE);
 	}
 	close (fd);
 	return (EXIT_SUCCESS);
@@ -94,12 +102,16 @@ static int	ft_dup_manage(int fd, t_lexem *redir)
 /** Función para tratar los heredoc.
  *  
  * @param redir Puntero a la redirección a tratar.
+ * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
+ * para modificar el valor si es necesario.
  * 
  * @return Resultado de la ejecución.
  */
 
-static int	ft_heredoc_creation(t_lexem *redir)
+static int	ft_heredoc_creation(t_lexem *redir, int *err_n)
 {
 	printf ("HDOC DEL - %s\n", redir->str);
+	if (*err_n > 0)
+		return (EXIT_FAILURE);
 	return (EXIT_FAILURE);
 }

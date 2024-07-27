@@ -37,8 +37,8 @@ int	main(int argc, char **argv, char **envp)
 					data->head_cmd_list, data->last_exit)))
 					data->last_exit = EXIT_FAILURE;
 				else
-					if (EXIT_FAILURE == ft_executor(data->head_cmd_list, envp))
-						data->last_exit = errno;
+					if(EXIT_FAILURE ==ft_executor(data->head_cmd_list, envp, &data->last_exit))
+						printf("%i\n", data->last_exit);
 			}
 			clean_data(data);
 			iters ++;

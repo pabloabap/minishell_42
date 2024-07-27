@@ -12,38 +12,40 @@
 
 #include "../../include/minishell.h"
 
-static int	ft_close_unused_pipes(t_single_cmd *current_cmd);
+static int	ft_close_unused_pipes(t_single_cmd *current_cmd, int *err_n);
 
 /** Establece las configuraciones de lectura y escritura en los pipes
  * que correponden al comando pasado como parametro.
  * 
  * @param current_cmd Punteor al comando a tratar.
- * @param main_out Referencia al STDOUT principal para recuperarlo
+ * @param std_out Referencia al STDOUT principal para recuperarlo
  * en caso de necesidad.
+ * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
+ * para modificar el valor si es necesario.
  * 
  * @return Resultado de la ejecución e impresión de errores sin procede.
 */
-int	ft_set_pipes(t_single_cmd *current_cmd, int main_out)
+int	ft_set_pipes(t_single_cmd *current_cmd, int std_out, int *err_n)
 {
-	if (EXIT_FAILURE == ft_close_unused_pipes(current_cmd))
+	if (EXIT_FAILURE == ft_close_unused_pipes(current_cmd, err_n))
 		return (EXIT_FAILURE);
 	if (current_cmd->prev)
 	{
 		if (-1 == dup2(current_cmd->prev->pipe_fd[0], STDIN_FILENO))
-			return (perror("1_SET_Minishell "), EXIT_FAILURE);
+			return (perror("1_SET_Minishell "), *err_n = errno, EXIT_FAILURE);
 		close(current_cmd->prev->pipe_fd[0]);
 	}
 	if (current_cmd->next)
 	{
 		if (-1 == dup2(current_cmd->pipe_fd[1], STDOUT_FILENO))
-			return (perror("2_SET_Minishell "), EXIT_FAILURE);
+			return (perror("2_SET_Minishell "), *err_n = errno, EXIT_FAILURE);
 		close(current_cmd->pipe_fd[1]);
 	}
 	else
 	{
-		if (-1 == dup2(main_out, STDOUT_FILENO))
-			return (perror("3_SET_Minishell "), EXIT_FAILURE);
-		close(main_out);
+		if (-1 == dup2(std_out, STDOUT_FILENO))
+			return (perror("3_SET_Minishell "), *err_n = errno, EXIT_FAILURE);
+		close(std_out);
 	}
 	return (EXIT_SUCCESS);
 }
@@ -53,10 +55,12 @@ int	ft_set_pipes(t_single_cmd *current_cmd, int main_out)
  * anterior y se escribe en pipe del comando actual).
  * 
  * @param current_cmd Comando a tratar.
+ * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
+ * para modificar el valor si es necesario.
  * 
- * @return Resultado de la ejecución e impresión de errores sin procede. * 
+ * @return Resultado de la ejecución e impresión de errores sin procede.
  */
-static int	ft_close_unused_pipes(t_single_cmd *current_cmd)
+static int	ft_close_unused_pipes(t_single_cmd *current_cmd, int *err_n)
 {
 	t_single_cmd	*tmp;
 
@@ -65,10 +69,12 @@ static int	ft_close_unused_pipes(t_single_cmd *current_cmd)
 	{
 		if (tmp != current_cmd->prev)
 			if (-1 == close(tmp->pipe_fd[0]))
-				return (perror("1_CLOSE_UNUS_Minishell "), EXIT_FAILURE);
+				return (perror("1_CLOSE_UNUS_Minishell "), \
+					*err_n = errno, EXIT_FAILURE);
 		if (tmp != current_cmd)
 			if (-1 == close(tmp->pipe_fd[1]))
-				return (perror("2_CLOSE_UNUS_Minishell "), EXIT_FAILURE);
+				return (perror("2_CLOSE_UNUS_Minishell "), \
+					*err_n = errno, EXIT_FAILURE);
 		tmp = tmp->next;
 	}
 	return (EXIT_SUCCESS);
