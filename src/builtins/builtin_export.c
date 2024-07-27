@@ -1,110 +1,61 @@
-#include "../../include/minishell.h"
+#include "../../include/builtins.h"
 
-// Función para verificar si una variable de entorno ya existe
-int variable_exist(t_tools *tools, char *str)
-{
-    int i;
 
-    i = 0;
-    if (str[equal_sign(str)] == '\"')
+// Implementación de equal_sign
+int equal_sign(char *str) {
+    int i = 0;
+    while (str[i] != '\0') {
+        if (str[i] == '=')
+            return i;
+        i++;
+    }
+    return -1; // No se encontró el signo igual
+}
+
+// Implementación de delete_quotes
+void delete_quotes(char *str, char quote_char) {
+    int i = 0, j = 0;
+    while (str[i]) {
+        if (str[i] != quote_char) {
+            str[j++] = str[i];
+        }
+        i++;
+    }
+    str[j] = '\0';
+}
+
+// Implementación de mini_env
+void mini_env(t_env *env, t_single_cmd *simple_cmd) {
+    // Implementación de ejemplo
+    (void)simple_cmd;
+    // Imprimir las variables de entorno
+    for (int i = 0; env->envp[i] != NULL; i++) {
+        printf("%s\n", env->envp[i]);
+    }
+}
+
+// Implementación de builtin_export
+void builtin_export(char **args, char **envp) {
+    char *str = args[1];
+    if (str[equal_sign(str)] == '\"') {
         delete_quotes(str, '\"');
-    if (str[equal_sign(str)] == '\'')
-        delete_quotes(str, '\'');
-    while (tools->envp[i]) {
-        if (ft_strncmp(tools->envp[i], str, equal_sign(tools->envp[i])) == 0) {
-            free(tools->envp[i]);
-            tools->envp[i] = ft_strdup(str);
-            return (1);
-        }
-        i++;
     }
-    return (0);
+    // Agregar la variable de entorno
+    envp = add_var(envp, str);
 }
 
-// Función para verificar la validez del parámetro
-int check_parameter(char *str)
-{
-    int i;
-
-    i = 0;
-    if (ft_isdigit(str[0]))
-        return (export_error(str));
-    if (equal_sign(str) == 0)
-        return (EXIT_FAILURE);
-    if (str[0] == '=')
-        return (export_error(str));
-    while (str[i] != '=' && str[i] != '\0') {
-        if (check_valid_identifier(str[i]))
-            return (export_error(str));
-        i++;
+// Implementación de add_var
+char **add_var(char **arr, char *str) {
+    int len = 0;
+    while (arr[len] != NULL) {
+        len++;
     }
-    return (EXIT_SUCCESS);
-}
-
-// Función auxiliar para añadir una variable al array
-char **whileloop_add_var(char **arr, char **rtn, char *str)
-{
-    int i;
-
-    i = 0;
-    while (arr[i] != NULL) {
-        if (arr[i + 1] == NULL) {
-            rtn[i] = ft_strdup(str);
-            rtn[i + 1] = ft_strdup(arr[i]);
-        } else {
-            rtn[i] = ft_strdup(arr[i]);
-        }
-        if (rtn[i] == NULL) {
-            free_arr(rtn);
-            return (rtn);
-        }
-        i++;
+    char **new_arr = malloc((len + 2) * sizeof(char *));
+    for (int i = 0; i < len; i++) {
+        new_arr[i] = arr[i];
     }
-    return (rtn);
-}
-
-// Función para añadir una variable al array de variables de entorno
-char **add_var(char **arr, char *str)
-{
-    char **rtn;
-    size_t i;
-
-    i = 0;
-    if (str[equal_sign(str)] == '\"')
-        delete_quotes(str, '\"');
-    if (str[equal_sign(str)] == '\'')
-        delete_quotes(str, '\'');
-    while (arr[i] != NULL)
-        i++;
-    rtn = ft_calloc(sizeof(char *), i + 2);
-    if (!rtn)
-        return (NULL);
-    i = 0;
-    whileloop_add_var(arr, rtn, str);
-    return (rtn);
-}
-
-// Implementación del comando 'export'
-int builtin_export(t_tools *tools, t_simple_cmds *simple_cmd) 
-{
-    char **tmp;
-    int i;
-
-    i = 1;
-    if (!simple_cmd->str[1] || simple_cmd->str[1][0] == '\0') {
-        mini_env(tools, simple_cmd);
-    } else {
-        while (simple_cmd->str[i]) {
-            if (check_parameter(simple_cmd->str[i]) == 0
-                && variable_exist(tools, simple_cmd->str[i]) == 0) {
-                if (simple_cmd->str[i]) {
-                    tmp = add_var(tools->envp, simple_cmd->str[i]);
-                    free_arr(tools->envp);
-                    tools->envp = tmp;
-                }
-            }
-            i++;
-        }
-    }
-    return (EXIT_SUCCESS);
+    new_arr[len] = strdup(str);
+    new_arr[len + 1] = NULL;
+    free(arr);
+    return new_arr;
 }
