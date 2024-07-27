@@ -5,17 +5,18 @@
 // Declaraciones de las funciones internas
 void builtin_cd(char **args);
 void builtin_pwd(void);
-void builtin_unset(char **args);
+void builtin_unset(char **args, char **envp);
 void builtin_exit(void);
-void builtin_env(char **environ);
-void builtin_export(char **args);
-void builtin_echo(char **args);
+void builtin_env(char **args, char **envp);
+void builtin_export(char **args, char **envp);
+void builtin_echo(char **args, char ** envp);
 
-// Verifica si el comando es una función interna
+typedef void (*builtin_func)(char **args, char **envp);
+
+builtin_func builtin_arr(char *str);
+
 int is_builtin(char *command);
-
-// Ejecuta el comando interno correspondiente
-void execute_builtin(char **args);
+void execute_builtin(char **args, char **envp);
 
 #endif
 

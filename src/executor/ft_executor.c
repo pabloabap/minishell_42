@@ -28,26 +28,30 @@ static char	*ft_path_finder(char *cmd_name);
  * 
  * @return Resultado de la ejecución.
  */
-int	ft_executor(t_single_cmd *head, char **envp)
+int ft_executor(t_single_cmd *head, char **envp)
 {
-	int	main_out;
-	int	pid;
+    int main_out;
+    int pid;
 
-	if (EXIT_FAILURE == ft_prepare_exec(head, &main_out))
-		return (EXIT_FAILURE);
-	while (head)
-	{
-		pid = fork();
-		if (pid == -1)
-			return (perror("02_Minishell"), EXIT_FAILURE);
-		if (pid == 0)
-			ft_child_mng(head, main_out, envp);
-		if(EXIT_FAILURE == ft_parent_mng(&head))
-			return (EXIT_FAILURE);
-	}
-	return (EXIT_SUCCESS);
+    if (EXIT_FAILURE == ft_prepare_exec(head, &main_out))
+        return (EXIT_FAILURE);
+    while (head) {
+        // Verificar si el comando es una builtin
+        if (is_builtin(head->str[0])) {
+            // Ejecutar builtin
+            execute_builtin(head->str, envp);
+        } else {
+            pid = fork();
+            if (pid == -1)
+                return (perror("02_Minishell"), EXIT_FAILURE);
+            if (pid == 0)
+                ft_child_mng(head, main_out, envp);
+            if (EXIT_FAILURE == ft_parent_mng(&head))
+                return (EXIT_FAILURE);
+        }
+    }
+    return (EXIT_SUCCESS);
 }
-
 /** Crea los pipes necesarios en la ejecución (uno menos que el número de 
  * comandos).
  * 

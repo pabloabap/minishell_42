@@ -45,9 +45,13 @@ SRC			=	src/debug/debug.c \
 				src/executor/ft_executor.c \
 				src/executor/ft_mng_redirs.c \
 				src/executor/ft_mng_cmds.c \
-				src/builtins/builtins_cd_pwd.c \
-				src/builtins/builtins_export_echo.c \
-				src/builtins/builtins_unset_exit_env.c \
+				src/builtins/builtin_pwd.c \
+				src/builtins/builtin_cd.c \
+				src/builtins/builtin_export.c \
+				src/builtins/builtin_echo.c \
+				src/builtins/builtin_unset.c \
+				src/builtins/builtin_exit.c \
+				src/builtins/builtin_env.c \
 				src/builtins/builtins.c \
 				src/main.c
 

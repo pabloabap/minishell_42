@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtins_cd_pwd.c                                  :+:      :+:    :+:   */
+/*   builtin_pwd.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,15 +12,23 @@
 
 #include "../../include/minishell.h"
 
-// Implementación del comando 'pwd'
-int builtin_pwd(void) {
+void builtin_pwd(void)
+{
     char cwd[1024];
+    char *result;
 
-    if (getcwd(cwd, sizeof(cwd)) != NULL) {
+    // Obtén el directorio de trabajo actual
+    result = getcwd(cwd, sizeof(cwd));
+
+    if (result != NULL)
+    {
+        // Usa `ft_putendl_fd` para escribir el directorio y añadir una nueva línea
         ft_putendl_fd(cwd, STDOUT_FILENO);
-        return EXIT_SUCCESS;
-    } else {
-        perror("pwd");
-        return EXIT_FAILURE;
+    }
+    else
+    {
+        // Imprime un mensaje de error en caso de fallo
+        const char *error_msg = "minishell: pwd: Error al obtener el directorio actual\n";
+        write(STDERR_FILENO, error_msg, strlen(error_msg));
     }
 }
