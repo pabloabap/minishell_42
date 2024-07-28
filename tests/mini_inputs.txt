@@ -1,0 +1,5 @@
+ls -la
+ls -la | wc
+echo Pablo
+cd ..
+pwd

@@ -51,6 +51,7 @@ typedef struct s_data
 int		init_data(t_data **data);
 int		is_whitespace(char c);
 void	clean_data(t_data *data);
+int		ft_close(int fd, int *err_n);
 
 //Error handling
 void	err_red_no_file(void);
