@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static int	ft_open_redirs(t_lexem *redir, int *err_n);
+static int	ft_open_redirs(t_single_cmd *cmd, t_lexem *redir, int *err_n);
 static int	ft_dup_manage(int fd, t_lexem *redir, int *err_n);
 
 /** Función principal de gestion de las redirecciones.
@@ -25,11 +25,14 @@ static int	ft_dup_manage(int fd, t_lexem *redir, int *err_n);
  * @return Resultado de ejecución de la función.
  */
 
-int	ft_prepare_redirections(t_lexem *redirs, int *err_n)
+int	ft_prepare_redirections(t_single_cmd *cmd, int *err_n)
 {
+	t_lexem	*redirs;
+
+	redirs = cmd->redirection;
 	while (redirs)
 	{
-		if (EXIT_FAILURE == ft_open_redirs(redirs, err_n))
+		if (EXIT_FAILURE == ft_open_redirs(cmd, redirs, err_n))
 			return (EXIT_FAILURE);
 		redirs = redirs->next;
 	}
@@ -39,13 +42,14 @@ int	ft_prepare_redirections(t_lexem *redirs, int *err_n)
 /** Función para abrir los ficheros de redirección con las configuraciones
  * especificas para cada uno.
  * 
+ * @param cmd Puntero al comando simple a tratar.
  * @param redirs Puntero la redirecci'on a tratar.
  * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
  * para modificar el valor si es necesario.
  *  
  * @return Resultado de ejecución e impresioón de error si existe. 
  */
-static int	ft_open_redirs(t_lexem *redir, int *err_n)
+static int	ft_open_redirs(t_single_cmd *cmd, t_lexem *redir, int *err_n)
 {
 	int	fd;
 
@@ -58,7 +62,7 @@ static int	ft_open_redirs(t_lexem *redir, int *err_n)
 		fd = open(redir->str, O_WRONLY | O_CREAT | O_APPEND, \
 			S_IWUSR | S_IRUSR | S_IRGRP | S_IROTH);
 	if (redir->token >= HERE_DOC)
-		fd = ft_heredoc_creation(redir, err_n);
+		fd = cmd->fd_hdoc;
 	if (fd < 0)
 		return (perror("12_Minishell "), *err_n = errno, EXIT_FAILURE);
 	else

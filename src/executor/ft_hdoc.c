@@ -12,6 +12,7 @@
 
 #include "../../include/minishell.h"
 
+static int	ft_heredoc_creation(t_lexem *redir, int *err_n);
 static int	ft_fill_hdoc(char *line, int *err_n, int fd_hdoc);
 static int	ft_write_char(char *line, int *i, int fd_hdoc, int *err_n);
 static int	ft_write_env_var(char *line, int v_start, int *err_n, int hdoc);
@@ -29,7 +30,25 @@ static int	ft_write_env_var(char *line, int v_start, int *err_n, int hdoc);
  * 
  * 	@return fd en formato lectura recien abierto. 
  */
-int	ft_heredoc_creation(t_lexem *redir, int *err_n)
+int	ft_check_hdoc(t_single_cmd *cmd, int *err_n)
+{
+	t_lexem	*redir;
+
+	redir = cmd->redirection;
+	while (redir)
+	{
+		if (redir->token >= HERE_DOC)
+		{
+			cmd->fd_hdoc = ft_heredoc_creation(redir, err_n);
+			if (0 > cmd->fd_hdoc)
+				return (EXIT_FAILURE);
+		}
+		redir = redir->next;
+	}
+	return (EXIT_SUCCESS);
+}
+
+static int	ft_heredoc_creation(t_lexem *redir, int *err_n)
 {
 	int		w_fd;
 	int		r_fd;

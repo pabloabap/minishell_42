@@ -67,6 +67,8 @@ static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n)
 		if (head->next)
 			if (-1 == pipe(head->pipe_fd))
 				return (perror("1_PREPARE_Minishell "), *err_n = errno, EXIT_FAILURE);
+		if (EXIT_FAILURE == ft_check_hdoc(head, err_n))
+			return (EXIT_FAILURE);
 		head = head->next;
 	}
 	*std_out = dup(STDOUT_FILENO);
@@ -89,7 +91,7 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
 {
 	if (EXIT_FAILURE == ft_set_pipes(cmd, std_out, en))
 		return (EXIT_FAILURE);
-	if (EXIT_FAILURE == ft_prepare_redirections(cmd->redirection, en))
+	if (EXIT_FAILURE == ft_prepare_redirections(cmd, en))
 		return (EXIT_FAILURE);
 	if (execve(ft_path_finder(cmd->str[0]), cmd->str, envp) < 0)
 		return (perror("1_EXEC_Minishell "), *en = errno, EXIT_FAILURE);
