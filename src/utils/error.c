@@ -34,3 +34,19 @@ void	err_malloc_fail(void)
 {
 	perror("Minishell: malloc fails");
 }
+
+void	ft_hdoc_close_check(t_lexem *redir, char *line, int *err_n)
+{
+	int	i;
+
+	i = 0;
+	if (line == NULL)
+	{
+		ft_putstr_fd("minishell: warning: here-document", STDERR_FILENO);
+		ft_putstr_fd(" delimited by end-of-file (wanted ", STDERR_FILENO);
+		while (redir->str[i])
+			ft_putchar_fd(redir->str[i++], STDERR_FILENO);
+		ft_putstr_fd(")\n", STDERR_FILENO);
+		*err_n = 0;
+	}
+}

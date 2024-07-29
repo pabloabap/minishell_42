@@ -58,5 +58,6 @@ void	err_red_no_file(void);
 void	err_pipe_start(void);
 void	err_pipe(void);
 void	err_malloc_fail(void);
+void	ft_hdoc_close_check(t_lexem *redir, char *line, int *err_n);
 
 #endif

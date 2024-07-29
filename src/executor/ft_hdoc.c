@@ -59,7 +59,7 @@ static int	ft_heredoc_creation(t_lexem *redir, int *err_n)
 	if (w_fd < 0)
 		return (perror("Minishell% "), w_fd);
 	line = readline("heredoc> ");
-	while (0 != ft_strncmp(line, redir->str, ft_strlen(redir->str) + 1))
+	while (line && ft_strncmp(line, redir->str, ft_strlen(redir->str) + 1))
 	{
 		if (redir->token >= SINGLE_QUO_RED)
 			ft_putstr_fd(line, w_fd);
@@ -68,6 +68,7 @@ static int	ft_heredoc_creation(t_lexem *redir, int *err_n)
 		write(w_fd, "\n", 1);
 		line = readline("heredoc> ");
 	}
+	ft_hdoc_close_check (redir, line, err_n);
 	ft_close(w_fd, err_n);
 	r_fd = open("./tmp.txt", O_RDONLY);
 	if (0 > r_fd)
