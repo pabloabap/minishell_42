@@ -14,14 +14,14 @@
 
 static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n);
 static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *e);
-static int	ft_parent_mng(t_single_cmd **cmd, int *err_n);
+static int	ft_parent_mng(t_single_cmd *cmd, int *err_n);
 static char	*ft_path_finder(char *cmd_name);
 
 /** Funcion principal executor. Crea un proceso hijo por comando 
- * a ejecutar y configura su entrada, salida y redirecciones. 
- * El padre espera la finalizacion del proceso hijo, recoge su
- * estado de salida y mueve head al siguiente comando a ejecutar 
- * si la ejecucion ha ido bien.
+ * a ejecutar, configura su entrada, salida y redirecciones y los ejecuta 
+ * en paralelo.
+ * El padre espera la finalizacion de todos los hijos para recoger
+ * el exit status final.
  * 
  * @param head Puntero al primer comando de la lista de comandos
  * @param envp Variables de entorno aplicables.
@@ -31,9 +31,11 @@ static char	*ft_path_finder(char *cmd_name);
  */
 int	ft_executor(t_single_cmd *head, char **envp, int *err_n)
 {
-	int	std_out;
-	int	pid;
+	int				std_out;
+	int				pid;
+	t_single_cmd	*tmp;
 
+	tmp = head;
 	if (EXIT_FAILURE == ft_prepare_exec(head, &std_out, err_n))
 		return (EXIT_FAILURE);
 	while (head)
@@ -44,9 +46,10 @@ int	ft_executor(t_single_cmd *head, char **envp, int *err_n)
 		if (pid == 0)
 			if (EXIT_FAILURE == ft_child_mng(head, std_out, envp, err_n))
 				return (EXIT_FAILURE);
-		if (EXIT_FAILURE == ft_parent_mng(&head, err_n))
-			return (EXIT_FAILURE);
+		head = head->next;
 	}
+	if (EXIT_FAILURE == ft_parent_mng(tmp, err_n))
+		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
@@ -99,10 +102,9 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
 }
 
 /** Gestiona instrucciones para el proceso padre en un fork.
- * Espera a que su proceso hijo termine, cierra los extremos de los pipes 
- * que ya no se van a utilizar (el de lectura del pipe almacenado en la 
- * estructura del cmd anterior y , si hay siguiente comando, el de escritura
- * del pipe almacenado en la estructura del comando actual).
+ * Cierra todos los pipes ya que no son utilizados en el padre.
+ * Espera a que los procesos hijos terminen y comprueba el exit status 
+ * para actualizarlo si es necesario.
  * 
  * @param cmd Doble puntero al comando actual a procesar.
  * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
@@ -110,20 +112,27 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
  * 
  * @return Resultado de ejecición e impresión de errores si procede. 
  */
-static int	ft_parent_mng(t_single_cmd **cmd, int *err_n)
+static int	ft_parent_mng(t_single_cmd *cmd, int *err_n)
 {
 	t_single_cmd	*tmp;
 	int				wstatus;
 
-	tmp = *cmd;
-	wait(&wstatus);
-	if (tmp->next)
-		if (-1 == close(tmp->pipe_fd[1]))
-			return (perror("Minishell "), *err_n = errno, EXIT_FAILURE);
-	if (tmp->prev)
-		if (-1 == close(tmp->prev->pipe_fd[0]))
-			return (perror("Minishell "), *err_n = errno, EXIT_FAILURE);
-	*cmd = tmp->next;
+	tmp = cmd;
+	while (tmp)
+	{
+		if (tmp->next)
+			if (-1 == close(tmp->pipe_fd[1]))
+				return (perror("Minishell "), *err_n = errno, EXIT_FAILURE);
+		if (tmp->prev)
+			if (-1 == close(tmp->prev->pipe_fd[0]))
+				return (perror("Minishell "), *err_n = errno, EXIT_FAILURE);
+		tmp = tmp-> next;
+	}
+	while (cmd)
+	{
+		wait(&wstatus);
+		cmd = cmd->next;
+	}
 	if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) != 0)
 		return (*err_n = WEXITSTATUS(wstatus), EXIT_FAILURE);
 	return (EXIT_SUCCESS);
