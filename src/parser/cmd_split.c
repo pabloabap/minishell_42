@@ -79,6 +79,7 @@ static int	ft_create_cmd(t_single_cmd **cmd_list)
 	new_cmd->next = NULL;
 	new_cmd->redirection = NULL;
 	new_cmd->str = NULL;
+	new_cmd->cmd_path = NULL;
 	if ((*cmd_list) == NULL)
 		(*cmd_list) = new_cmd;
 	else

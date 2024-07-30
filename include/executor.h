@@ -18,6 +18,6 @@ int		ft_executor(t_single_cmd *head, char **envp, int *err_n);
 int		ft_prepare_redirections(t_single_cmd *cmd, int *err_n);
 int		ft_set_pipes(t_single_cmd *current_cmd, int std_out, int *err_n);
 int		ft_check_hdoc(t_single_cmd *cmd, int *err_n);
-char	*ft_path_finder(char *cmd_name);
+char	*ft_path_finder(t_single_cmd *cmd, int *err_n);
 
 #endif
