@@ -19,6 +19,7 @@
 typedef struct s_single_cmd
 {
 	char				**str; //commando
+	char				*cmd_path;
 //	char				(*build_func)(<param1Typte> <param1Name>, ...) BUILDING FUNCTION. PDTE DE DEFINIRLAS
 	t_lexem				*redirection;
 	int					fd_hdoc; //Pendiente de confirmar si lo necesitaremos

@@ -15,8 +15,6 @@
 static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n);
 static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *e);
 static int	ft_parent_mng(t_single_cmd *cmd, int *err_n);
-static char	*ft_path_finder(char *cmd_name);
-
 /** Funcion principal executor. Crea un proceso hijo por comando 
  * a ejecutar, configura su entrada, salida y redirecciones y los ejecuta 
  * en paralelo.
@@ -136,43 +134,4 @@ static int	ft_parent_mng(t_single_cmd *cmd, int *err_n)
 	if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) != 0)
 		return (*err_n = WEXITSTATUS(wstatus), EXIT_FAILURE);
 	return (EXIT_SUCCESS);
-}
-
-/** Localiza la ruta del comando.
- * 
- * @param cmd_name Nombre del comando a buscar.
- * 
- * @return Ruta absoluta al fichero del comando. 
- */
-static char	*ft_path_finder(char *cmd_name)
-{
-	char			**dirs;
-	int				i;
-	DIR				*actual;
-	struct dirent	*subdir;
-
-	dirs = ft_split(getenv("PATH"), ':');
-	i = 0;
-	while (dirs && dirs[i])
-	{
-		actual = opendir(dirs[i]);
-		if (actual != NULL)
-		{
-			subdir = readdir(actual);
-			while (subdir)
-			{
-				if (!ft_strncmp(subdir->d_name, cmd_name, ft_strlen(cmd_name)) \
-					&& ft_strlen(subdir->d_name) == ft_strlen(cmd_name))
-					return (ft_strjoin(ft_strjoin(dirs[i], "/"), subdir->d_name));
-				subdir = readdir(actual);
-			}
-			closedir(actual);
-		}
-		free(dirs[i]);
-		dirs[i] = NULL;
-		i++;
-	}
-	free(dirs);
-	dirs = NULL;
-	return (NULL);
 }
