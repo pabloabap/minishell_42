@@ -11,7 +11,7 @@ typedef struct s_env {
 void builtin_cd(char **args, char **envp);
 void builtin_pwd(void);
 void builtin_unset(char **args, char **envp);
-void builtin_exit(void);
+void builtin_exit(char **args);
 void builtin_env(char **args, char **envp);
 void builtin_export(char **args, char **envp);
 int builtin_echo(char **args);

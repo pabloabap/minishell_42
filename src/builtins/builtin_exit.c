@@ -2,22 +2,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-// Función auxiliar para liberar recursos
-void free_tools(t_tools *tools)
-{
-    free_arr(tools->paths);
-    free_arr(tools->envp);
-    free(tools->args);
-    ft_simple_cmdsclear(&tools->simple_cmds);
-    free(tools->pwd);
-    free(tools->old_pwd);
-    if (tools->pipes)
-        free(tools->pid);
-}
-
 // Función para verificar si una cadena es numérica
-int is_str_digit(char *str)
-{
+static int is_str_digit(char *str) {
     int i = 0;
     while (str[i]) {
         if (!ft_isdigit(str[i]))
@@ -27,43 +13,41 @@ int is_str_digit(char *str)
     return (1);
 }
 
+// Función para liberar un array de cadenas
+static void free_arr(char **arr) {
+    int i = 0;
+    if (arr != NULL) {
+        while (arr[i] != NULL) {
+            free(arr[i]);
+            i++;
+        }
+        free(arr);
+    }
+}
 // Función para determinar el código de salida y salir del programa
-void determine_exit_code(char **str)
-{
+void determine_exit_code(char **args) {
     int exit_code;
 
-    if (!str[1])
+    if (!args[1])  // Si no hay argumentos adicionales, el código de salida es 0
         exit_code = 0;
-    else if (is_str_digit(str[1]))
-        exit_code = ft_atoi(str[1]);
+    else if (is_str_digit(args[1]))  // Verifica si el argumento es numérico
+        exit_code = ft_atoi(args[1]);  // Convierte el argumento a un código de salida
     else {
         ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
-        ft_putstr_fd(str[1], STDERR_FILENO);
+        ft_putstr_fd(args[1], STDERR_FILENO);
         ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
-        exit_code = 255;
+        exit_code = 255;  // Código de salida para argumentos no numéricos
     }
-    free_arr(str);
-    exit(exit_code);
+    free_arr(args);  // Libera el array de argumentos
+    exit(exit_code);  // Sale del programa con el código de salida determinado
 }
 
-// Implementación del comando 'exit'
-void builtin_exit(void) {
-    if (args[1] && args[2]) {
+// Implementación del comando 'exit' ajustada para aceptar args como argumento global o externo
+void builtin_exit(char **args) {
+    if (args[1] && args[2]) {  // Verifica si hay demasiados argumentos
         ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
-        return;
+        return;  // Retorna sin salir si hay demasiados argumentos
     }
     
-    int exit_code = 0;
-    if (args[1]) {
-        if (is_str_digit(args[1])) {
-            exit_code = ft_atoi(args[1]);
-        } else {
-            ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
-            ft_putstr_fd(args[1], STDERR_FILENO);
-            ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
-            exit_code = 255;
-        }
-    }
-    free_arr(envp); // Asegúrate de liberar recursos apropiadamente
-    exit(exit_code);
+    determine_exit_code(args);  // Determina el código de salida y sale del programa
 }
