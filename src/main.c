@@ -40,6 +40,9 @@ int	main(int argc, char **argv, char **envp)
 					if(EXIT_FAILURE ==ft_executor(data->head_cmd_list, envp, &data->last_exit))
 						printf("%i\n", data->last_exit);
 			}
+			else if (!data->input)
+				return(ft_putendl_fd("exit", STDERR_FILENO), \
+				clean_data(data), free(data), EXIT_SUCCESS);
 			clean_data(data);
 			iters ++;
 		}
