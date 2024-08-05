@@ -53,7 +53,7 @@ int		is_whitespace(char c);
 void	clean_data(t_data *data);
 int		ft_close(int fd, int *err_n);
 void	wait_signal(int main_process);
-int ft_parent_exit(int	wstatus, int *err_n);
+int 	ft_parent_exit(int	wstatus, int *err_n);
 
 //Error handling
 void	err_red_no_file(void);

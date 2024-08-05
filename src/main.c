@@ -22,10 +22,10 @@ int	main(int argc, char **argv, char **envp)
 	int		status;
 	int		iters=0; //ELIMINAR ANTES DE ENTREGAR, SOLO PARA TEST
 
-	if (argc == 1 && 0 == ft_strncmp(argv[0], "./minishell", 11))
+	if (argc == 1 && ft_strnstr(argv[0], "minishell", ft_strlen(argv[0])))
 	{
 		status = init_data(&data);
-		while (iters < 5 && EXIT_SUCCESS == status)
+		while (iters < 10 && EXIT_SUCCESS == status)
 		{
 			ft_readline(data);
 			if (data->input && *(data->input) != '\0')

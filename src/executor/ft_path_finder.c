@@ -8,7 +8,7 @@
  * 
  * @return Ruta absoluta al fichero del comando. 
  */
-char	*ft_path_finder(t_single_cmd *cmd, int *err_n)
+char	*ft_path_finder(t_single_cmd *cmd)
 {
 	char			**dirs;
 	int				i;
@@ -16,8 +16,6 @@ char	*ft_path_finder(t_single_cmd *cmd, int *err_n)
 	struct dirent	*subdir;
 	dirs = ft_split(getenv("PATH"), ':');
 	i = 0;
-	if (0 == 1) //ESCRITO PARA NO DAR ERRROR AL NO USAR ERR_NO - BORRAR
-		write(STDIN_FILENO, err_n, 1); //BORRAR
 	while (dirs && dirs[i])
 	{
 		actual = opendir(dirs[i]);

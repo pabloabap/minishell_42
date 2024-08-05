@@ -15,7 +15,6 @@
 static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n);
 static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *e);
 static int	ft_parent_mng(t_single_cmd *cmd, int *err_n, int std_out);
-static char	*ft_path_finder(char *cmd_name);
 
 /** Funcion principal executor. Crea un proceso hijo por comando 
  * a ejecutar, configura su entrada, salida y redirecciones y los ejecuta 
@@ -98,8 +97,8 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
 		return (EXIT_FAILURE);
 	if (EXIT_FAILURE == ft_prepare_redirections(cmd, en))
 		return (EXIT_FAILURE);
-	if (execve(ft_path_finder(cmd, en), cmd->str, envp) < 0)
-		return (perror("1_EXEC_Minishell "), *en = errno, EXIT_FAILURE);
+	if (execve(ft_path_finder(cmd), cmd->str, envp) < 0)
+		return (perror("1_EXEC_Minishell "), exit(errno), EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
