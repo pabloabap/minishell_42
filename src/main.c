@@ -20,12 +20,11 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_data	*data;
 	int		status;
-	int		iters=0; //ELIMINAR ANTES DE ENTREGAR, SOLO PARA TEST
 
-	if (argc == 1 && 0 == ft_strncmp(argv[0], "./minishell", 11))
+	if (argc == 1 && ft_strnstr(argv[0], "minishell", ft_strlen(argv[0])))
 	{
 		status = init_data(&data);
-		while (iters < 5 && EXIT_SUCCESS == status)
+		while (EXIT_SUCCESS == status)
 		{
 			ft_readline(data);
 			if (data->input && *(data->input) != '\0')
@@ -38,7 +37,6 @@ int	main(int argc, char **argv, char **envp)
 				return (ft_putendl_fd("exit", STDERR_FILENO), \
 				clean_data(data), free(data), EXIT_SUCCESS);
 			clean_data(data);
-			iters ++;
 		}
 		free(data);
 	}
@@ -73,9 +71,9 @@ static int	ft_preprocesing(t_data *data)
 {
 	if ((EXIT_FAILURE == lexer(data->input, &(data->head_lex_list))) || \
 		(EXIT_FAILURE == ft_lex_to_cmd(&(data->head_lex_list), \
-		&(data->head_cmd_list))) || \
+		&(data->head_cmd_list), &data->last_exit)) || \
 		(EXIT_FAILURE == ft_expander(data->head_lex_list, \
-		data->head_cmd_list, data->last_exit)))
+		data->head_cmd_list, &data->last_exit)))
 	{
 		data->last_exit = 2;
 		return (EXIT_FAILURE);

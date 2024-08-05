@@ -29,8 +29,7 @@ OBJS_DIR	= ./build/
 INCLUDE		= -Iinclude -I$(LIBFT_DIR)
 
 # Source files
-SRC			=	src/debug/debug.c \
-				src/lexer/lexer.c \
+SRC			=	src/lexer/lexer.c \
 				src/lexer/lexer_utils.c \
 				src/parser/parser_utils.c \
 				src/parser/cmd_split.c \
@@ -45,6 +44,7 @@ SRC			=	src/debug/debug.c \
 				src/expander/expansion_malloc.c \
 				src/expander/fill_expansion.c \
 				src/executor/ft_executor.c \
+				src/executor/ft_path_finder.c \
 				src/executor/ft_mng_redirs.c \
 				src/executor/ft_mng_cmds.c \
 				src/executor/ft_hdoc.c \

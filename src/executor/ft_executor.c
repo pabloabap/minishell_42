@@ -15,7 +15,6 @@
 static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n);
 static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *e);
 static int	ft_parent_mng(t_single_cmd *cmd, int *err_n, int std_out);
-static char	*ft_path_finder(char *cmd_name);
 
 /** Funcion principal executor. Crea un proceso hijo por comando 
  * a ejecutar, configura su entrada, salida y redirecciones y los ejecuta 
@@ -42,7 +41,7 @@ int	ft_executor(t_single_cmd *head, char **envp, int *err_n)
 	{
 		pid = fork();
 		if (pid == -1)
-			return (perror("02_Minishell"), *err_n = errno, EXIT_FAILURE);
+			return (perror("-Minishell"), *err_n = errno, EXIT_FAILURE);
 		if (pid == 0)
 			if (EXIT_FAILURE == ft_child_mng(head, std_out, envp, err_n))
 				return (EXIT_FAILURE);
@@ -69,14 +68,14 @@ static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n)
 	{
 		if (head->next)
 			if (-1 == pipe(head->pipe_fd))
-				return (perror("1_PREPARE_Minishell "), *err_n = errno, EXIT_FAILURE);
+				return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
 		if (EXIT_FAILURE == ft_check_hdoc(head, err_n))
 			return (EXIT_FAILURE);
 		head = head->next;
 	}
 	*std_out = dup(STDOUT_FILENO);
 	if (*std_out == -1)
-		return (perror("3_PREPARE_Minishell "), *err_n = errno, EXIT_FAILURE);
+		return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
@@ -88,18 +87,21 @@ static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n)
  * @param en Puntero a int que almacena el errno de la ultima ejecucion
  * para modificar el valor si es necesario.
  * 
- * @return Resultado de ejecición e impresión de errores si procede. * 
+ * @return Resultado de ejecición e impresión de errores si procede.
  */
 static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
 {
-	if (!cmd->str) // CASE OF HEREDOC WITHOUT CMD
-		return (EXIT_FAILURE);
-	if (EXIT_FAILURE == ft_set_pipes(cmd, std_out, en))
-		return (EXIT_FAILURE);
-	if (EXIT_FAILURE == ft_prepare_redirections(cmd, en))
-		return (EXIT_FAILURE);
-	if (execve(ft_path_finder(cmd->str[0]), cmd->str, envp) < 0)
-		return (perror("1_EXEC_Minishell "), *en = errno, EXIT_FAILURE);
+	if (!cmd->str || \
+		EXIT_FAILURE == ft_set_pipes(cmd, std_out, en) || \
+		EXIT_FAILURE == ft_prepare_redirections(cmd, en) || \
+		EXIT_FAILURE == ft_path_finder(cmd, en))
+		return (exit(*en), EXIT_FAILURE);
+	else if (execve(cmd->cmd_path, cmd->str, envp) < 0)
+	{
+		if (access(cmd->cmd_path, X_OK) < 0)
+			return (perror("-Minishell "), exit(126), EXIT_FAILURE);
+		return (perror("-Minishell "), exit(errno), EXIT_FAILURE);
+	}
 	return (EXIT_SUCCESS);
 }
 
@@ -125,10 +127,10 @@ static int	ft_parent_mng(t_single_cmd *cmd, int *err_n, int std_out)
 	{
 		if (tmp->next)
 			if (-1 == close(tmp->pipe_fd[1]))
-				return (perror("Minishell "), *err_n = errno, EXIT_FAILURE);
+				return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
 		if (tmp->prev)
 			if (-1 == close(tmp->prev->pipe_fd[0]))
-				return (perror("Minishell "), *err_n = errno, EXIT_FAILURE);
+				return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
 		tmp = tmp-> next;
 	}
 	while (cmd)
@@ -138,43 +140,4 @@ static int	ft_parent_mng(t_single_cmd *cmd, int *err_n, int std_out)
 		cmd = cmd->next;
 	}
 	return (ft_parent_exit(wstatus, err_n));
-}
-
-/** Localiza la ruta del comando.
- * 
- * @param cmd_name Nombre del comando a buscar.
- * 
- * @return Ruta absoluta al fichero del comando. 
- */
-static char	*ft_path_finder(char *cmd_name)
-{
-	char			**dirs;
-	int				i;
-	DIR				*actual;
-	struct dirent	*subdir;
-
-	dirs = ft_split(getenv("PATH"), ':');
-	i = 0;
-	while (dirs && dirs[i])
-	{
-		actual = opendir(dirs[i]);
-		if (actual != NULL)
-		{
-			subdir = readdir(actual);
-			while (subdir)
-			{
-				if (!ft_strncmp(subdir->d_name, cmd_name, ft_strlen(cmd_name)) \
-					&& ft_strlen(subdir->d_name) == ft_strlen(cmd_name))
-					return (ft_strjoin(ft_strjoin(dirs[i], "/"), subdir->d_name));
-				subdir = readdir(actual);
-			}
-			closedir(actual);
-		}
-		free(dirs[i]);
-		dirs[i] = NULL;
-		i++;
-	}
-	free(dirs);
-	dirs = NULL;
-	return (NULL);
 }
