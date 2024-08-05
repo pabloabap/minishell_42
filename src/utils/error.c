@@ -14,7 +14,7 @@
 
 void	err_red_no_file(void)
 {
-	ft_putendl_fd("Minishell: Redirection without file or delimiter", \
+	ft_putendl_fd("Minishell: syntax error near unexpected token `newline'", \
 	STDERR_FILENO);
 }
 

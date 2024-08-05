@@ -39,6 +39,7 @@ SRC			=	src/debug/debug.c \
 				src/utils/utils.c \
 				src/utils/clean_memory.c \
 				src/utils/error.c \
+				src/utils/signals.c \
 				src/expander/expander.c \
 				src/expander/expander_utils.c \
 				src/expander/expansion_malloc.c \
