@@ -13,8 +13,8 @@
 #include "../../include/minishell.h"
 
 static void	ft_regular_char_count(int *i, int *chars);
-static int	ft_exp_logic(char *str, int *i, int *chars, int exit);
-static int	ft_exp_len(char *str, int *i, int *chars);
+static int	ft_exp_logic(char *str, int *i, int *chars, int *exit);
+static int	ft_exp_len(char *str, int *i, int *chars, int *exit);
 
 /** Aprovisiona memoria para la nueva string con expansiones expandida.
  * 
@@ -23,11 +23,12 @@ static int	ft_exp_len(char *str, int *i, int *chars);
  * @param src Puntero a structura a a expandir.
  * @param buffer Puntero a entero que almacena la cantidad de espacio reservado
  * para la nueva string.
- * @param exit Exit status of the last execution.
+ * @param exit Puntero a direccion de memoria que almacena último error de
+ * ejecución.
  *
  * @returns Estado de salida de la función. 
  **/
-int	ft_expansion_malloc(char **dst, t_lexem *src, int *buff, int exit)
+int	ft_expansion_malloc(char **dst, t_lexem *src, int *buff, int *exit)
 {
 	int	i;
 	int	chars;
@@ -47,7 +48,7 @@ int	ft_expansion_malloc(char **dst, t_lexem *src, int *buff, int exit)
 	}
 	*dst = (char *)ft_calloc(chars + 1, sizeof(char));
 	if (!(*dst))
-		return (err_malloc_fail(), EXIT_FAILURE);
+		return (err_malloc_fail(exit), EXIT_FAILURE);
 	*buff = chars;
 	return (EXIT_SUCCESS);
 }
@@ -69,23 +70,25 @@ static void	ft_regular_char_count(int *i, int *chars)
  * hacer avances sobre los carácteres del string.
  * @param chars Puntero al contador de carácteres de la string
  * expandida para podificarlo conforme vaya habiendo expansiones.
+  * @param exit Puntero a direccion de memoria que almacena último error de
+ * ejecución.
  *
  * @returns Estado de salida de la función. 
  **/
-static int	ft_exp_logic(char *str, int *i, int *chars, int exit)
+static int	ft_exp_logic(char *str, int *i, int *chars, int *exit)
 {
 	char	*lst_exit_to_char;
 
-	lst_exit_to_char = ft_itoa(exit);
+	lst_exit_to_char = ft_itoa(*exit);
 	if (!lst_exit_to_char)
-		return (err_malloc_fail(), EXIT_FAILURE);
+		return (err_malloc_fail(exit), EXIT_FAILURE);
 	if (str[*i] == '?')
 	{
 		*chars += ft_strlen(lst_exit_to_char);
 		*i = *i + 1;
 	}
 	else if (ft_isalnum(str[*i]) || str[*i] == '_')
-		ft_exp_len(str + *i, i, chars);
+		ft_exp_len(str + *i, i, chars, exit);
 	else
 		*chars = *chars + 1;
 	free(lst_exit_to_char);
@@ -100,10 +103,12 @@ static int	ft_exp_logic(char *str, int *i, int *chars, int exit)
  * hacer avances sobre los carácteres del string.
  * @param chars Puntero al contador de carácteres de la string
  * expandida para podificarlo conforme vaya habiendo expansiones.
+  * @param exit Puntero a direccion de memoria que almacena último error de
+ * ejecución.
  *
  * @returns Estado de salida de la función. 
  **/
-static int	ft_exp_len(char *str, int *i, int *chars)
+static int	ft_exp_len(char *str, int *i, int *chars, int *exit)
 {
 	int		j;
 	char	*var_name;
@@ -114,7 +119,7 @@ static int	ft_exp_len(char *str, int *i, int *chars)
 		j++;
 	var_name = ft_substr(str, 0, j);
 	if (var_name == NULL)
-		return (err_malloc_fail(), EXIT_FAILURE);
+		return (err_malloc_fail(exit), EXIT_FAILURE);
 	*i = *i + j;
 	j = 0;
 	var_value = getenv(var_name);

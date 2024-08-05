@@ -32,7 +32,7 @@ int	ft_close(int fd, int *err_n)
  * 
  * @return Resultado de ejecución de la función.
  */
-int ft_parent_exit(int	wstatus, int *err_n)
+int	ft_parent_exit(int wstatus, int *err_n)
 {
 	wait_signal(1);
 	if (WIFSIGNALED(wstatus))

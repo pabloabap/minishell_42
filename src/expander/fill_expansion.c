@@ -14,7 +14,7 @@
 
 static void	ft_regular_chars_fill(char *dst, char *src, int *i, int *chars);
 static int	ft_exp_fill(char *dst, char *src, int *i, int *chars);
-static int	ft_exit_fill(char *dst, int *chars, int exit, int *i);
+static int	ft_exit_fill(char *dst, int *chars, int *exit, int *i);
 static int	ft_fill_var(char *dst, char *src, int *i, int *chars);
 
 /** Rellena la memoria reservada para la string expandida.
@@ -27,7 +27,7 @@ static int	ft_fill_var(char *dst, char *src, int *i, int *chars);
  *
  * @returns Estado de salida de la función. 
  **/
-int	ft_fill_expansion(char *dst, t_lexem *src, int *buff, int exit)
+int	ft_fill_expansion(char *dst, t_lexem *src, int *buff, int *exit)
 {
 	int	i;
 	int	chars;
@@ -85,21 +85,22 @@ static void	ft_regular_chars_fill(char *dst, char *src, int *i, int *chars)
 /** Gestor de las expansion $? (exit status de la anterior ejecucion.
  * 
  * @param dst Puntero al espacio de memoria reservado para la nueva string.
- * @param src Puntero al string original (con expansiones sin expandir).
  * @param chars Puntero al contador de caracteres ya existentes en destino.
  * 			Se utilizará para sumar el número de nuevos caracteres añadidos
  * 			en dst.
- * @param exit Exit status de la enterior ejecucion.
+ * @param exit Puntero a direccion de memoria que almacena último error de
+ * ejecución.
+ * @param i Iterador de caracteres procesados.
  *
  * @returns Estado de salida de la función.
  * */
-static int	ft_exit_fill(char *dst, int *chars, int exit, int *i)
+static int	ft_exit_fill(char *dst, int *chars, int *exit, int *i)
 {
 	char	*lst_exit_to_char;
 
-	lst_exit_to_char = ft_itoa(exit);
+	lst_exit_to_char = ft_itoa(*exit);
 	if (!lst_exit_to_char)
-		return (err_malloc_fail(), EXIT_FAILURE);
+		return (err_malloc_fail(exit), EXIT_FAILURE);
 	*chars = *chars + ft_strlen(lst_exit_to_char);
 	ft_strlcat(dst, lst_exit_to_char, *chars + 1);
 	free(lst_exit_to_char);
@@ -156,7 +157,7 @@ static int	ft_fill_var(char *dst, char *src, int *i, int *chars)
 		j++;
 	var_name = ft_substr(src, 0, j);
 	if (var_name == NULL)
-		return (err_malloc_fail(), EXIT_FAILURE);
+		return (err_malloc_fail(&j), EXIT_FAILURE);
 	*i = *i + j;
 	j = 0;
 	var_value = getenv(var_name);

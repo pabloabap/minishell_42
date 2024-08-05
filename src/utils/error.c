@@ -12,29 +12,35 @@
 
 #include "../../include/minishell.h"
 
+/** Gestion de errores de redirecciones sin fichero */
 void	err_red_no_file(void)
 {
-	ft_putendl_fd("Minishell: syntax error near unexpected token `newline'", \
+	ft_putendl_fd("-Minishell: syntax error near unexpected token `newline'", \
 	STDERR_FILENO);
 }
 
+/** Gestion de errores de pipes al comienzo del input */
 void	err_pipe_start(void)
 {
-	ft_putendl_fd("Minishell: syntax error near unexpected token '|'" \
+	ft_putendl_fd("-Minishell: syntax error near unexpected token '|'" \
 	, STDERR_FILENO);
 }
 
+/** Gestion de errores de pipes sin comando a su derecha*/
 void	err_pipe(void)
 {
-	ft_putendl_fd("Minishell: Pipe without command at its right" \
+	ft_putendl_fd("-Minishell: Pipe without command at its right" \
 	, STDERR_FILENO);
 }
 
-void	err_malloc_fail(void)
+/** Gestion de errores de malloc*/
+void	err_malloc_fail(int *err_n)
 {
-	perror("Minishell: malloc fails");
+	perror("-Minishell: malloc fails");
+	*err_n = ENOMEM;
 }
 
+/** Gestion del cierre de un HEREDOC por la recepción de una señal de EOF.*/
 void	ft_hdoc_close_check(t_lexem *redir, char *line, int *err_n)
 {
 	int	i;
@@ -42,7 +48,7 @@ void	ft_hdoc_close_check(t_lexem *redir, char *line, int *err_n)
 	i = 0;
 	if (line == NULL)
 	{
-		ft_putstr_fd("minishell: warning: here-document", STDERR_FILENO);
+		ft_putstr_fd("-Minishell: warning: here-document", STDERR_FILENO);
 		ft_putstr_fd(" delimited by end-of-file (wanted ", STDERR_FILENO);
 		while (redir->str[i])
 			ft_putchar_fd(redir->str[i++], STDERR_FILENO);

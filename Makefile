@@ -29,8 +29,7 @@ OBJS_DIR	= ./build/
 INCLUDE		= -Iinclude -I$(LIBFT_DIR)
 
 # Source files
-SRC			=	src/debug/debug.c \
-				src/lexer/lexer.c \
+SRC			=	src/lexer/lexer.c \
 				src/lexer/lexer_utils.c \
 				src/parser/parser_utils.c \
 				src/parser/cmd_split.c \

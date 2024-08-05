@@ -76,7 +76,7 @@ static int	new_lexem(char **str, t_lexem **lexem_list_last)
 	status = EXIT_SUCCESS;
 	if (lexem_item == NULL)
 	{
-		perror("Minishell: t_lexem malloc fails");
+		perror("-Minishell: t_lexem malloc fails");
 		return (EXIT_FAILURE);
 	}
 	while (is_whitespace(**str))
@@ -118,7 +118,7 @@ static int	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 	end_quote = ft_strchr(++(*str), quote_type);
 	if (end_quote == NULL)
 	{
-		ft_putendl_fd("minishell: syntax error: quotes not closed", \
+		ft_putendl_fd("-minishell: syntax error: quotes not closed", \
 		STDERR_FILENO);
 		return ((*lexem_item)->str = NULL, EXIT_FAILURE);
 	}
@@ -127,7 +127,7 @@ static int	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 		(*lexem_item)->token = DOUBLE_QUOTES;
 	else
 		(*lexem_item)->token = SINGLE_QUOTES;
-	*str = (*str + (end_quote - *str + 1)); // Mueve el puntero str al caracter posterior al cierre de comillas
+	*str = (*str + (end_quote - *str + 1));
 	return (EXIT_SUCCESS);
 }
 
@@ -162,7 +162,7 @@ static int	unquoted_lexer(char **str, t_lexem **lexem_item)
 		*str += i;
 		if ((*lexem_item)->str == NULL)
 		{
-			ft_putendl_fd("minishell: ft_substr fail", STDERR_FILENO);
+			ft_putendl_fd("-minishell: ft_substr fail", STDERR_FILENO);
 			return (EXIT_FAILURE);
 		}
 	}

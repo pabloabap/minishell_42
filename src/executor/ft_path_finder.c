@@ -2,55 +2,123 @@
 
 #include "../../include/minishell.h"
 
+static int	ft_check_path_env(t_single_cmd *cmd, int *err_n);
+static int	ft_check_path_dir(t_single_cmd *cmd, char *dir, DIR *actual, \
+	int *err_n);
+static int	ft_check_cmd_not_found(t_single_cmd *cmd, int *err_n);
+
 /** Localiza la ruta del comando.
  * 
  * @param cmd_name Nombre del comando a buscar.
+ * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
+ * para modificar el valor si es necesario.
  * 
  * @return Ruta absoluta al fichero del comando. 
  */
-char	*ft_path_finder(t_single_cmd *cmd)
+int	ft_path_finder(t_single_cmd *cmd, int *err_n)
 {
-	char			**dirs;
-	int				i;
-	DIR				*actual;
-	struct dirent	*subdir;
-	dirs = ft_split(getenv("PATH"), ':');
+	if (ft_strnstr(cmd->str[0], "/", ft_strlen(cmd->str[0])))
+		return (cmd->cmd_path = cmd->str[0], EXIT_SUCCESS);
+	else
+		if (EXIT_FAILURE == ft_check_path_env(cmd, err_n))
+			return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
+}
+
+/** Subfunción de `ft_path_finder` encargada de iterar sobre los directorios 
+ * de la variable de entorno `$PATH` hasta encontrar el directorio de un 
+ * comando o terminar de recorrer la lista de directorios.
+ * 
+ * @param cmd Puntero a la estructura con información del comando a procesar.
+ * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
+ * para modificar el valor si es necesario.
+ *
+ * @return Resultado de ejecución de la función. 
+ */
+static int	ft_check_path_env(t_single_cmd *cmd, int *err_n)
+{
+	int		i;
+	char	**dirs;
+	DIR		*actual;
+
 	i = 0;
-	while (dirs && dirs[i])
+	dirs = ft_split(getenv("PATH"), ':');
+	if (dirs == NULL)
+		err_malloc_fail(err_n);
+	while (dirs && dirs[i] && cmd->cmd_path == NULL)
 	{
 		actual = opendir(dirs[i]);
-		if (actual != NULL)
-		{
-			subdir = readdir(actual);
-			while (subdir)
-			{
-				if (!ft_strncmp(subdir->d_name, cmd->str[0], ft_strlen(cmd->str[0])) \
-					&& ft_strlen(subdir->d_name) == ft_strlen(cmd->str[0]))
-					return (ft_strjoin(ft_strjoin(dirs[i], "/"), subdir->d_name));
-				subdir = readdir(actual);
-			}
-			closedir(actual);
-		}
+		if (actual == NULL)
+			return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
+		else
+			ft_check_path_dir(cmd, dirs[i], actual, err_n);
 		free(dirs[i]);
 		dirs[i] = NULL;
 		i++;
 	}
-	free(dirs);
-	dirs = NULL;
-	return (NULL);
+	return (free(dirs), dirs = NULL, ft_check_cmd_not_found (cmd, err_n));
 }
-/*
-ft_absolut_path_check
+
+/** Subfunción de `ft_check_path_env` encargada iterar sobre los ficheros de 
+ * 	un directorio para comprobar si contiene el fichero del comando a buscar.
+ * 
+ *  @param cmd Puntero a la estructura con información del comando a procesar.
+ *  @param dir String con la ruta del directorio a analizar.
+ *  @param actual Estructura dirstream con información de un directorio.
+ * 	@param err_n Puntero a int que almacena el errno de la ultima ejecucion
+ * 	para modificar el valor si es necesario.
+ * 
+ * 	@return Resultado de ejecución de la función. En caso de encontrarse el 
+ *  fichero asociado al comando se incluye en el atributo `cmd_path´ de la
+ *  estructura del comando.
+ */
+static int	ft_check_path_dir(t_single_cmd *cmd, char *dir, DIR *actual, \
+int *err_n)
 {
+	struct dirent	*subdir;
+	char			*tmp;
 
+	subdir = readdir(actual);
+	if (subdir == NULL && *err_n != errno)
+		return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
+	while (subdir)
+	{
+		if (!ft_strncmp(subdir->d_name, cmd->str[0], \
+			ft_strlen(cmd->str[0]) + 1))
+		{
+			tmp = ft_strjoin(dir, "/");
+			if (!tmp)
+				return (err_malloc_fail(err_n), EXIT_FAILURE);
+			cmd->cmd_path = ft_strjoin(tmp, subdir->d_name);
+			if (!cmd->cmd_path)
+				return (free(tmp), err_malloc_fail(err_n), EXIT_FAILURE);
+			return (free(tmp), closedir(actual), EXIT_SUCCESS);
+		}
+		subdir = readdir(actual);
+	}
+	return (closedir(actual), EXIT_FAILURE);
 }
-ft_relative_to_absolute
+
+/** Función que comprueba si al final de la busqueda del comando se ha 
+ * encontrado la ruta del comando. En caso de que no se haya encontrado se 
+ * imprime el mensaje de error por la salida STDERR y se actualizar el errno 
+ * de la última ejecución.
+ * 
+ * @param cmd Puntero a la estructura con información del comando a procesar.
+ * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
+ * para modificar el valor si es necesario.
+ * 
+ * @return Resultado de ejecución de la función. 	
+ */
+static int	ft_check_cmd_not_found(t_single_cmd *cmd, int *err_n)
 {
-
+	if (cmd->cmd_path == NULL)
+	{
+		ft_putstr_fd("-Minishell: ", STDERR_FILENO);
+		ft_putstr_fd(cmd->str[0], STDERR_FILENO);
+		ft_putendl_fd(": command not found", STDERR_FILENO);
+		*err_n = 127;
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
 }
-
-ft_find_cmd
-{
-
-}
-*/
