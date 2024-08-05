@@ -30,3 +30,12 @@ PROGRAM WITH REDIRECTIONS
 ---
 cat -> Tiene que esperar a que introduzcas argumentos
 cat | cat | ls
+
+----
+cat | ls
+cat | cat | ls
+cat /dev/urandom | head -n 5
+----
+./pipex infile "cat /dev/urandom" "head -n 5" outfile
+----
+sleep 5 | sleep 5

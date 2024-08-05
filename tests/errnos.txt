@@ -1,0 +1,300 @@
+0_Success
+1_Operation not permitted
+2_No such file or directory
+3_No such process
+4_Interrupted system call
+5_Input/output error
+6_No such device or address
+7_Argument list too long
+8_Exec format error
+9_Bad file descriptor
+10_No child processes
+11_Resource temporarily unavailable
+12_Cannot allocate memory
+13_Permission denied
+14_Bad address
+15_Block device required
+16_Device or resource busy
+17_File exists
+18_Invalid cross-device link
+19_No such device
+20_Not a directory
+21_Is a directory
+22_Invalid argument
+23_Too many open files in system
+24_Too many open files
+25_Inappropriate ioctl for device
+26_Text file busy
+27_File too large
+28_No space left on device
+29_Illegal seek
+30_Read-only file system
+31_Too many links
+32_Broken pipe
+33_Numerical argument out of domain
+34_Numerical result out of range
+35_Resource deadlock avoided
+36_File name too long
+37_No locks available
+38_Function not implemented
+39_Directory not empty
+40_Too many levels of symbolic links
+41_Unknown error 41
+42_No message of desired type
+43_Identifier removed
+44_Channel number out of range
+45_Level 2 not synchronized
+46_Level 3 halted
+47_Level 3 reset
+48_Link number out of range
+49_Protocol driver not attached
+50_No CSI structure available
+51_Level 2 halted
+52_Invalid exchange
+53_Invalid request descriptor
+54_Exchange full
+55_No anode
+56_Invalid request code
+57_Invalid slot
+58_Unknown error 58
+59_Bad font file format
+60_Device not a stream
+61_No data available
+62_Timer expired
+63_Out of streams resources
+64_Machine is not on the network
+65_Package not installed
+66_Object is remote
+67_Link has been severed
+68_Advertise error
+69_Srmount error
+70_Communication error on send
+71_Protocol error
+72_Multihop attempted
+73_RFS specific error
+74_Bad message
+75_Value too large for defined data type
+76_Name not unique on network
+77_File descriptor in bad state
+78_Remote address changed
+79_Can not access a needed shared library
+80_Accessing a corrupted shared library
+81_.lib section in a.out corrupted
+82_Attempting to link in too many shared libraries
+83_Cannot exec a shared library directly
+84_Invalid or incomplete multibyte or wide character
+85_Interrupted system call should be restarted
+86_Streams pipe error
+87_Too many users
+88_Socket operation on non-socket
+89_Destination address required
+90_Message too long
+91_Protocol wrong type for socket
+92_Protocol not available
+93_Protocol not supported
+94_Socket type not supported
+95_Operation not supported
+96_Protocol family not supported
+97_Address family not supported by protocol
+98_Address already in use
+99_Cannot assign requested address
+100_Network is down
+101_Network is unreachable
+102_Network dropped connection on reset
+103_Software caused connection abort
+104_Connection reset by peer
+105_No buffer space available
+106_Transport endpoint is already connected
+107_Transport endpoint is not connected
+108_Cannot send after transport endpoint shutdown
+109_Too many references: cannot splice
+110_Connection timed out
+111_Connection refused
+112_Host is down
+113_No route to host
+114_Operation already in progress
+115_Operation now in progress
+116_Stale file handle
+117_Structure needs cleaning
+118_Not a XENIX named type file
+119_No XENIX semaphores available
+120_Is a named type file
+121_Remote I/O error
+122_Disk quota exceeded
+123_No medium found
+124_Wrong medium type
+125_Operation canceled
+126_Required key not available
+127_Key has expired
+128_Key has been revoked
+129_Key was rejected by service
+130_Owner died
+131_State not recoverable
+132_Operation not possible due to RF-kill
+133_Memory page has hardware error
+134_Unknown error 134
+135_Unknown error 135
+136_Unknown error 136
+137_Unknown error 137
+138_Unknown error 138
+139_Unknown error 139
+140_Unknown error 140
+141_Unknown error 141
+142_Unknown error 142
+143_Unknown error 143
+144_Unknown error 144
+145_Unknown error 145
+146_Unknown error 146
+147_Unknown error 147
+148_Unknown error 148
+149_Unknown error 149
+150_Unknown error 150
+151_Unknown error 151
+152_Unknown error 152
+153_Unknown error 153
+154_Unknown error 154
+155_Unknown error 155
+156_Unknown error 156
+157_Unknown error 157
+158_Unknown error 158
+159_Unknown error 159
+160_Unknown error 160
+161_Unknown error 161
+162_Unknown error 162
+163_Unknown error 163
+164_Unknown error 164
+165_Unknown error 165
+166_Unknown error 166
+167_Unknown error 167
+168_Unknown error 168
+169_Unknown error 169
+170_Unknown error 170
+171_Unknown error 171
+172_Unknown error 172
+173_Unknown error 173
+174_Unknown error 174
+175_Unknown error 175
+176_Unknown error 176
+177_Unknown error 177
+178_Unknown error 178
+179_Unknown error 179
+180_Unknown error 180
+181_Unknown error 181
+182_Unknown error 182
+183_Unknown error 183
+184_Unknown error 184
+185_Unknown error 185
+186_Unknown error 186
+187_Unknown error 187
+188_Unknown error 188
+189_Unknown error 189
+190_Unknown error 190
+191_Unknown error 191
+192_Unknown error 192
+193_Unknown error 193
+194_Unknown error 194
+195_Unknown error 195
+196_Unknown error 196
+197_Unknown error 197
+198_Unknown error 198
+199_Unknown error 199
+200_Unknown error 200
+201_Unknown error 201
+202_Unknown error 202
+203_Unknown error 203
+204_Unknown error 204
+205_Unknown error 205
+206_Unknown error 206
+207_Unknown error 207
+208_Unknown error 208
+209_Unknown error 209
+210_Unknown error 210
+211_Unknown error 211
+212_Unknown error 212
+213_Unknown error 213
+214_Unknown error 214
+215_Unknown error 215
+216_Unknown error 216
+217_Unknown error 217
+218_Unknown error 218
+219_Unknown error 219
+220_Unknown error 220
+221_Unknown error 221
+222_Unknown error 222
+223_Unknown error 223
+224_Unknown error 224
+225_Unknown error 225
+226_Unknown error 226
+227_Unknown error 227
+228_Unknown error 228
+229_Unknown error 229
+230_Unknown error 230
+231_Unknown error 231
+232_Unknown error 232
+233_Unknown error 233
+234_Unknown error 234
+235_Unknown error 235
+236_Unknown error 236
+237_Unknown error 237
+238_Unknown error 238
+239_Unknown error 239
+240_Unknown error 240
+241_Unknown error 241
+242_Unknown error 242
+243_Unknown error 243
+244_Unknown error 244
+245_Unknown error 245
+246_Unknown error 246
+247_Unknown error 247
+248_Unknown error 248
+249_Unknown error 249
+250_Unknown error 250
+251_Unknown error 251
+252_Unknown error 252
+253_Unknown error 253
+254_Unknown error 254
+255_Unknown error 255
+256_Unknown error 256
+257_Unknown error 257
+258_Unknown error 258
+259_Unknown error 259
+260_Unknown error 260
+261_Unknown error 261
+262_Unknown error 262
+263_Unknown error 263
+264_Unknown error 264
+265_Unknown error 265
+266_Unknown error 266
+267_Unknown error 267
+268_Unknown error 268
+269_Unknown error 269
+270_Unknown error 270
+271_Unknown error 271
+272_Unknown error 272
+273_Unknown error 273
+274_Unknown error 274
+275_Unknown error 275
+276_Unknown error 276
+277_Unknown error 277
+278_Unknown error 278
+279_Unknown error 279
+280_Unknown error 280
+281_Unknown error 281
+282_Unknown error 282
+283_Unknown error 283
+284_Unknown error 284
+285_Unknown error 285
+286_Unknown error 286
+287_Unknown error 287
+288_Unknown error 288
+289_Unknown error 289
+290_Unknown error 290
+291_Unknown error 291
+292_Unknown error 292
+293_Unknown error 293
+294_Unknown error 294
+295_Unknown error 295
+296_Unknown error 296
+297_Unknown error 297
+298_Unknown error 298
+299_Unknown error 299
