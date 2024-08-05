@@ -46,8 +46,8 @@ int	ft_set_pipes(t_single_cmd *current_cmd, int std_out, int *err_n)
 	{
 		if (-1 == dup2(std_out, STDOUT_FILENO))
 			return (perror("3_SET_Minishell "), *err_n = errno, EXIT_FAILURE);
-		close(std_out);
 	}
+	close(std_out);
 	return (EXIT_SUCCESS);
 }
 

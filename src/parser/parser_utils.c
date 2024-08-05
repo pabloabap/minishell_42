@@ -45,7 +45,7 @@ int	grammar_checks(t_lexem *lex_list)
 	while (lex_list)
 	{
 		if ((lex_list->token >= IN_REDIR \
-			&& lex_list->token <= APPEND_REDIR) \
+			&& lex_list->token <= HERE_DOC) \
 			&& (!(lex_list->next) || \
 			lex_list->next->token > DOUBLE_QUOTES))
 			return (err_red_no_file(), EXIT_FAILURE);
