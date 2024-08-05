@@ -3,19 +3,36 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-void signal_handler (int signal)
+int					i = 0;
+
+void	signal_handler(int signum)
 {
-	if (signal == SIGUSR1) //Number of SIGUSR1
-		printf("SIGUSR1 received\n");
-	else if (signal == SIGUSR2) //Number of SIGUSR2
-		printf("SIGUSR2 received\n");
+	printf("SEÑAL Nº%i RECIBIDA\n", signum);
 }
+
+void	signal_handler2(int signum)
+{
+	printf("Nº%i SEÑAL RECIBIDA\n", signum);
+}
+
 
 int main (void)
 {
-	printf("%i\n", getpid());
-	signal(SIGUSR1, signal_handler);
-	signal(SIGUSR2, signal_handler);
+	struct sigaction	sa;
+	struct sigaction	sa2;
+	struct sigaction	sa3;
+	struct sigaction	sa4;
+
+	sa.sa_handler = SIG_IGN;	
+	sa2.sa_handler = SIG_DFL;
+	sa3.sa_handler = &signal_handler;
+	sa4.sa_handler = &signal_handler2;
+	sigaction(SIGINT, &sa, NULL);
+	sigaction(SIGQUIT, &sa2, NULL);
+	sigaction(SIGCHLD, &sa4, NULL);
+	sigaction(SIGCHLD, &sa3, NULL);
+	
+	//signal(SIGINT, signal_handler);
 	while (1)
 	{
 		continue;

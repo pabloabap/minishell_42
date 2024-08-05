@@ -14,7 +14,9 @@
 
 static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n);
 static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *e);
-static int	ft_parent_mng(t_single_cmd *cmd, int *err_n);
+static int	ft_parent_mng(t_single_cmd *cmd, int *err_n, int std_out);
+static char	*ft_path_finder(char *cmd_name);
+
 /** Funcion principal executor. Crea un proceso hijo por comando 
  * a ejecutar, configura su entrada, salida y redirecciones y los ejecuta 
  * en paralelo.
@@ -46,7 +48,7 @@ int	ft_executor(t_single_cmd *head, char **envp, int *err_n)
 				return (EXIT_FAILURE);
 		head = head->next;
 	}
-	if (EXIT_FAILURE == ft_parent_mng(tmp, err_n))
+	if (EXIT_FAILURE == ft_parent_mng(tmp, err_n, std_out))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
@@ -90,6 +92,8 @@ static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n)
  */
 static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
 {
+	if (!cmd->str) // CASE OF HEREDOC WITHOUT CMD
+		return (EXIT_FAILURE);
 	if (EXIT_FAILURE == ft_set_pipes(cmd, std_out, en))
 		return (EXIT_FAILURE);
 	if (EXIT_FAILURE == ft_prepare_redirections(cmd, en))
@@ -110,12 +114,13 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
  * 
  * @return Resultado de ejecición e impresión de errores si procede. 
  */
-static int	ft_parent_mng(t_single_cmd *cmd, int *err_n)
+static int	ft_parent_mng(t_single_cmd *cmd, int *err_n, int std_out)
 {
 	t_single_cmd	*tmp;
 	int				wstatus;
 
 	tmp = cmd;
+	close (std_out);
 	while (tmp)
 	{
 		if (tmp->next)
@@ -128,10 +133,9 @@ static int	ft_parent_mng(t_single_cmd *cmd, int *err_n)
 	}
 	while (cmd)
 	{
+		wait_signal(0);
 		wait(&wstatus);
 		cmd = cmd->next;
 	}
-	if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) != 0)
-		return (*err_n = WEXITSTATUS(wstatus), EXIT_FAILURE);
-	return (EXIT_SUCCESS);
+	return (ft_parent_exit(wstatus, err_n));
 }

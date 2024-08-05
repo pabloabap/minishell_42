@@ -35,7 +35,7 @@
 # include "../lib/libft/libft.h"
 
 /*Variable global que almacena el exit status del último comando ejecutado*/
-//extern int	g_last_exit;
+extern int	g_error;
 
 /**Estructura principal desde la que podamos liberar
  * memoría alojada dinámicamente.
@@ -52,6 +52,8 @@ int		init_data(t_data **data);
 int		is_whitespace(char c);
 void	clean_data(t_data *data);
 int		ft_close(int fd, int *err_n);
+void	wait_signal(int main_process);
+int ft_parent_exit(int	wstatus, int *err_n);
 
 //Error handling
 void	err_red_no_file(void);
