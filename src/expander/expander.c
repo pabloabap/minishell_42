@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static int	ft_str_expander(t_lexem *lex_list, int exit);
+static int	ft_str_expander(t_lexem *lex_list, int *exit);
 static void	ft_add_cmd_expansions(t_single_cmd *cmd_list, t_lexem **cmd_args);
 
 /** Expansion de strings del atributo str de los t_single_cmd (equivalente
@@ -20,10 +20,12 @@ static void	ft_add_cmd_expansions(t_single_cmd *cmd_list, t_lexem **cmd_args);
  * 
  * @param lex_list Puntero al primer elemento de la lista de lexemas.
  * @param cmd_list Puntero al primer elemento de la lista de t_single_cmd.
+ * @param exit Puntero a direccion de memoria que almacena último error de
+ * ejecución.
  *
  * @returns Estado de salida de la función. 
  **/
-int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list, int exit)
+int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list, int *exit)
 {
 	t_lexem	*curr_cmd_args;
 
@@ -43,10 +45,12 @@ int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list, int exit)
 
 /** Funcion de apoyo para expandir el atributo str de estructuras t_lexem.
  * @param lex_list Puntero al primer elemento de la lista de lexemas.
+ * @param exit Puntero a direccion de memoria que almacena último error de
+ * ejecución.
  * 
  * @returns Estado de salida de la función. 
  **/
-static int	ft_str_expander(t_lexem *lex_list, int exit)
+static int	ft_str_expander(t_lexem *lex_list, int *exit)
 {
 	char	*exp_malloc;
 	int		buffer;

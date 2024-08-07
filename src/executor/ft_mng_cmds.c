@@ -12,64 +12,85 @@
 
 #include "../../include/minishell.h"
 
-static int	ft_close_unused_pipes(t_single_cmd *current_cmd);
+static int			ft_close_unused_pipes(t_single_cmd *current_cmd, int *en);
+static t_single_cmd	*ft_head_cmd(t_single_cmd *curr_cmd);
 
 /** Establece las configuraciones de lectura y escritura en los pipes
  * que correponden al comando pasado como parametro.
  * 
  * @param current_cmd Punteor al comando a tratar.
- * @param main_out Referencia al STDOUT principal para recuperarlo
+ * @param std_out Referencia al STDOUT principal para recuperarlo
  * en caso de necesidad.
+ * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
+ * para modificar el valor si es necesario.
  * 
  * @return Resultado de la ejecución e impresión de errores sin procede.
 */
-int	ft_set_pipes(t_single_cmd *current_cmd, int main_out)
+int	ft_set_pipes(t_single_cmd *current_cmd, int std_out, int *err_n)
 {
-	if (EXIT_FAILURE == ft_close_unused_pipes(current_cmd))
+	if (EXIT_FAILURE == ft_close_unused_pipes(current_cmd, err_n))
 		return (EXIT_FAILURE);
 	if (current_cmd->prev)
 	{
 		if (-1 == dup2(current_cmd->prev->pipe_fd[0], STDIN_FILENO))
-			return (perror("1_SET_Minishell "), EXIT_FAILURE);
+			return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
 		close(current_cmd->prev->pipe_fd[0]);
 	}
 	if (current_cmd->next)
 	{
 		if (-1 == dup2(current_cmd->pipe_fd[1], STDOUT_FILENO))
-			return (perror("2_SET_Minishell "), EXIT_FAILURE);
+			return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
 		close(current_cmd->pipe_fd[1]);
 	}
 	else
 	{
-		if (-1 == dup2(main_out, STDOUT_FILENO))
-			return (perror("3_SET_Minishell "), EXIT_FAILURE);
-		close(main_out);
+		if (-1 == dup2(std_out, STDOUT_FILENO))
+			return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
 	}
+	close(std_out);
 	return (EXIT_SUCCESS);
 }
 
-/** Cierra lo pipes de lectura del comando actual en adelante y los de
+/** Cierra los pipes de lectura del comando actual en adelante y los de
  * escritura a partir del siguiente comando (Se lee del pipe del comando 
  * anterior y se escribe en pipe del comando actual).
  * 
  * @param current_cmd Comando a tratar.
+ * @param en Puntero a int que almacena el errno de la ultima ejecucion
+ * para modificar el valor si es necesario.
  * 
- * @return Resultado de la ejecución e impresión de errores sin procede. * 
+ * @return Resultado de la ejecución e impresión de errores sin procede.
  */
-static int	ft_close_unused_pipes(t_single_cmd *current_cmd)
+static int	ft_close_unused_pipes(t_single_cmd *current_cmd, int *en)
 {
 	t_single_cmd	*tmp;
 
-	tmp = current_cmd;
+	tmp = ft_head_cmd(current_cmd);
 	while (tmp->next)
 	{
 		if (tmp != current_cmd->prev)
 			if (-1 == close(tmp->pipe_fd[0]))
-				return (perror("1_CLOSE_UNUS_Minishell "), EXIT_FAILURE);
+				return (perror("-Minishell "), \
+					*en = errno, EXIT_FAILURE);
 		if (tmp != current_cmd)
 			if (-1 == close(tmp->pipe_fd[1]))
-				return (perror("2_CLOSE_UNUS_Minishell "), EXIT_FAILURE);
+				return (perror("-Minishell "), \
+					*en = errno, EXIT_FAILURE);
 		tmp = tmp->next;
 	}
 	return (EXIT_SUCCESS);
+}
+
+/** Funcion que devuelve el primer elemento de una lista de 
+ * estructuras t_single_cmd.
+ * @param curr_cmd cmd actual.
+ * 
+ * @return Primer elemento de la lista.
+ */
+
+static t_single_cmd	*ft_head_cmd(t_single_cmd *curr_cmd)
+{
+	while (curr_cmd->prev)
+		curr_cmd = curr_cmd->prev;
+	return (curr_cmd);
 }

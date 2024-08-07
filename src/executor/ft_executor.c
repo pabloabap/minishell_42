@@ -12,67 +12,69 @@
 
 #include "../../include/minishell.h"
 
-static int	ft_prepare_exec(t_single_cmd *head, int *main_out);
-static int	ft_child_mng(t_single_cmd *cmd, int main_out, char **envp);
-static int	ft_parent_mng(t_single_cmd **cmd);
-static char	*ft_path_finder(char *cmd_name);
+static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n);
+static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *e);
+static int	ft_parent_mng(t_single_cmd *cmd, int *err_n, int std_out);
 
 /** Funcion principal executor. Crea un proceso hijo por comando 
- * a ejecutar y configura su entrada, salida y redirecciones. 
- * El padre espera la finalizacion del proceso hijo, recoge su
- * estado de salida y mueve head al siguiente comando a ejecutar 
- * si la ejecucion ha ido bien.
+ * a ejecutar, configura su entrada, salida y redirecciones y los ejecuta 
+ * en paralelo.
+ * El padre espera la finalizacion de todos los hijos para recoger
+ * el exit status final.
  * 
  * @param head Puntero al primer comando de la lista de comandos
  * @param envp Variables de entorno aplicables.
+ * @param err_n Puntero a int que almacena el errno de la ultima ejecucion.
  * 
  * @return Resultado de la ejecución.
  */
-int ft_executor(t_single_cmd *head, char **envp)
+int	ft_executor(t_single_cmd *head, char **envp, int *err_n)
 {
-    int main_out;
-    int pid;
+	int				std_out;
+	int				pid;
+	t_single_cmd	*tmp;
 
-    if (EXIT_FAILURE == ft_prepare_exec(head, &main_out))
-        return (EXIT_FAILURE);
-    while (head) {
-        // Verificar si el comando es una builtin
-        if (is_builtin(head->str[0])) {
-            // Ejecutar builtin
-            execute_builtin(head->str, envp);
-        } else {
-            pid = fork();
-            if (pid == -1)
-                return (perror("02_Minishell"), EXIT_FAILURE);
-            if (pid == 0)
-                ft_child_mng(head, main_out, envp);
-            if (EXIT_FAILURE == ft_parent_mng(&head))
-                return (EXIT_FAILURE);
-        }
-    }
-    return (EXIT_SUCCESS);
+	tmp = head;
+	if (EXIT_FAILURE == ft_prepare_exec(head, &std_out, err_n))
+		return (EXIT_FAILURE);
+	while (head)
+	{
+		pid = fork();
+		if (pid == -1)
+			return (perror("-Minishell"), *err_n = errno, EXIT_FAILURE);
+		if (pid == 0)
+			if (EXIT_FAILURE == ft_child_mng(head, std_out, envp, err_n))
+				return (EXIT_FAILURE);
+		head = head->next;
+	}
+	if (EXIT_FAILURE == ft_parent_mng(tmp, err_n, std_out))
+		return (EXIT_FAILURE);
+	return (EXIT_SUCCESS);
 }
 /** Crea los pipes necesarios en la ejecución (uno menos que el número de 
  * comandos).
  * 
  * @param head Puntero al primer elemento de la lista de comandos.
- * @param main_out Referencia al STDOUT para que en caso de que tenga que ser 
+ * @param std_out Referencia al STDOUT para que en caso de que tenga que ser 
  * modificado por por algún comando intermedio podamos recuperar el principal.
+ * @param err_n Puntero a int que almacena el errno de la ultima ejecucion.
  * 
  * @return Resultado de la ejecución e impresión de error si existe. 
  */
-static int	ft_prepare_exec(t_single_cmd *head, int *main_out)
+static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n)
 {
 	while (head)
 	{
 		if (head->next)
 			if (-1 == pipe(head->pipe_fd))
-				return (perror("1_PREPARE_Minishell "), EXIT_FAILURE);
+				return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
+		if (EXIT_FAILURE == ft_check_hdoc(head, err_n))
+			return (EXIT_FAILURE);
 		head = head->next;
 	}
-	*main_out = dup(STDOUT_FILENO);
-	if (*main_out == -1)
-		return (perror("3_PREPARE_Minishell "), EXIT_FAILURE);
+	*std_out = dup(STDOUT_FILENO);
+	if (*std_out == -1)
+		return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
@@ -81,84 +83,60 @@ static int	ft_prepare_exec(t_single_cmd *head, int *main_out)
  * @param cmd Puntero al comando actual a procesar.
  * @param main_out file descriptor del STDOUT principal.
  * @param envp Puntero de punteros a la lista de variables de entorno.
+ * @param en Puntero a int que almacena el errno de la ultima ejecucion
+ * para modificar el valor si es necesario.
  * 
- * @return Resultado de ejecición e impresión de errores si procede. * 
+ * @return Resultado de ejecición e impresión de errores si procede.
  */
-static int	ft_child_mng(t_single_cmd *cmd, int main_out, char **envp)
+static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
 {
-	if (EXIT_FAILURE == ft_set_pipes(cmd, main_out))
-		return (EXIT_FAILURE);
-	if (EXIT_FAILURE == ft_prepare_redirections(cmd->redirection))
-		return (EXIT_FAILURE);
-	if (execve(ft_path_finder(cmd->str[0]), cmd->str, envp) < 0)
-		return(perror("1_EXEC_Minishell "), EXIT_FAILURE);
+	if (!cmd->str || \
+		EXIT_FAILURE == ft_set_pipes(cmd, std_out, en) || \
+		EXIT_FAILURE == ft_prepare_redirections(cmd, en) || \
+		EXIT_FAILURE == ft_path_finder(cmd, en))
+		return (exit(*en), EXIT_FAILURE);
+	else if (execve(cmd->cmd_path, cmd->str, envp) < 0)
+	{
+		if (access(cmd->cmd_path, X_OK) < 0)
+			return (perror("-Minishell "), exit(126), EXIT_FAILURE);
+		return (perror("-Minishell "), exit(errno), EXIT_FAILURE);
+	}
 	return (EXIT_SUCCESS);
 }
 
 /** Gestiona instrucciones para el proceso padre en un fork.
- * Espera a que su proceso hijo termine, cierra los extremos de los pipes 
- * que ya no se van a utilizar (el de lectura del pipe almacenado en la 
- * estructura del cmd anterior y , si hay siguiente comando, el de escritura
- * del pipe almacenado en la estructura del comando actual).
+ * Cierra todos los pipes ya que no son utilizados en el padre.
+ * Espera a que los procesos hijos terminen y comprueba el exit status 
+ * para actualizarlo si es necesario.
  * 
  * @param cmd Doble puntero al comando actual a procesar.
+ * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
+ * para modificar el valor si es necesario.
  * 
  * @return Resultado de ejecición e impresión de errores si procede. 
  */
-static int	ft_parent_mng(t_single_cmd **cmd)
+static int	ft_parent_mng(t_single_cmd *cmd, int *err_n, int std_out)
 {
 	t_single_cmd	*tmp;
 	int				wstatus;
 
-	tmp = *cmd;
-	wait(&wstatus);
-	if (tmp->next)
-		if (-1 == close(tmp->pipe_fd[1]))
-			return (perror("Minishell "), EXIT_FAILURE);
-	if (tmp->prev)
-		if (-1 == close(tmp->prev->pipe_fd[0]))
-			return (perror("Minishell "), EXIT_FAILURE);
-	*cmd = tmp->next;
-	if (WIFEXITED(wstatus) && WEXITSTATUS(wstatus) != 0)
-		return (EXIT_FAILURE);
-	return (EXIT_SUCCESS);
-}
-
-/** Localiza la ruta del comando.
- * 
- * @param cmd_name Nombre del comando a buscar.
- * 
- * @return Ruta absoluta al fichero del comando. 
- */
-static char	*ft_path_finder(char *cmd_name)
-{
-	char			**dirs;
-	int				i;
-	DIR				*actual;
-	struct dirent	*subdir;
-
-	dirs = ft_split(getenv("PATH"), ':');
-	i = 0;
-	while (dirs && dirs[i])
+	tmp = cmd;
+	close (std_out);
+	while (tmp)
 	{
-		actual = opendir(dirs[i]);
-		if (actual != NULL)
-		{
-			subdir = readdir(actual);
-			while (subdir)
-			{
-				if (!ft_strncmp(subdir->d_name, cmd_name, ft_strlen(cmd_name)) \
-					&& ft_strlen(subdir->d_name) == ft_strlen(cmd_name))
-					return (ft_strjoin(ft_strjoin(dirs[i], "/"), subdir->d_name));
-				subdir = readdir(actual);
-			}
-			closedir(actual);
-		}
-		free(dirs[i]);
-		dirs[i] = NULL;
-		i++;
+		if (tmp->next)
+			if (-1 == close(tmp->pipe_fd[1]))
+				return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
+		if (tmp->prev)
+			if (-1 == close(tmp->prev->pipe_fd[0]))
+				return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
+		tmp = tmp-> next;
 	}
-	free(dirs);
-	dirs = NULL;
-	return (NULL);
+	while (cmd)
+	{
+		wait_signal(0);
+		wait(&wstatus);
+		cmd = cmd->next;
+	}
+	return (ft_parent_exit(wstatus, err_n));
 }
