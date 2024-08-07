@@ -13,6 +13,7 @@
 #include "../../include/minishell.h"
 
 static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n);
+static int	ft_builtins(t_single_cmd *cmd, int std_out, char **envp, int *en);
 static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *e);
 static int	ft_parent_mng(t_single_cmd *cmd, int *err_n, int std_out);
 
@@ -51,6 +52,7 @@ int	ft_executor(t_single_cmd *head, char **envp, int *err_n)
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
+
 /** Crea los pipes necesarios en la ejecución (uno menos que el número de 
  * comandos).
  * 
@@ -75,6 +77,32 @@ static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n)
 	*std_out = dup(STDOUT_FILENO);
 	if (*std_out == -1)
 		return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
+	return (EXIT_SUCCESS);
+}
+
+static int	ft_builtins(t_single_cmd *cmd, int std_out, char **envp, int *en)
+{
+	char	*builtins;
+	char	**tmp;
+	int		i;
+	int		is_builtin;
+
+	builtins = "echo:cd:pwd:export:unset:env:exit";
+	tmp = ft_split(builtins, ':');
+	i = 0;
+	is_builtin = 0;
+	while (tmp[i])
+	{
+		if (0 == ft_strncmp(tmp[i], cmd->str[0], ft_strlen(tmp[i]) + 1))
+		{
+			if (EXIT_FAILURE == ft_prepare_redirections(cmd, en))
+				return (exit(*en), EXIT_FAILURE);
+			execute_builtin(cmd->str, envp);
+		}
+		free(tmp[i]);
+		i ++;
+	}
+	free(tmp);
 	return (EXIT_SUCCESS);
 }
 
