@@ -48,9 +48,9 @@ static int	ft_check_path_env(t_single_cmd *cmd, int *err_n)
 	while (dirs && dirs[i] && cmd->cmd_path == NULL)
 	{
 		actual = opendir(dirs[i]);
-		if (actual == NULL)
+		if (actual == NULL && dirs[i] == NULL)
 			return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
-		else
+		else if (actual != NULL)
 			ft_check_path_dir(cmd, dirs[i], actual, err_n);
 		free(dirs[i]);
 		dirs[i] = NULL;
