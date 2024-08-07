@@ -9,12 +9,12 @@ typedef struct s_env {
 
 // Declaraciones de las funciones internas
 void builtin_cd(char **args, char **envp);
-void builtin_pwd(void);
+void builtin_pwd(char **args, char **envp);
 void builtin_unset(char **args, char **envp);
-void builtin_exit(char **args);
+void builtin_exit(char **args, char **envp);
 void builtin_env(char **args, char **envp);
 void builtin_export(char **args, char **envp);
-int builtin_echo(char **args);
+void builtin_echo(char **args, char **envp);
 
 typedef void (*builtin_func)(char **args, char **envp);
 

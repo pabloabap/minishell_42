@@ -15,8 +15,9 @@ static void print_lines(int start_index, char **args, int fd)
 }
 
 // Implementación del comando 'echo'
-int builtin_echo(char **args)
+void builtin_echo(char **args, char **envp)
 {
+    (void)envp;  // Ignoramos envp ya que no se utiliza en esta función
     int i = 1;
     int j;
     int n_option = 0;
@@ -42,7 +43,4 @@ int builtin_echo(char **args)
     if (!n_option) {
         ft_putchar_fd('\n', STDOUT_FILENO);
     }
-
-    return EXIT_SUCCESS;
 }
-

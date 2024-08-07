@@ -3,7 +3,8 @@
 #include <stdio.h>
 
 // Función para verificar si una cadena es numérica
-static int is_str_digit(char *str) {
+static int is_str_digit(char *str)
+{
     int i = 0;
     while (str[i]) {
         if (!ft_isdigit(str[i]))
@@ -14,7 +15,8 @@ static int is_str_digit(char *str) {
 }
 
 // Función para liberar un array de cadenas
-static void free_arr(char **arr) {
+static void free_arr(char **arr)
+{
     int i = 0;
     if (arr != NULL) {
         while (arr[i] != NULL) {
@@ -25,7 +27,8 @@ static void free_arr(char **arr) {
     }
 }
 // Función para determinar el código de salida y salir del programa
-void determine_exit_code(char **args) {
+void determine_exit_code(char **args)
+{
     int exit_code;
 
     if (!args[1])  // Si no hay argumentos adicionales, el código de salida es 0
@@ -43,7 +46,9 @@ void determine_exit_code(char **args) {
 }
 
 // Implementación del comando 'exit' ajustada para aceptar args como argumento global o externo
-void builtin_exit(char **args) {
+void builtin_exit(char **args, char **envp)
+{
+    (void)envp;  // Ignora envp ya que no se utiliza en esta función
     if (args[1] && args[2]) {  // Verifica si hay demasiados argumentos
         ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
         return;  // Retorna sin salir si hay demasiados argumentos
