@@ -94,7 +94,6 @@ void builtin_cd(char **args, char **envp)
     }
     if (ret != 0)
         return;
-
     // Aquí deberías obtener `pwd` y `old_pwd` antes de llamar a `add_path_to_env`
     // Suponiendo que `pwd` y `old_pwd` se obtienen de alguna manera.
     add_path_to_env(envp, pwd, old_pwd);

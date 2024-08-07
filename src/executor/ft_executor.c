@@ -39,6 +39,14 @@ int	ft_executor(t_single_cmd *head, char **envp, int *err_n)
 		return (EXIT_FAILURE);
 	while (head)
 	{
+		if (is_builtin(head->str[0]))
+        {
+            // Ejecutar builtin en el proceso padre
+            printf("Ejecutando builtin en el proceso padre...\n");
+            execute_builtin(head->str, envp);
+            head = head->next; // Mover al siguiente comando
+            continue; // Saltar la creación de un proceso hijo para este comando
+        }
 		pid = fork();
 		if (pid == -1)
 			return (perror("-Minishell"), *err_n = errno, EXIT_FAILURE);
@@ -92,11 +100,17 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
 {
 	if (!cmd->str || \
 		EXIT_FAILURE == ft_set_pipes(cmd, std_out, en) || \
-		EXIT_FAILURE == ft_prepare_redirections(cmd, en) || \
-		EXIT_FAILURE == ft_path_finder(cmd, en))
+		EXIT_FAILURE == ft_prepare_redirections(cmd, en)) //|| 
+		//EXIT_FAILURE == ft_path_finder(cmd, en))
 		return (exit(*en), EXIT_FAILURE);
+	/*else if (is_builtin(cmd->str[0]))
+	{
+            // Ejecutar builtin
+            return (printf("ENTRA!!\n"), execute_builtin(cmd->str, envp), exit(0), EXIT_SUCCESS);
+	}*/
 	else if (execve(cmd->cmd_path, cmd->str, envp) < 0)
 	{
+		printf("ENTRA2!!\n");
 		if (access(cmd->cmd_path, X_OK) < 0)
 			return (perror("-Minishell "), exit(126), EXIT_FAILURE);
 		return (perror("-Minishell "), exit(errno), EXIT_FAILURE);

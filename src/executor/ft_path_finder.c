@@ -19,6 +19,7 @@ int	ft_path_finder(t_single_cmd *cmd, int *err_n)
 {
 	if (ft_strnstr(cmd->str[0], "/", ft_strlen(cmd->str[0])))
 		return (cmd->cmd_path = cmd->str[0], EXIT_SUCCESS);
+	
 	else
 		if (EXIT_FAILURE == ft_check_path_env(cmd, err_n))
 			return (EXIT_FAILURE);

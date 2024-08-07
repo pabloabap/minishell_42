@@ -37,25 +37,27 @@ void mini_env(t_env *env, t_single_cmd *simple_cmd) {
 // Implementación de builtin_export
 void builtin_export(char **args, char **envp) {
     char *str = args[1];
+    
+    builtin_env(args, envp);
     if (str[equal_sign(str)] == '\"') {
         delete_quotes(str, '\"');
     }
     // Agregar la variable de entorno
     envp = add_var(envp, str);
+    builtin_env(args, envp);
 }
 
 // Implementación de add_var
 char **add_var(char **arr, char *str) {
     int len = 0;
-    while (arr[len] != NULL) {
+    while (arr[len] != NULL)
         len++;
-    }
     char **new_arr = malloc((len + 2) * sizeof(char *));
     for (int i = 0; i < len; i++) {
         new_arr[i] = arr[i];
     }
     new_arr[len] = strdup(str);
     new_arr[len + 1] = NULL;
-    free(arr);
+    //free(arr);
     return new_arr;
 }
