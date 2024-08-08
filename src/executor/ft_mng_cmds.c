@@ -26,26 +26,27 @@ static t_single_cmd	*ft_head_cmd(t_single_cmd *curr_cmd);
  * 
  * @return Resultado de la ejecución e impresión de errores sin procede.
 */
-int	ft_set_pipes(t_single_cmd *current_cmd, int std_out, int *err_n)
+int	ft_set_pipes(t_single_cmd *current_cmd, int std_out, int *err_n, int built)
 {
-	if (EXIT_FAILURE == ft_close_unused_pipes(current_cmd, err_n))
-		return (EXIT_FAILURE);
+	if (!built)
+		if (EXIT_FAILURE == ft_close_unused_pipes(current_cmd, err_n))
+			return (EXIT_FAILURE);
 	if (current_cmd->prev)
 	{
 		if (-1 == dup2(current_cmd->prev->pipe_fd[0], STDIN_FILENO))
-			return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
+			return (perror("6-Minishell "), *err_n = errno, EXIT_FAILURE);
 		close(current_cmd->prev->pipe_fd[0]);
 	}
 	if (current_cmd->next)
 	{
 		if (-1 == dup2(current_cmd->pipe_fd[1], STDOUT_FILENO))
-			return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
+			return (perror("66-Minishell "), *err_n = errno, EXIT_FAILURE);
 		close(current_cmd->pipe_fd[1]);
 	}
 	else
 	{
 		if (-1 == dup2(std_out, STDOUT_FILENO))
-			return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
+			return (perror("666-Minishell "), *err_n = errno, EXIT_FAILURE);
 	}
 	close(std_out);
 	return (EXIT_SUCCESS);
@@ -70,11 +71,11 @@ static int	ft_close_unused_pipes(t_single_cmd *current_cmd, int *en)
 	{
 		if (tmp != current_cmd->prev)
 			if (-1 == close(tmp->pipe_fd[0]))
-				return (perror("-Minishell "), \
+				return (perror("7-Minishell "), \
 					*en = errno, EXIT_FAILURE);
 		if (tmp != current_cmd)
 			if (-1 == close(tmp->pipe_fd[1]))
-				return (perror("-Minishell "), \
+				return (perror("77-Minishell "), \
 					*en = errno, EXIT_FAILURE);
 		tmp = tmp->next;
 	}

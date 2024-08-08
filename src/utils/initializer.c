@@ -29,7 +29,7 @@ int	init_data(t_data **data)
 	(*data) = (t_data *)malloc(sizeof(t_data));
 	if (!(*data))
 	{
-		perror("-Minishell: t_data malloc fails");
+		perror("456-Minishell: t_data malloc fails");
 		return (EXIT_FAILURE);
 	}
 	(*data)->head_lex_list = NULL;

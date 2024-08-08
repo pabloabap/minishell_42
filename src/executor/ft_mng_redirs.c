@@ -64,7 +64,8 @@ static int	ft_open_redirs(t_single_cmd *cmd, t_lexem *redir, int *err_n)
 	if (redir->token >= HERE_DOC)
 		fd = cmd->fd_hdoc;
 	if (fd < 0)
-		return (perror("-Minishell "), *err_n = 1, EXIT_FAILURE);
+		return (ft_putstr_fd("8-Minishell: ", STDERR_FILENO), \
+			perror(redir->str), *err_n = 1, EXIT_FAILURE);
 	else
 	{
 		if (EXIT_FAILURE == ft_dup_manage(fd, redir, err_n))
@@ -89,13 +90,13 @@ static int	ft_dup_manage(int fd, t_lexem *redir, int *err_n)
 	if (redir->token == IN_REDIR || redir->token >= HERE_DOC)
 	{
 		if (0 > dup2(fd, STDIN_FILENO))
-			return (close (fd), perror("-Minishell "), \
+			return (close (fd), perror("9-Minishell "), \
 				*err_n = errno, EXIT_FAILURE);
 	}
 	else if (redir->token == OUT_REDIR || redir->token >= APPEND_REDIR)
 	{
 		if (0 > dup2(fd, STDOUT_FILENO))
-			return (close (fd), perror("-Minishell "), \
+			return (close (fd), perror("99-Minishell "), \
 				*err_n = errno, EXIT_FAILURE);
 	}
 	close (fd);
