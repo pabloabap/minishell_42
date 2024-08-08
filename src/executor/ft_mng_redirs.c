@@ -28,11 +28,23 @@ static int	ft_dup_manage(int fd, t_lexem *redir, int *err_n);
 int	ft_prepare_redirections(t_single_cmd *cmd, int *err_n)
 {
 	t_lexem	*redirs;
-
+	t_lexem	*tmp;
+	int 	hdoc_count;
+	
 	redirs = cmd->redirection;
+	tmp = cmd->redirection;
+	hdoc_count = 0;
+	while (tmp)
+	{
+		if (tmp->token >= HERE_DOC)
+			hdoc_count ++;
+		tmp = tmp->next;
+	}
 	while (redirs)
 	{
-		if (EXIT_FAILURE == ft_open_redirs(cmd, redirs, err_n))
+		if (hdoc_count > 1)
+			hdoc_count --;
+		else if (EXIT_FAILURE == ft_open_redirs(cmd, redirs, err_n))
 			return (EXIT_FAILURE);
 		redirs = redirs->next;
 	}
@@ -64,7 +76,7 @@ static int	ft_open_redirs(t_single_cmd *cmd, t_lexem *redir, int *err_n)
 	if (redir->token >= HERE_DOC)
 		fd = cmd->fd_hdoc;
 	if (fd < 0)
-		return (perror("-Minishell "), *err_n = 1, EXIT_FAILURE);
+		return (perror("4-Minishell "), *err_n = 1, EXIT_FAILURE);
 	else
 	{
 		if (EXIT_FAILURE == ft_dup_manage(fd, redir, err_n))
