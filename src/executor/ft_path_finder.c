@@ -1,4 +1,14 @@
-// CABECERA
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_path_finder.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/08 19:11:42 by pabad-ap          #+#    #+#             */
+/*   Updated: 2024/08/08 19:11:50 by pabad-ap         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
@@ -41,22 +51,26 @@ static int	ft_check_path_env(t_single_cmd *cmd, int *err_n)
 	char	**dirs;
 	DIR		*actual;
 
-	i = 0;
-	dirs = ft_split(getenv("PATH"), ':');
-	if (dirs == NULL)
-		err_malloc_fail(err_n);
-	while (dirs && dirs[i] && cmd->cmd_path == NULL)
+	if (!is_builtin(cmd->str[0]))
 	{
-		actual = opendir(dirs[i]);
-		if (actual == NULL && dirs[i] == NULL)
-			return (perror("12-Minishell "), *err_n = errno, EXIT_FAILURE);
-		else if (actual != NULL)
-			ft_check_path_dir(cmd, dirs[i], actual, err_n);
-		free(dirs[i]);
-		dirs[i] = NULL;
-		i++;
+		i = 0;
+		dirs = ft_split(getenv("PATH"), ':');
+		if (dirs == NULL)
+			err_malloc_fail(err_n);
+		while (dirs && dirs[i] && cmd->cmd_path == NULL)
+		{
+			actual = opendir(dirs[i]);
+			if (actual == NULL && dirs[i] == NULL)
+				return (perror("12-Minishell "), *err_n = errno, EXIT_FAILURE);
+			else if (actual != NULL)
+				ft_check_path_dir(cmd, dirs[i], actual, err_n);
+			free(dirs[i]);
+			dirs[i] = NULL;
+			i++;
+		}
+		return (free(dirs), dirs = NULL, ft_check_cmd_not_found (cmd, err_n));
 	}
-	return (free(dirs), dirs = NULL, ft_check_cmd_not_found (cmd, err_n));
+	return (EXIT_SUCCESS);
 }
 
 /** Subfunción de `ft_check_path_env` encargada iterar sobre los ficheros de 

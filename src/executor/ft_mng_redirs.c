@@ -64,7 +64,8 @@ static int	ft_open_redirs(t_single_cmd *cmd, t_lexem *redir, int *err_n)
 	if (redir->token >= HERE_DOC)
 		fd = cmd->fd_hdoc;
 	if (fd < 0)
-		return (perror("8-Minishell "), *err_n = 1, EXIT_FAILURE);
+		return (ft_putstr_fd("8-Minishell: ", STDERR_FILENO), \
+			perror(redir->str), *err_n = 1, EXIT_FAILURE);
 	else
 	{
 		if (EXIT_FAILURE == ft_dup_manage(fd, redir, err_n))

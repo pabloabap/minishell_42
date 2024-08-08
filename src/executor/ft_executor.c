@@ -6,16 +6,18 @@
 /*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 20:22:37 by pabad-ap          #+#    #+#             */
-/*   Updated: 2024/07/24 20:22:43 by pabad-ap         ###   ########.fr       */
+/*   Updated: 2024/08/08 19:16:40 by pabad-ap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
 
 static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n);
-static int	ft_builtins(t_single_cmd *cmd, int std_out, char **envp, int *en);
 static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *e);
-static int	ft_parent_mng(t_single_cmd *cmd, char **envp, int *err_n, int std_out);
+static int	ft_parent_mng(t_single_cmd *cmd, char **envp, int *err_n, \
+		int std_out);
+static int	ft_single_builtin(t_single_cmd *cmd, char **envp, int *err_n, \
+	int std_out);
 
 /** Funcion principal executor. Crea un proceso hijo por comando 
  * a ejecutar, configura su entrada, salida y redirecciones y los ejecuta 
@@ -80,37 +82,6 @@ static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n)
 	return (EXIT_SUCCESS);
 }
 
-static int	ft_builtins(t_single_cmd *cmd, int std_out, char **envp, int *en)
-{
-	char	*builtins;
-	char	**tmp;
-	int		i;
-
-	builtins = "echo:cd:pwd:export:unset:env:exit";
-	tmp = ft_split(builtins, ':');
-	i = 0;
-	while (cmd)
-	{
-		while (tmp[i])
-		{
-			if (0 == ft_strncmp(tmp[i], cmd->str[0], ft_strlen(tmp[i]) + 1))
-			{
-				if (EXIT_FAILURE == ft_set_pipes(cmd, std_out, en, 1) || \
-					EXIT_FAILURE == ft_prepare_redirections(cmd, en))					
-					return (printf("A22X\n"), exit(*en), EXIT_FAILURE);
-				execute_builtin(cmd->str, envp);
-			}
-			if (!cmd->next)
-				free(tmp[i]);
-			i ++;
-		}
-		i = 0;
-		cmd = cmd->next;
-	}
-	free(tmp);
-	return (EXIT_SUCCESS);
-}
-
 /** Gestiona instrucciones para el proceso hijo de un fork.
  * 
  * @param cmd Puntero al comando actual a procesar.
@@ -123,20 +94,22 @@ static int	ft_builtins(t_single_cmd *cmd, int std_out, char **envp, int *en)
  */
 static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
 {
-	if (is_builtin(cmd->str[0]))
+	if (is_builtin(cmd->str[0]) && !cmd->prev && !cmd->next)
 		return (exit(0), EXIT_SUCCESS);
 	else if (!cmd->str || \
 		EXIT_FAILURE == ft_set_pipes(cmd, std_out, en, 0) || \
 		EXIT_FAILURE == ft_prepare_redirections(cmd, en) || \
 		EXIT_FAILURE == ft_path_finder(cmd, en))
 		return (exit(*en), EXIT_FAILURE);
+	else if (is_builtin(cmd->str[0]) && cmd->next)
+		execute_builtin(cmd->str, envp);
 	else if (execve(cmd->cmd_path, cmd->str, envp) < 0)
 	{
 		if (access(cmd->cmd_path, X_OK) < 0)
 			return (perror("2-Minishell "), exit(126), EXIT_FAILURE);
 		return (perror("22-Minishell "), exit(errno), EXIT_FAILURE);
 	}
-	return (EXIT_SUCCESS);
+	return (exit(0), EXIT_SUCCESS);
 }
 
 /** Gestiona instrucciones para el proceso padre en un fork.
@@ -150,32 +123,68 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
  * 
  * @return Resultado de ejecición e impresión de errores si procede. 
  */
-static int	ft_parent_mng(t_single_cmd *cmd, char **envp, int *err_n, int std_out)
+static int	ft_parent_mng(t_single_cmd *cmd, char **envp, int *err_n, \
+	int std_out)
 {
 	t_single_cmd	*tmp;
-	//t_single_cmd	*tmp2;
 	int				wstatus;
 
 	tmp = cmd;
-	//tmp2 = cmd;
-	ft_builtins(cmd, std_out, envp, err_n);
-    //close (std_out);
+	if (is_builtin(cmd->str[0]) && !cmd->next)
+		if (EXIT_FAILURE == ft_single_builtin(cmd, envp, err_n, std_out))
+			return (EXIT_FAILURE);
 	while (tmp)
 	{
 		if (tmp->next)
-			if (!is_builtin(tmp-> str[0]) && -1 == close(tmp->pipe_fd[1]))
+			if (-1 == close(tmp->pipe_fd[1]))
 				return (perror("3-Minishell "), *err_n = errno, EXIT_FAILURE);
 		if (tmp->prev)
-			if (!is_builtin(tmp-> str[0]) && -1 == close(tmp->prev->pipe_fd[0]))
+			if (-1 == close(tmp->prev->pipe_fd[0]))
 				return (perror("33-Minishell "), *err_n = errno, EXIT_FAILURE);
 		tmp = tmp-> next;
 	}
 	while (cmd)
 	{
 		wait_signal(0);
-		if (!is_builtin(cmd->str[0]))
-			wait(&wstatus);
+		wait(&wstatus);
 		cmd = cmd->next;
 	}
+	close (std_out);
 	return (ft_parent_exit(wstatus, err_n));
+}
+
+/** Gestiona los casos en los que solo se recibe un comando builtin como input.
+ * Cuando minishell recibe un solo comando y es una builtin function
+ * el programa ejecuta la funcion en el mismo proceso, no crea un subproceso.
+ * 
+ * @param cmd Puntero a la estructura que contiene informacion del 
+ * comando.
+ * @param envp Array a las variables de entorno.
+ * @param err_n Puntero al espacio de memoria que almacena el numero del
+ * ultimo error de ejecucion.
+ * @param std_out File descriptor que apunta al STDOUT por defecto del 
+ * terminal, para recuperarlo en caso de que se haya cambiado.
+ * 
+ * @return Resultado de la ejecucion. Actualiza a traves de punteros el
+ * err_n en caso de fallo.
+ */
+static int	ft_single_builtin(t_single_cmd *cmd, char **envp, int *err_n, \
+	int std_out)
+{
+	int	default_stdin;
+
+	default_stdin = dup(STDIN_FILENO);
+	if (0 > default_stdin)
+		return (perror("0000-Minishell "), *err_n = errno, EXIT_FAILURE);
+	if (EXIT_FAILURE == ft_prepare_redirections(cmd, err_n))
+		return (EXIT_FAILURE);
+	if (0 > dup2(default_stdin, STDIN_FILENO))
+		return (close (default_stdin), perror("00000-Minishell "), \
+			*err_n = errno, EXIT_FAILURE);
+	execute_builtin(cmd->str, envp);
+	if (0 > dup2(std_out, STDOUT_FILENO))
+		return (close (default_stdin), perror("000000-Minishell "), \
+			*err_n = errno, EXIT_FAILURE);
+	ft_close(default_stdin, err_n);
+	return (EXIT_SUCCESS);
 }
