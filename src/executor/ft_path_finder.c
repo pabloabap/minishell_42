@@ -49,7 +49,7 @@ static int	ft_check_path_env(t_single_cmd *cmd, int *err_n)
 	{
 		actual = opendir(dirs[i]);
 		if (actual == NULL && dirs[i] == NULL)
-			return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
+			return (perror("12-Minishell "), *err_n = errno, EXIT_FAILURE);
 		else if (actual != NULL)
 			ft_check_path_dir(cmd, dirs[i], actual, err_n);
 		free(dirs[i]);
@@ -80,7 +80,7 @@ int *err_n)
 
 	subdir = readdir(actual);
 	if (subdir == NULL && *err_n != errno)
-		return (perror("-Minishell "), *err_n = errno, EXIT_FAILURE);
+		return (perror("123-Minishell "), *err_n = errno, EXIT_FAILURE);
 	while (subdir)
 	{
 		if (!ft_strncmp(subdir->d_name, cmd->str[0], \

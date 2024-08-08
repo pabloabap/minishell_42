@@ -57,7 +57,7 @@ static int	ft_heredoc_creation(t_lexem *redir, int *err_n)
 	w_fd = open("./tmp.txt", O_WRONLY | O_CREAT | O_TRUNC, \
 		S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	if (w_fd < 0)
-		return (perror("-Minishell% "), w_fd);
+		return (perror("4-Minishell% "), w_fd);
 	line = readline("heredoc> ");
 	while (line && ft_strncmp(line, redir->str, ft_strlen(redir->str) + 1))
 	{
@@ -164,14 +164,14 @@ static int	ft_write_env_var(char *line, int v_start, int *err_n, int hdoc)
 	{
 		v_name = ft_substr(line, v_start, v_end - v_start);
 		if (v_name == NULL)
-			return (perror("-Minishell% "), *err_n = errno, EXIT_FAILURE);
+			return (perror("5-Minishell% "), *err_n = errno, EXIT_FAILURE);
 		if (getenv(v_name) != NULL)
 			ft_putstr_fd(getenv(v_name), hdoc);
 		free(v_name);
 	}
 	else
 		if (-1 == write(hdoc, "$", 1))
-			return (perror("-Minishell% "), *err_n = errno, EXIT_FAILURE);
+			return (perror("55-Minishell% "), *err_n = errno, EXIT_FAILURE);
 	if (line[v_end])
 	{
 		line += v_end;
