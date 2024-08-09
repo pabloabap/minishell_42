@@ -1,0 +1,35 @@
+//CABECERA
+
+#include "../../include/minishell.h"
+
+ /** Cuenta el número de comillas consecutivas antes de un espacio
+  * para comprobar si lo entrecomillado tiene comillas pares (input correcto)
+  * o impares (input erroneo). En caso de que el input sea erroneo
+  * convierte `end_quote` en `NULL` para informar al lexer del error.
+  * 
+  * @param end_quote Puntero al primer cierre encontrado de una
+  *  comilla.
+  * @param quote_type Caracter del tipo de comilla que ha abierto
+  * la string entrecomillada.
+ */
+void	ft_consecutive_quotes(char **end_quote, char quote_type)
+{
+	int	i;
+	int	quotes_counter;
+	
+	i= 0;
+	quotes_counter = 1;
+	while (*end_quote && (*end_quote)[i] != '\0' && !is_whitespace((*end_quote)[i]))
+	{
+		if ((*end_quote)[i] == quote_type)
+			quotes_counter ++;
+		i ++;
+	}
+	if (quotes_counter % 2 != 0)
+		*end_quote = NULL;
+	else if ((*end_quote)[i] == '\0' || is_whitespace((*end_quote)[i]))
+		*end_quote = (*end_quote + i - 1);
+	printf("COUNTER => %i\n", quotes_counter);
+	printf("EOQ => %s\n", *end_quote);
+}
+

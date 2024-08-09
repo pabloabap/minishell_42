@@ -116,18 +116,22 @@ static int	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 	char	*end_quote;
 
 	end_quote = ft_strchr(++(*str), quote_type);
+	ft_consecutive_quotes(&end_quote, quote_type);		
+	printf("quote_type: %c | str: %s | end_quote: %p \n", quote_type, *str, end_quote);
 	if (end_quote == NULL)
 	{
 		ft_putendl_fd("-minishell: syntax error: quotes not closed", \
 		STDERR_FILENO);
 		return ((*lexem_item)->str = NULL, EXIT_FAILURE);
 	}
-	(*lexem_item)->str = ft_substr(*str, 0, end_quote - *str);
 	if (quote_type == '"')
 		(*lexem_item)->token = DOUBLE_QUOTES;
 	else
 		(*lexem_item)->token = SINGLE_QUOTES;
-	*str = (*str + (end_quote - *str + 1));
+//METER FUNCION DE RELLENAR STR CON EXPANSIONES Y MULTIPLES COMILLAS
+	(*lexem_item)->str = ft_substr(*str, 0, end_quote - *str +  !(*end_quote == quote_type));		
+	*str = (*str + (end_quote - *str + (*end_quote == quote_type))); // Mueve el puntero str al caracter posterior al cierre de comillas
+	printf("POST - str: %s  | ITEM: %s\n", *str, (*lexem_item)->str);
 	return (EXIT_SUCCESS);
 }
 
