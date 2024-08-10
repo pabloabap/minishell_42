@@ -32,6 +32,8 @@ INCLUDE		= -Iinclude -I$(LIBFT_DIR)
 SRC			=	src/lexer/lexer.c \
 				src/lexer/lexer_utils.c \
 				src/lexer/consecutive_quotes_utils.c \
+				src/lexer/consecutive_quotes_split.c \
+				src/lexer/consecutive_quotes_fill.c \
 				src/parser/parser_utils.c \
 				src/parser/cmd_split.c \
 				src/parser/redirection_utils.c \

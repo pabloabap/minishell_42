@@ -41,5 +41,7 @@ int		token_lex_fill(char *str, t_lexem **lexem_item, t_tokens token);
 int		lexer(char *str, t_lexem **head_lex_list);
 t_lexem	*ft_lstlex(t_lexem *lst);
 void	ft_consecutive_quotes(char **end_quote, char quote_type);
+void	ft_str_lex_check(t_lexem **lexem_item, char quote_type);
+char	**ft_consecutive_split(char const *s, char c);
 
 #endif
