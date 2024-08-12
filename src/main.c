@@ -16,6 +16,35 @@ static void	ft_readline(t_data *data);
 static int	ft_preprocesing(t_data *data);
 int	g_error = 0;
 
+char **dup_envp(char **envp)
+{
+    int i;
+    char **envp_cpy;
+
+    i = 0;
+    while (envp[i])
+        i++;
+    envp_cpy = (char **)malloc(sizeof(char *) * (i + 1));
+    if (!envp_cpy)
+        return (NULL);
+    i = 0;
+    while (envp[i])
+    {
+        envp_cpy[i] = ft_strdup(envp[i]);
+        if (!envp_cpy[i])
+        {
+            while (i > 0)
+                free(envp_cpy[--i]);
+            free(envp_cpy);
+            return (NULL);
+        }
+        i++;
+    }
+    envp_cpy[i] = NULL;
+    return (envp_cpy);
+}
+
+
 int	main(int argc, char **argv, char **envp)
 {
 	t_data	*data;
@@ -24,13 +53,14 @@ int	main(int argc, char **argv, char **envp)
 	if (argc == 1 && ft_strnstr(argv[0], "minishell", ft_strlen(argv[0])))
 	{
 		status = init_data(&data);
+		data->envp_cpy = dup_envp(envp);
 		while (EXIT_SUCCESS == status)
 		{
 			ft_readline(data);
 			if (data->input && *(data->input) != '\0')
 			{
 				if (EXIT_SUCCESS == ft_preprocesing(data) && EXIT_SUCCESS == \
-				ft_executor(data->head_cmd_list, envp, &data->last_exit))
+				ft_executor(data->head_cmd_list, data->envp_cpy, &data->last_exit))
 					data->last_exit = 0;
 			}
 			else if (!data->input)

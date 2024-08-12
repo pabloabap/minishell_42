@@ -45,6 +45,7 @@ typedef struct s_data
 	t_lexem			*head_lex_list;
 	t_single_cmd	*head_cmd_list;
 	char			*input;
+	char			**envp_cpy;
 	int				last_exit;	
 }	t_data;
 

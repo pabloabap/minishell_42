@@ -10,7 +10,7 @@ LIBFT_AR	= ./lib/libft/libft.a
 
 # Compiler and flags
 CC 			= gcc
-CFLAGS 		= -Wall -Wextra -Werror
+CFLAGS 		= -Wall -Wextra -Werror -g
 READLINE	= -lreadline -lhistory
 LIBFT		= -L./lib/libft -lft
 
