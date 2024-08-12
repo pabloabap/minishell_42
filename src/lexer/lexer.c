@@ -116,18 +116,24 @@ static int	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 	char	*end_quote;
 
 	end_quote = ft_strchr(++(*str), quote_type);
+	ft_consecutive_quotes(&end_quote, quote_type);
 	if (end_quote == NULL)
 	{
 		ft_putendl_fd("-minishell: syntax error: quotes not closed", \
 		STDERR_FILENO);
 		return ((*lexem_item)->str = NULL, EXIT_FAILURE);
 	}
-	(*lexem_item)->str = ft_substr(*str, 0, end_quote - *str);
 	if (quote_type == '"')
 		(*lexem_item)->token = DOUBLE_QUOTES;
 	else
 		(*lexem_item)->token = SINGLE_QUOTES;
+	(*lexem_item)->str = ft_substr(*str, 0, end_quote - *str + \
+		!(*end_quote == quote_type));
+	ft_str_lex_check(lexem_item, quote_type);
+	if ((*lexem_item)->str == NULL)
+		return (EXIT_FAILURE);
 	*str = (*str + (end_quote - *str + 1));
+	printf("POST - str: %s  | ITEM: %s\n", *str, (*lexem_item)->str);
 	return (EXIT_SUCCESS);
 }
 
