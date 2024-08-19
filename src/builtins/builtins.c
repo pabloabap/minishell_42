@@ -12,11 +12,33 @@
 
 #include "../../include/minishell.h"
 
+int variable_exist(char **envp, char *str)
+{
+    int i;
+    int eq_idx;
+
+    eq_idx = equal_sign(str);
+    if (eq_idx != -1 && (str[eq_idx + 1] == '\"' || str[eq_idx + 1] == '\''))
+        delete_quotes(&str[eq_idx + 1], str[eq_idx + 1]);
+
+    i = 0;
+    while (envp[i])
+    {
+        if (ft_strncmp(envp[i], str, equal_sign(envp[i])) == 0)
+        {
+            free(envp[i]);
+            envp[i] = ft_strdup(str);
+            return (1);
+        }
+        i++;
+    }
+    return (0);
+}
+#include "../../include/minishell.h"
+
 // Array de funciones built-in
 builtin_func	builtin_arr(char *str)
 {
-	size_t	num_builtins;
-	size_t	i;
 	static struct 
 	{
 		char		*name;
@@ -30,6 +52,9 @@ builtin_func	builtin_arr(char *str)
 		{"env", builtin_env},
 		{"exit", builtin_exit}
 	};
+	size_t	num_builtins;
+	size_t	i;
+
 	num_builtins = sizeof(builtins) / sizeof(builtins[0]);
 	i = 0;
 	while (i < num_builtins)

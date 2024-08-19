@@ -43,4 +43,6 @@ int			equal_sign(char *str);
 void		delete_quotes(char *str, char quote_char);
 void		mini_env(t_env *env, t_single_cmd *simple_cmd);
 
+int variable_exist(char **envp, char *str);
+
 #endif
