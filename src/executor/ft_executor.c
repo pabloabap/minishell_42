@@ -177,6 +177,7 @@ static int	ft_parent_mng(t_single_cmd *cmd, char **envp, int *err_n, \
  * @return Resultado de la ejecucion. Actualiza a traves de punteros el
  * err_n en caso de fallo.
  */
+/*
 static int	ft_single_builtin(t_single_cmd *cmd, char **envp, int *err_n, \
 	int std_out)
 {
@@ -194,6 +195,29 @@ static int	ft_single_builtin(t_single_cmd *cmd, char **envp, int *err_n, \
 	if (0 > dup2(std_out, STDOUT_FILENO))
 		return (close (default_stdin), perror("000000-Minishell "), \
 			*err_n = errno, EXIT_FAILURE);
+	ft_close(default_stdin, err_n);
+	return (EXIT_SUCCESS);
+}
+*/
+#include "../../include/minishell.h"
+
+static int	ft_single_builtin(t_single_cmd *cmd, char **envp, int *err_n, int std_out)
+{
+	int	default_stdin;
+
+	default_stdin = dup(STDIN_FILENO);
+	if (0 > default_stdin)
+		return (perror("0000-Minishell "), *err_n = errno, EXIT_FAILURE);
+	if (EXIT_FAILURE == ft_prepare_redirections(cmd, err_n))
+		return (EXIT_FAILURE);
+	if (0 > dup2(default_stdin, STDIN_FILENO))
+		return (close(default_stdin), perror("00000-Minishell "), *err_n = errno, EXIT_FAILURE);
+	
+	// Llama a execute_builtin con data->envp_cpy
+	execute_builtin(cmd->str, envp);
+
+	if (0 > dup2(std_out, STDOUT_FILENO))
+		return (close(default_stdin), perror("000000-Minishell "), *err_n = errno, EXIT_FAILURE);
 	ft_close(default_stdin, err_n);
 	return (EXIT_SUCCESS);
 }

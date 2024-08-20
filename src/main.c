@@ -15,7 +15,7 @@
 static void	ft_readline(t_data *data);
 static int	ft_preprocesing(t_data *data);
 int	g_error = 0;
-
+/*
 char **dup_envp(char **envp)
 {
     int i;
@@ -43,7 +43,36 @@ char **dup_envp(char **envp)
     envp_cpy[i] = NULL;
     return (envp_cpy);
 }
+*/
+char **dup_envp(char **envp)
+{
+    int i = 0;
+    char **envp_copy;
 
+    while (envp[i])
+        i++;
+
+    envp_copy = (char **)malloc(sizeof(char *) * (i + 1));
+    if (!envp_copy)
+        return NULL;
+
+    i = 0;
+    while (envp[i])
+    {
+        envp_copy[i] = ft_strdup(envp[i]);
+        if (!envp_copy[i])
+        {
+            // En caso de error, liberamos la memoria ya asignada
+            while (i-- > 0)
+                free(envp_copy[i]);
+            free(envp_copy);
+            return NULL;
+        }
+        i++;
+    }
+    envp_copy[i] = NULL;
+    return envp_copy;
+}
 
 int	main(int argc, char **argv, char **envp)
 {

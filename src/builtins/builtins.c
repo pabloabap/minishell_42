@@ -74,6 +74,7 @@ int	is_builtin(char *command)
 }
 
 // Ejecuta el comando interno correspondiente
+/*
 void	execute_builtin(char **args, char **envp)
 {
 	builtin_func	builtin_func;
@@ -81,4 +82,15 @@ void	execute_builtin(char **args, char **envp)
 	builtin_func = builtin_arr(args[0]);
 	if (builtin_func != NULL)
 		builtin_func(args, envp);
+}
+*/
+void execute_builtin(char **args, char **envp)
+{
+    builtin_func builtin_func;
+
+    builtin_func = builtin_arr(args[0]);
+    if (builtin_func != NULL)
+    {
+        builtin_func(args, envp); // Se ejecuta la función builtin con envp (que será data->envp_cpy)
+    }
 }
