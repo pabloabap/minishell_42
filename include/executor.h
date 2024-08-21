@@ -14,6 +14,11 @@
 # define EXECUTOR_H
 # include "minishell.h"
 
+typedef struct s_env
+{
+    char    **envp_cpy;
+}   t_env;
+
 int		ft_executor(t_single_cmd *head, t_env *env, int *err_n);
 int		ft_prepare_redirections(t_single_cmd *cmd, int *err_n);
 int		ft_set_pipes(t_single_cmd *current_cmd, int std_out, \

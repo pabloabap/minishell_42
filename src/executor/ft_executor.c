@@ -13,7 +13,7 @@
 #include "../../include/minishell.h"
 
 static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n);
-static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *e);
+static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_env *env, int *e);
 static int	ft_parent_mng(t_single_cmd *cmd, t_env *env, int *err_n, \
 		int std_out);
 static int	ft_single_builtin(t_single_cmd *cmd, t_env *env, int *err_n, \
@@ -92,7 +92,7 @@ static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n)
  * 
  * @return Resultado de ejecición e impresión de errores si procede.
  */
-static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
+static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_env *env, int *en)
 {
 	if (is_builtin(cmd->str[0]) && !cmd->prev && !cmd->next)
 		return (exit(0), EXIT_SUCCESS);
@@ -102,8 +102,8 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
 		EXIT_FAILURE == ft_path_finder(cmd, en))
 		return (exit(*en), EXIT_FAILURE);
 	else if (is_builtin(cmd->str[0]) && cmd->next)
-		execute_builtin(cmd->str, envp);
-	else if (execve(cmd->cmd_path, cmd->str, envp) < 0)
+		execute_builtin(cmd->str, env);
+	else if (execve(cmd->cmd_path, cmd->str, env->envp_cpy) < 0)
 	{
 		if (access(cmd->cmd_path, X_OK) < 0)
 			return (perror("2-Minishell "), exit(126), EXIT_FAILURE);

@@ -13,7 +13,7 @@
 #include "../../include/builtins.h"
 
 // Devuelve el índice del primer signo '=' en la cadena, o -1 si no se encuentra
-int equal_sign(char *str)
+int equal_sign(const char *str)
 {
     int i = 0;
 
@@ -221,7 +221,7 @@ void builtin_export(char **args, t_env *env)
                 delete_quotes(&str[eq_idx + 1], '\"');
 
             // Primero, verificamos si la variable ya existe
-            if (!variable_exist(env->envp_cpy, str))
+            if (!variable_exist(env, str))
             {
                 // Si no existe, intentamos agregarla
                 new_envp = add_var(env->envp_cpy, str);

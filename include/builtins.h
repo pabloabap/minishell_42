@@ -33,7 +33,7 @@ char		**add_var(char **arr, char *str);
 void		whileloop_add_var(char **arr, char **rtn, char *str);
 
 // Declaraciones de las funciones faltantes
-int			equal_sign(char *str);
+int			equal_sign(const char *str);
 void		delete_quotes(char *str, char quote_char);
 void		mini_env(t_env *env, t_single_cmd *simple_cmd);
 

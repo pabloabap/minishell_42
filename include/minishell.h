@@ -37,11 +37,6 @@
 /*Variable global que almacena el exit status del último comando ejecutado*/
 extern int	g_error;
 
-typedef struct s_env
-{
-    char    **envp_cpy;
-}   t_env;
-
 /**Estructura principal desde la que podamos liberar
  * memoría alojada dinámicamente.
 */
