@@ -18,14 +18,15 @@
 #include <string.h>
 
 // Declaraciones de funciones internas
-static char	*find_path_ret(char *str, char **envp);
-static int	specific_path(char **envp, char *str);
-static void	add_path_to_env(char **envp, char *pwd, char *old_pwd);
+static char	*find_path_ret(char *str, t_env *env);
+static int	specific_path(t_env *env, char *str);
+static void	add_path_to_env(t_env *env, char *pwd, char *old_pwd);
 
 // Encuentra el valor de una variable de entorno especificada por `str` en `envp`.
-static char	*find_path_ret(char *str, char **envp)
+static char	*find_path_ret(char *str, t_env *env)
 {
     int	i;
+    char **envp = env->envp_cpy; // Usar envp_cpy desde t_env
 
     i = 0;
     if (!envp) // Verifica que envp no sea NULL
@@ -46,12 +47,12 @@ static char	*find_path_ret(char *str, char **envp)
  * especificada por `str`.
 **/
 
-static int	specific_path(char **envp, char *str)
+static int	specific_path(t_env *env, char *str)
 {
     char	*tmp;
     int		ret;
 
-    tmp = find_path_ret(str, envp);
+    tmp = find_path_ret(str, env);
     if (!tmp)
     {
         ft_putstr_fd("minishell: ", STDERR_FILENO);
@@ -72,10 +73,11 @@ static int	specific_path(char **envp, char *str)
 }
 
 // Actualiza la variable de entorno `PWD` y `OLDPWD` en `envp`.
-static void	add_path_to_env(char **envp, char *pwd, char *old_pwd)
+static void	add_path_to_env(t_env *env, char *pwd, char *old_pwd)
 {
     int		i;
     char	*tmp;
+    char    **envp = env->envp_cpy; // Usar envp_cpy desde t_env
 
     i = 0;
     while (envp[i])
@@ -106,7 +108,7 @@ static void	add_path_to_env(char **envp, char *pwd, char *old_pwd)
  * entorno.
  */
 
-void builtin_cd(char **args, char **envp)
+void builtin_cd(char **args, t_env *env)
 {
     int ret;
     char *pwd = NULL;
@@ -115,7 +117,7 @@ void builtin_cd(char **args, char **envp)
     // Mensajes de depuración
     ft_putendl_fd("minishell: entrando en builtin_cd", STDERR_FILENO);
 
-    if (!envp) // Verifica que envp no sea NULL
+    if (!env->envp_cpy) // Verifica que envp no sea NULL
     {
         ft_putendl_fd("minishell: envp es NULL", STDERR_FILENO);
         return;
@@ -132,9 +134,9 @@ void builtin_cd(char **args, char **envp)
         ft_putendl_fd("minishell: old_pwd obtenido correctamente", STDERR_FILENO);
 
     if (!args[1])
-        ret = specific_path(envp, "HOME=");
+        ret = specific_path(env, "HOME=");
     else if (ft_strncmp(args[1], "-", 1) == 0)
-        ret = specific_path(envp, "OLDPWD=");
+        ret = specific_path(env, "OLDPWD=");
     else
     {
         ret = chdir(args[1]);
@@ -160,7 +162,7 @@ void builtin_cd(char **args, char **envp)
         ft_putendl_fd("minishell: pwd obtenido correctamente", STDERR_FILENO);
 
     if (pwd && old_pwd)
-        add_path_to_env(envp, pwd, old_pwd);
+        add_path_to_env(env, pwd, old_pwd);
 
     // Libera la memoria después de usar pwd y old_pwd
     if (pwd != NULL)

@@ -14,9 +14,9 @@
 
 static int	ft_prepare_exec(t_single_cmd *head, int *std_out, int *err_n);
 static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *e);
-static int	ft_parent_mng(t_single_cmd *cmd, char **envp, int *err_n, \
+static int	ft_parent_mng(t_single_cmd *cmd, t_env *env, int *err_n, \
 		int std_out);
-static int	ft_single_builtin(t_single_cmd *cmd, char **envp, int *err_n, \
+static int	ft_single_builtin(t_single_cmd *cmd, t_env *env, int *err_n, \
 	int std_out);
 
 /** Funcion principal executor. Crea un proceso hijo por comando 
@@ -31,7 +31,7 @@ static int	ft_single_builtin(t_single_cmd *cmd, char **envp, int *err_n, \
  * 
  * @return Resultado de la ejecución.
  */
-int	ft_executor(t_single_cmd *head, char **envp, int *err_n)
+int	ft_executor(t_single_cmd *head, t_env *env, int *err_n)
 {
 	int				std_out;
 	int				pid;
@@ -46,11 +46,11 @@ int	ft_executor(t_single_cmd *head, char **envp, int *err_n)
 		if (pid == -1)
 			return (perror("00-Minishell"), *err_n = errno, EXIT_FAILURE);
 		if (pid == 0)
-			if (EXIT_FAILURE == ft_child_mng(head, std_out, envp, err_n))
+			if (EXIT_FAILURE == ft_child_mng(head, std_out, env, err_n))
 				return (EXIT_FAILURE);
 		head = head->next;
 	}
-	if (EXIT_FAILURE == ft_parent_mng(tmp, envp, err_n, std_out))
+	if (EXIT_FAILURE == ft_parent_mng(tmp, env, err_n, std_out))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
@@ -123,7 +123,7 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, char **envp, int *en)
  * 
  * @return Resultado de ejecición e impresión de errores si procede. 
  */
-static int	ft_parent_mng(t_single_cmd *cmd, char **envp, int *err_n, \
+static int	ft_parent_mng(t_single_cmd *cmd, t_env *env, int *err_n, \
 	int std_out)
 {
 	t_single_cmd	*tmp;
@@ -131,7 +131,7 @@ static int	ft_parent_mng(t_single_cmd *cmd, char **envp, int *err_n, \
 
 	tmp = cmd;
 	if (is_builtin(cmd->str[0]) && !cmd->next)
-		if (EXIT_FAILURE == ft_single_builtin(cmd, envp, err_n, std_out))
+		if (EXIT_FAILURE == ft_single_builtin(cmd, env, err_n, std_out))
 			return (EXIT_FAILURE);
 	while (tmp)
 	{
@@ -191,8 +191,7 @@ static int	ft_single_builtin(t_single_cmd *cmd, char **envp, int *err_n, \
 }
 */
 #include "../../include/minishell.h"
-
-static int	ft_single_builtin(t_single_cmd *cmd, char **envp, int *err_n, int std_out)
+static int	ft_single_builtin(t_single_cmd *cmd, t_env *env, int *err_n, int std_out)
 {
 	int	default_stdin;
 
@@ -205,10 +204,11 @@ static int	ft_single_builtin(t_single_cmd *cmd, char **envp, int *err_n, int std
 		return (close(default_stdin), perror("00000-Minishell "), *err_n = errno, EXIT_FAILURE);
 	
 	// Llama a execute_builtin con data->envp_cpy
-	execute_builtin(cmd->str, envp);
+	execute_builtin(cmd->str, env);
 
 	if (0 > dup2(std_out, STDOUT_FILENO))
 		return (close(default_stdin), perror("000000-Minishell "), *err_n = errno, EXIT_FAILURE);
 	ft_close(default_stdin, err_n);
 	return (EXIT_SUCCESS);
 }
+

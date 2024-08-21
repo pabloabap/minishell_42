@@ -69,9 +69,9 @@ void	determine_exit_code(char **args)
 /** Implementación del comando 'exit' ajustada para aceptar args como argumento
  *  global o externo.
 */
-void	builtin_exit(char **args, char **envp)
+void	builtin_exit(char **args, t_env *env)
 {
-	(void)envp; //Ignora envp ya que no se utiliza en esta función
+	(void)env; //Ignora envp ya que no se utiliza en esta función
 
 	if (args[1] && args[2])
 	{ // Verifica si hay demasiados argumentos

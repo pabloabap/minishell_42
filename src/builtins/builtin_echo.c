@@ -28,9 +28,9 @@ static void	print_lines(int start_index, char **args, int fd)
 }
 
 // Implementación del comando 'echo'
-void	builtin_echo(char **args, char **envp)
+void	builtin_echo(char **args, t_env *env)
 {
-	(void)envp; // Ignoramos envp ya que no se utiliza en esta función
+	(void)env; // Ignoramos env ya que no se utiliza en esta función
 	int	i;
 	int	j;
 	int	n_option;

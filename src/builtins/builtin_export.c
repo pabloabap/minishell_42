@@ -103,6 +103,7 @@ char **replace_envp(char **old_envp, char **new_envp)
     return new_envp;
 }
 */
+
 char **add_var(char **arr, char *str)
 {
     int i;
@@ -195,7 +196,7 @@ void builtin_export(char **args, char **envp)
     }
 }
 */
-void builtin_export(char **args, char **envp)
+void builtin_export(char **args, t_env *env)
 {
     int i;
     char *str;
@@ -205,7 +206,7 @@ void builtin_export(char **args, char **envp)
     if (args[1] == NULL)
     {
         // Mostrar las variables de entorno
-        builtin_env(args, envp);
+        builtin_env(args, env);
         return;
     }
 
@@ -220,17 +221,17 @@ void builtin_export(char **args, char **envp)
                 delete_quotes(&str[eq_idx + 1], '\"');
 
             // Primero, verificamos si la variable ya existe
-            if (!variable_exist(envp, str))
+            if (!variable_exist(env->envp_cpy, str))
             {
                 // Si no existe, intentamos agregarla
-                new_envp = add_var(envp, str);
+                new_envp = add_var(env->envp_cpy, str);
                 if (new_envp == NULL)
                 {
                     perror("Error al agregar variable de entorno");
                     return;
                 }
                 // Aquí actualizamos el puntero envp con el nuevo array
-                envp = replace_envp(envp, new_envp);
+                env->envp_cpy = replace_envp(env->envp_cpy, new_envp);
             }
         }
         else

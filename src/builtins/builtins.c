@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-int variable_exist(char **envp, char *str)
+int variable_exist(t_env *env, char *str)
 {
     int i;
     int eq_idx;
@@ -22,12 +22,13 @@ int variable_exist(char **envp, char *str)
         delete_quotes(&str[eq_idx + 1], str[eq_idx + 1]);
 
     i = 0;
-    while (envp[i])
+    while (env->envp_cpy[i])
     {
-        if (ft_strncmp(envp[i], str, equal_sign(envp[i])) == 0)
+        if (ft_strncmp(env->envp_cpy[i], str, equal_sign(env->envp_cpy
+		[i])) == 0)
         {
-            free(envp[i]);
-            envp[i] = ft_strdup(str);
+            free(env->envp_cpy[i]);
+            env->envp_cpy[i] = ft_strdup(str);
             return (1);
         }
         i++;
@@ -84,13 +85,13 @@ void	execute_builtin(char **args, char **envp)
 		builtin_func(args, envp);
 }
 */
-void execute_builtin(char **args, char **envp)
+void execute_builtin(char **args, t_env *env)
 {
     builtin_func builtin_func;
 
     builtin_func = builtin_arr(args[0]);
     if (builtin_func != NULL)
     {
-        builtin_func(args, envp); // Se ejecuta la función builtin con envp (que será data->envp_cpy)
+        builtin_func(args, env); // Se ejecuta la función builtin con envp (que será data->envp_cpy)
     }
 }

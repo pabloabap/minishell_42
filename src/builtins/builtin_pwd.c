@@ -12,10 +12,10 @@
 
 #include "../../include/minishell.h"
 
-void	builtin_pwd(char **args, char **envp)
+void	builtin_pwd(char **args, t_env *env)
 {
 	(void)args; // Ignora args ya que no se utiliza en esta función
-	(void)envp; // Ignora envp ya que no se utiliza en esta función
+	(void)env; // Ignora envp ya que no se utiliza en esta función
 	char		cwd[1024];
 	char		*result;
 	const char	*error_msg;

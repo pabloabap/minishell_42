@@ -40,7 +40,7 @@ int	find_env_var_index(char **envp, const char *var)
 	return (-1);
 }
 
-void	builtin_unset(char **args, char **envp)
+void	builtin_unset(char **args, t_env *env)
 {
 	int	index;
 	int	i; // Comenzar en 1 para omitir el nombre del comando
@@ -48,9 +48,9 @@ void	builtin_unset(char **args, char **envp)
 	i = 1; // Comenzar en 1 para omitir el nombre del comando
 	while (args[i] != NULL)
 	{
-		index = find_env_var_index(envp, args[i]);
+		index = find_env_var_index(env, args[i]);
 		if (index != -1)
-			remove_env_var(&envp, index);
+			remove_env_var(env, index);
 		i++;
 	}
 }

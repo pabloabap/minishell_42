@@ -82,14 +82,18 @@ int	main(int argc, char **argv, char **envp)
 	if (argc == 1 && ft_strnstr(argv[0], "minishell", ft_strlen(argv[0])))
 	{
 		status = init_data(&data);
-		data->envp_cpy = dup_envp(envp);
+		// Inicializamos t_env y duplicamos envp dentro de envp_cpy
+        data->env = malloc(sizeof(t_env));
+        if (!data->env)
+            return (EXIT_FAILURE);
+        data->env->envp_cpy = dup_envp(envp);
 		while (EXIT_SUCCESS == status)
 		{
 			ft_readline(data);
 			if (data->input && *(data->input) != '\0')
 			{
 				if (EXIT_SUCCESS == ft_preprocesing(data) && EXIT_SUCCESS == \
-				ft_executor(data->head_cmd_list, data->envp_cpy, &data->last_exit))
+				ft_executor(data->head_cmd_list, data->env, &data->last_exit))
 					data->last_exit = 0;
 			}
 			else if (!data->input)
@@ -97,6 +101,8 @@ int	main(int argc, char **argv, char **envp)
 				clean_data(data), free(data), EXIT_SUCCESS);
 			clean_data(data);
 		}
+        free(data->env->envp_cpy);  // Liberamos la memoria de envp_cpy
+        free(data->env);            // Liberamos la estructura t_env
 		free(data);
 	}
 	return (status);
