@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../include/builtins.h"
+#include "../../include/minishell.h"
 
 // Devuelve el índice del primer signo '=' en la cadena, o -1 si no se encuentra
 int equal_sign(const char *str)

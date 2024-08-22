@@ -15,35 +15,7 @@
 static void	ft_readline(t_data *data);
 static int	ft_preprocesing(t_data *data);
 int	g_error = 0;
-/*
-char **dup_envp(char **envp)
-{
-    int i;
-    char **envp_cpy;
 
-    i = 0;
-    while (envp[i])
-        i++;
-    envp_cpy = (char **)malloc(sizeof(char *) * (i + 1));
-    if (!envp_cpy)
-        return (NULL);
-    i = 0;
-    while (envp[i])
-    {
-        envp_cpy[i] = ft_strdup(envp[i]);
-        if (!envp_cpy[i])
-        {
-            while (i > 0)
-                free(envp_cpy[--i]);
-            free(envp_cpy);
-            return (NULL);
-        }
-        i++;
-    }
-    envp_cpy[i] = NULL;
-    return (envp_cpy);
-}
-*/
 char **dup_envp(char **envp)
 {
     int i = 0;
@@ -93,7 +65,7 @@ int	main(int argc, char **argv, char **envp)
 			if (data->input && *(data->input) != '\0')
 			{
 				if (EXIT_SUCCESS == ft_preprocesing(data) && EXIT_SUCCESS == \
-				ft_executor(data->head_cmd_list, data->env, &data->last_exit))
+				ft_executor(data->head_cmd_list, data))
 					data->last_exit = 0;
 			}
 			else if (!data->input)
