@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #include "../../include/minishell.h"
 #include <unistd.h>
 #include <stdlib.h>
@@ -20,161 +19,112 @@
 // Declaraciones de funciones internas
 static char	*find_path_ret(char *str, t_env *env);
 static int	specific_path(t_env *env, char *str);
-static void	add_path_to_env(t_env *env, char *pwd, char *old_pwd);
+static int	change_directory(char *path, char *dir);
+static void	update_paths(t_env *env, char *old_pwd, char *pwd);
 
-// Encuentra el valor de una variable de entorno especificada por `str` en `envp`.
+// Encuentra el valor de una var de env especificada por `str` en `envp`.
 static char	*find_path_ret(char *str, t_env *env)
 {
-    int	i;
-    char **envp = env->envp_cpy; // Usar envp_cpy desde t_env
+	int		i;
+	char	**envp;
 
-    i = 0;
-    if (!envp) // Verifica que envp no sea NULL
-    {
-        ft_putendl_fd("minishell: envp is NULL", STDERR_FILENO);
-        return (NULL);
-    }
-    while (envp[i])
-    {
-        if (!ft_strncmp(envp[i], str, ft_strlen(str)))
-            return (ft_strdup(envp[i] + ft_strlen(str))); // Usa ft_strdup para duplicar la cadena
-        i++;
-    }
-    return (NULL);
+	i = 0;
+	envp = env->envp_cpy;
+	if (!envp)
+	{
+		ft_putendl_fd("minishell: envp is NULL", STDERR_FILENO);
+		return (NULL);
+	}
+	while (envp[i])
+	{
+		if (!ft_strncmp(envp[i], str, ft_strlen(str)))
+			return (
+				ft_strdup(envp[i] + ft_strlen(str))
+			);
+		i++;
+	}
+	return (NULL);
 }
 
-/** Cambia el directorio actual al valor de la variable de entorno 
+/* Cambia el directorio actual al valor de la variable de entorno 
  * especificada por `str`.
-**/
-
+ */
 static int	specific_path(t_env *env, char *str)
 {
-    char	*tmp;
-    int		ret;
+	char	*tmp;
+	int		ret;
 
-    tmp = find_path_ret(str, env);
-    if (!tmp)
-    {
-        ft_putstr_fd("minishell: ", STDERR_FILENO);
-        ft_putstr_fd(str, STDERR_FILENO);
-        ft_putendl_fd(" not found", STDERR_FILENO);
-        return (EXIT_FAILURE);
-    }
-    ret = chdir(tmp);
-    free(tmp); // Usa free para liberar memoria
-    if (ret != 0)
-    {
-        ft_putstr_fd("minishell: ", STDERR_FILENO);
-        ft_putstr_fd(str, STDERR_FILENO);
-        ft_putendl_fd(" not set", STDERR_FILENO);
-        return (EXIT_FAILURE);
-    }
-    return (EXIT_SUCCESS);
+	tmp = find_path_ret(str, env);
+	if (!tmp)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(str, STDERR_FILENO);
+		ft_putendl_fd(" not found", STDERR_FILENO);
+		return (EXIT_FAILURE);
+	}
+	ret = chdir(tmp);
+	free(tmp);
+	if (ret != 0)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(str, STDERR_FILENO);
+		ft_putendl_fd(" not set", STDERR_FILENO);
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
 }
 
-// Actualiza la variable de entorno `PWD` y `OLDPWD` en `envp`.
-static void	add_path_to_env(t_env *env, char *pwd, char *old_pwd)
-{
-    int		i;
-    char	*tmp;
-    char    **envp = env->envp_cpy; // Usar envp_cpy desde t_env
-
-    i = 0;
-    while (envp[i])
-    {
-        if (!ft_strncmp(envp[i], "PWD=", 4))
-        {
-            tmp = ft_strjoin("PWD=", pwd);
-            if (tmp)
-            {
-                free(envp[i]);
-                envp[i] = tmp;
-            }
-        }
-        else if (!ft_strncmp(envp[i], "OLDPWD=", 7) && old_pwd)
-        {
-            tmp = ft_strjoin("OLDPWD=", old_pwd);
-            if (tmp)
-            {
-                free(envp[i]);
-                envp[i] = tmp;
-            }
-        }
-        i++;
-    }
-}
-
-/** Maneja el comando `cd`, cambiando el directorio actual y actualizando el 
+/* Maneja el comando `cd`, cambiando el directorio actual y actualizando el 
  * entorno.
  */
-
-void builtin_cd(char **args, t_env *env)
+void	builtin_cd(char **args, t_env *env)
 {
-    int ret;
-    char *pwd = NULL;
-    char *old_pwd = NULL;
+	char	*pwd;
+	char	*old_pwd;
 
-    // Mensajes de depuración
-    ft_putendl_fd("minishell: entrando en builtin_cd", STDERR_FILENO);
+	pwd = NULL;
+	old_pwd = getcwd(NULL, 0);
+	if (!old_pwd)
+	{
+		ft_putendl_fd("minishell: error obteniendo old_pwd", STDERR_FILENO);
+		return ;
+	}
+	if (!args[1])
+		specific_path(env, "HOME=");
+	else if (ft_strncmp(args[1], "-", 1) == 0)
+		specific_path(env, "OLDPWD=");
+	else
+		change_directory(args[1], old_pwd);
+	pwd = getcwd(NULL, 0);
+	if (pwd && old_pwd)
+		update_paths(env, old_pwd, pwd);
+	free(pwd);
+	free(old_pwd);
+}
 
-    if (!env->envp_cpy) // Verifica que envp no sea NULL
-    {
-        ft_putendl_fd("minishell: envp es NULL", STDERR_FILENO);
-        return;
-    }
+/* Cambia el directorio a una ruta específica y maneja errores.
+ */
+static int	change_directory(char *path, char *dir)
+{
+	int	ret;
 
-    // Obtén el directorio actual antes de cambiar de directorio
-    old_pwd = getcwd(NULL, 0);
-    if (!old_pwd)
-    {
-        ft_putendl_fd("minishell: error obteniendo old_pwd", STDERR_FILENO);
-        return; // Salir temprano si no se pudo obtener old_pwd
-    }
-    else
-        ft_putendl_fd("minishell: old_pwd obtenido correctamente", STDERR_FILENO);
+	ret = chdir(path);
+	if (ret != 0)
+	{
+		ft_putstr_fd("minishell: error cambiando de directorio a ", \
+			STDERR_FILENO);
+		ft_putstr_fd(path, STDERR_FILENO);
+		perror("");
+		free(dir);
+		return (EXIT_FAILURE);
+	}
+	return (EXIT_SUCCESS);
+}
 
-    if (!args[1])
-        ret = specific_path(env, "HOME=");
-    else if (ft_strncmp(args[1], "-", 1) == 0)
-        ret = specific_path(env, "OLDPWD=");
-    else
-    {
-        ret = chdir(args[1]);
-        if (ret != 0)
-        {
-            ft_putstr_fd("minishell: error cambiando de directorio a ", STDERR_FILENO);
-            ft_putstr_fd(args[1], STDERR_FILENO);
-            perror(" ");
-            free(old_pwd); // Liberar old_pwd antes de salir temprano
-            return; // Salir temprano si chdir falló
-        }
-    }
-
-    // Obtén el nuevo directorio después de cambiar de directorio
-    pwd = getcwd(NULL, 0);
-    if (!pwd)
-    {
-        ft_putendl_fd("minishell: error obteniendo pwd", STDERR_FILENO);
-        free(old_pwd); // Liberar old_pwd antes de salir temprano
-        return; // Salir temprano si no se pudo obtener pwd
-    }
-    else
-        ft_putendl_fd("minishell: pwd obtenido correctamente", STDERR_FILENO);
-
-    if (pwd && old_pwd)
-        add_path_to_env(env, pwd, old_pwd);
-
-    // Libera la memoria después de usar pwd y old_pwd
-    if (pwd != NULL)
-    {
-        free(pwd);
-        pwd = NULL; // Buena práctica para evitar usar un puntero liberado
-    }
-    if (old_pwd != NULL)
-    {
-        free(old_pwd);
-        old_pwd = NULL; // Buena práctica para evitar usar un puntero liberado
-    }
-
-    ft_putendl_fd("minishell: builtin_cd completado correctamente", STDERR_FILENO);
+/* Actualiza las variables de entorno `PWD` y `OLDPWD` en `env`.
+ */
+static void	update_paths(t_env *env, char *old_pwd, char *pwd)
+{
+	if (pwd && old_pwd)
+		add_path_to_env(env, pwd, old_pwd);
 }

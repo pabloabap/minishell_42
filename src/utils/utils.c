@@ -41,3 +41,23 @@ int	ft_parent_exit(int wstatus, int *err_n)
 		return (*err_n = WEXITSTATUS(wstatus), EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
+
+/** Función getenv ajustada a nuestro programa para que 
+ * apunte al duplicado de variable de entorno en vez de
+ * a las reales.
+*/
+char	*ft_getenv(char *var_name, char **envp)
+{
+	int	i;
+	int	var_name_len;
+
+	i = 0;
+	var_name_len = ft_strlen(var_name);
+	while (envp && envp[i])
+	{
+		if (0 == ft_strncmp(var_name, envp[i], var_name_len))
+			return (&(envp[i][var_name_len]));
+		i ++;
+	}
+	return (NULL);
+}

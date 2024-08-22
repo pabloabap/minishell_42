@@ -56,6 +56,7 @@ SRC			=	src/lexer/lexer.c \
 				src/builtins/builtin_exit.c \
 				src/builtins/builtin_env.c \
 				src/builtins/builtins.c \
+				src/builtins/builtins_utils.c \
 				src/main.c
 
 # Object files
@@ -63,12 +64,7 @@ OBJS		=	$(addprefix $(OBJS_DIR), \
 				$(notdir $(patsubst %.c, %.o, $(SRC))))
 
 # Header files
-HEADERS		=	./include/minishell.h \
-				./include/lexer.h \
-				./include/parser.h \
-				./include/expander.h \
-				./include/executor.h \
-				./include/builtins.h
+HEADERS		=	./include/minishell.h
 
 all: $(NAME)
 

@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static int	ft_check_path_env(t_single_cmd *cmd, int *err_n);
+static int	ft_check_path_env(t_single_cmd *cmd, t_data *data);
 static int	ft_check_path_dir(t_single_cmd *cmd, char *dir, DIR *actual, \
 	int *err_n);
 static int	ft_check_cmd_not_found(t_single_cmd *cmd, int *err_n);
@@ -25,13 +25,13 @@ static int	ft_check_cmd_not_found(t_single_cmd *cmd, int *err_n);
  * 
  * @return Ruta absoluta al fichero del comando. 
  */
-int	ft_path_finder(t_single_cmd *cmd, int *err_n)
+int	ft_path_finder(t_single_cmd *cmd, t_data *data)
 {
 	if (ft_strnstr(cmd->str[0], "/", ft_strlen(cmd->str[0])))
 		return (cmd->cmd_path = cmd->str[0], EXIT_SUCCESS);
 	
 	else
-		if (EXIT_FAILURE == ft_check_path_env(cmd, err_n))
+		if (EXIT_FAILURE == ft_check_path_env(cmd, data))
 			return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
@@ -46,7 +46,7 @@ int	ft_path_finder(t_single_cmd *cmd, int *err_n)
  *
  * @return Resultado de ejecución de la función. 
  */
-static int	ft_check_path_env(t_single_cmd *cmd, int *err_n)
+static int	ft_check_path_env(t_single_cmd *cmd, t_data *data)
 {
 	int		i;
 	char	**dirs;
@@ -55,21 +55,22 @@ static int	ft_check_path_env(t_single_cmd *cmd, int *err_n)
 	if (!is_builtin(cmd->str[0]))
 	{
 		i = 0;
-		dirs = ft_split(getenv("PATH"), ':');
+		dirs = ft_split(ft_getenv("PATH", data->env->envp_cpy), ':');
 		if (dirs == NULL)
-			err_malloc_fail(err_n);
+			err_malloc_fail(&(data->last_exit));
 		while (dirs && dirs[i] && cmd->cmd_path == NULL)
 		{
 			actual = opendir(dirs[i]);
 			if (actual == NULL && dirs[i] == NULL)
-				return (perror("12-Minishell "), *err_n = errno, EXIT_FAILURE);
+				return (perror("12-Minishell "), data->last_exit = errno, 1);
 			else if (actual != NULL)
-				ft_check_path_dir(cmd, dirs[i], actual, err_n);
+				ft_check_path_dir(cmd, dirs[i], actual, &(data->last_exit));
 			free(dirs[i]);
 			dirs[i] = NULL;
 			i++;
 		}
-		return (free(dirs), dirs = NULL, ft_check_cmd_not_found (cmd, err_n));
+		return (free(dirs), dirs = NULL, \
+			ft_check_cmd_not_found(cmd, &(data->last_exit)));
 	}
 	return (EXIT_SUCCESS);
 }
