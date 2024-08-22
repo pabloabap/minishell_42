@@ -23,14 +23,14 @@ int	main(int argc, char **argv, char **envp)
 
 	if (argc == 1 && ft_strnstr(argv[0], "minishell", ft_strlen(argv[0])))
 	{
-		status = init_data(&data);
+		status = init_data(&data, envp);
 		while (EXIT_SUCCESS == status)
 		{
 			ft_readline(data);
 			if (data->input && *(data->input) != '\0')
 			{
 				if (EXIT_SUCCESS == ft_preprocesing(data) && EXIT_SUCCESS == \
-				ft_executor(data->head_cmd_list, envp, &data->last_exit))
+				ft_executor(data->head_cmd_list, data))
 					data->last_exit = 0;
 			}
 			else if (!data->input)
@@ -38,7 +38,7 @@ int	main(int argc, char **argv, char **envp)
 				clean_data(data), free(data), EXIT_SUCCESS);
 			clean_data(data);
 		}
-		free(data);
+		ft_final_clean(data);
 	}
 	return (status);
 }
@@ -73,7 +73,7 @@ static int	ft_preprocesing(t_data *data)
 		(EXIT_FAILURE == ft_lex_to_cmd(&(data->head_lex_list), \
 		&(data->head_cmd_list), &data->last_exit)) || \
 		(EXIT_FAILURE == ft_expander(data->head_lex_list, \
-		data->head_cmd_list, &data->last_exit)))
+		data->head_cmd_list, data)))
 	{
 		data->last_exit = 2;
 		return (EXIT_FAILURE);

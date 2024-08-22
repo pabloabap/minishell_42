@@ -76,7 +76,7 @@ static int	new_lexem(char **str, t_lexem **lexem_list_last)
 	status = EXIT_SUCCESS;
 	if (lexem_item == NULL)
 	{
-		perror("-Minishell: t_lexem malloc fails");
+		perror("234-Minishell: t_lexem malloc fails");
 		return (EXIT_FAILURE);
 	}
 	while (is_whitespace(**str))

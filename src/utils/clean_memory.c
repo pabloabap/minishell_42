@@ -15,6 +15,14 @@
 static void	clean_lex_list(t_lexem *list_lexem, int is_redirection);
 static void	clean_cmd_list(t_single_cmd *cmd);
 
+/** Limpieza final antes de salir del programa del todo*/
+void	ft_final_clean(t_data *data)
+{
+	free(data->env->envp_cpy);
+	free(data->env);
+	free(data);
+}
+
 /**
  * @brief Libera toda la memoria reservada con malloc de
  * de la estrucutura data y sus atributos si contienen

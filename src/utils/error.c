@@ -36,7 +36,7 @@ void	err_pipe(void)
 /** Gestion de errores de malloc*/
 void	err_malloc_fail(int *err_n)
 {
-	perror("-Minishell: malloc fails");
+	perror("345-Minishell: malloc fails");
 	*err_n = ENOMEM;
 }
 

@@ -1,23 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   executor.h                                         :+:      :+:    :+:   */
+/*   builtin_env.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/07/27 23:22:53 by pabad-ap          #+#    #+#             */
-/*   Updated: 2024/07/27 23:23:22 by pabad-ap         ###   ########.fr       */
+/*   Created: 2024/08/08 20:11:14 by pabad-ap          #+#    #+#             */
+/*   Updated: 2024/08/08 20:14:04 by pabad-ap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef EXECUTOR_H
-# define EXECUTOR_H
-# include "minishell.h"
+#include "../../include/minishell.h"
 
-int		ft_executor(t_single_cmd *head, char **envp, int *err_n);
-int		ft_prepare_redirections(t_single_cmd *cmd, int *err_n);
-int		ft_set_pipes(t_single_cmd *current_cmd, int std_out, int *err_n);
-int		ft_check_hdoc(t_single_cmd *cmd, int *err_n);
-int		ft_path_finder(t_single_cmd *cmd, int *err_n);
+// Implementación del comando 'env'
+void	builtin_env(char **args, t_env *env)
+{
+	int	i;
+	(void)args; // Ignoramos args ya que no se utiliza en esta función
 
-#endif
+	i = 0;
+	while (env->envp_cpy[i])
+	{
+		ft_putendl_fd(env->envp_cpy[i], STDOUT_FILENO);
+		i++;
+	}
+}
