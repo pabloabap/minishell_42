@@ -16,8 +16,8 @@
 void	builtin_env(char **args, t_env *env)
 {
 	int	i;
-	(void)args; // Ignoramos args ya que no se utiliza en esta función
 
+	(void)args;
 	i = 0;
 	while (env->envp_cpy[i])
 	{

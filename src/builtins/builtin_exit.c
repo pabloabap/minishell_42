@@ -30,7 +30,7 @@ static int	is_str_digit(char *str)
 }
 
 // Función para liberar un array de cadenas
-static void	free_arr(char **arr)
+static void	free_arr_exit(char **arr)
 {
 	int	i;
 
@@ -51,19 +51,19 @@ void	determine_exit_code(char **args)
 {
 	int	exit_code;
 
-	if (!args[1]) // Si no hay argumentos adicionales, el código de salida es 0
+	if (!args[1])
 		exit_code = 0;
-	else if (is_str_digit(args[1])) // Verifica si el argumento es numérico
-		exit_code = ft_atoi(args[1]); // Convierte el argumento a un código de salida
+	else if (is_str_digit(args[1]))
+		exit_code = ft_atoi(args[1]);
 	else
 	{
 		ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
 		ft_putstr_fd(args[1], STDERR_FILENO);
 		ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
-		exit_code = 255; // Código de salida para argumentos no numéricos
+		exit_code = 255;
 	}
-	free_arr(args); // Libera el array de argumentos
-	exit(exit_code); // Sale del programa con el código de salida determinado
+	free_arr_exit(args);
+	exit(exit_code);
 }
 
 /** Implementación del comando 'exit' ajustada para aceptar args como argumento
@@ -71,12 +71,11 @@ void	determine_exit_code(char **args)
 */
 void	builtin_exit(char **args, t_env *env)
 {
-	(void)env; //Ignora envp ya que no se utiliza en esta función
-
+	(void)env;
 	if (args[1] && args[2])
-	{ // Verifica si hay demasiados argumentos
+	{
 		ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
-		return ; // Retorna sin salir si hay demasiados argumentos
+		return ;
 	}
-	determine_exit_code(args); // Determina el código de salida y sale del programa
+	determine_exit_code(args);
 }

@@ -152,13 +152,15 @@ void		execute_builtin(char **args, t_env *env);
 char		**add_var(char **arr, char *str);
 void		whileloop_add_var(char **arr, char **rtn, char *str);
 
-void	add_path_to_env(t_env *env, char *pwd, char *old_pwd);
+void		add_path_to_env(t_env *env, char *pwd, char *old_pwd);
+char		**free_arr(char **arr, int len);
 
 // Declaraciones de las funciones faltantes
 int			equal_sign(const char *str);
 void		delete_quotes(char *str, char quote_char);
 void		mini_env(t_env *env, t_single_cmd *simple_cmd);
-
-int variable_exist(t_env *env, char *str);
+int 		variable_exist(t_env *env, char *str);
+void		handle_export_errors(char *str);
+int			is_valid_identifier(const char *str);
 
 #endif
