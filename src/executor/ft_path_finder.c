@@ -20,8 +20,8 @@ static int	ft_check_cmd_not_found(t_single_cmd *cmd, int *err_n);
 /** Localiza la ruta del comando.
  * 
  * @param cmd_name Nombre del comando a buscar.
- * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
- * para modificar el valor si es necesario.
+ * @param data Puntero a la estructura data con datos generales del programa
+ * para utilizar o modificar los atributos last_exit y env.
  * 
  * @return Ruta absoluta al fichero del comando. 
  */
@@ -29,7 +29,6 @@ int	ft_path_finder(t_single_cmd *cmd, t_data *data)
 {
 	if (ft_strnstr(cmd->str[0], "/", ft_strlen(cmd->str[0])))
 		return (cmd->cmd_path = cmd->str[0], EXIT_SUCCESS);
-	
 	else
 		if (EXIT_FAILURE == ft_check_path_env(cmd, data))
 			return (EXIT_FAILURE);
@@ -41,8 +40,8 @@ int	ft_path_finder(t_single_cmd *cmd, t_data *data)
  * comando o terminar de recorrer la lista de directorios.
  * 
  * @param cmd Puntero a la estructura con información del comando a procesar.
- * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
- * para modificar el valor si es necesario.
+ * @param data Puntero a la estructura data con datos generales del programa
+ * para utilizar o modificar los atributos last_exit y env.
  *
  * @return Resultado de ejecución de la función. 
  */

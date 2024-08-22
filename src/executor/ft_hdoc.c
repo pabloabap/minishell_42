@@ -12,8 +12,8 @@
 
 #include "../../include/minishell.h"
 
-static int	ft_heredoc_creation(t_lexem *redir,  t_data *data);
-static int	ft_fill_hdoc(char *line,  t_data *data, int fd_hdoc);
+static int	ft_heredoc_creation(t_lexem *redir, t_data *data);
+static int	ft_fill_hdoc(char *line, t_data *data, int fd_hdoc);
 static int	ft_write_char(char *line, int *i, int fd_hdoc, int *err_n);
 static int	ft_write_env_var(char *line, int v_start, t_data *data, int hdoc);
 
@@ -25,8 +25,8 @@ static int	ft_write_env_var(char *line, int v_start, t_data *data, int hdoc);
  *	@param	redir estructura `t_lexem` que contiene informacion del tipo de 
  *	redireccion (atributo `token`) y el indicador de final del fichero
  *  (atributo `str`).
- *	@param err_n Puntero a int que almacena el errno de la ultima ejecucion
- *	para modificar el valor si es necesario.
+ *  @param data Puntero a la estructura data con datos generales del programa
+ *  para utilizar o modificar los atributos last_exit y env.
  * 
  * 	@return fd en formato lectura recien abierto. 
  */
@@ -81,14 +81,14 @@ static int	ft_heredoc_creation(t_lexem *redir, t_data *data)
  * 	el fichero al que apunta fd_hdoc.
  * 	
  *	@param	line String a procesar.
- *	@param err_n Puntero a int que almacena el errno de la ultima ejecucion
- *	para modificar el valor si es necesario.
+ *  @param data Puntero a la estructura data con datos generales del programa
+ *  para utilizar o modificar los atributos last_exit y env.
  *	@param	fd_hdoc fd en modo escritura del heredoc.
  * 	para modificar el valor si es necesario.
  * 
  * 	@return Resultado de ejecucion. 
  */
-static int	ft_fill_hdoc(char *line,  t_data *data, int fd_hdoc)
+static int	ft_fill_hdoc(char *line, t_data *data, int fd_hdoc)
 {
 	int		i;
 	char	*char_exit;
@@ -145,8 +145,8 @@ static int	ft_write_char(char *line, int *i, int fd_hdoc, int *err_n)
  * 	
  *	@param	line String que contiene una variable de entorno.
  *	@param	v_start Indice del comienzo del VAR_NAME.
- *	@param	err_n Puntero a int que almacena el errno de la ultima ejecucion
- *	para modificar el valor si es necesario.
+ *  @param data Puntero a la estructura data con datos generales del programa
+ *  para utilizar o modificar los atributos last_exit y env.
  *	@param	hdoc fd en modo escritura del heredoc.
  * 	para modificar el valor si es necesario.
  * 
@@ -164,14 +164,14 @@ static int	ft_write_env_var(char *line, int v_start, t_data *data, int hdoc)
 	{
 		v_name = ft_substr(line, v_start, v_end - v_start);
 		if (v_name == NULL)
-			return (perror("5-Minishell% "), data->last_exit = errno, EXIT_FAILURE);
+			return (perror("5-Minishell% "), data->last_exit = errno, 1);
 		if (ft_getenv(v_name, data->env->envp_cpy) != NULL)
 			ft_putstr_fd(ft_getenv(v_name, data->env->envp_cpy), hdoc);
 		free(v_name);
 	}
 	else
 		if (-1 == write(hdoc, "$", 1))
-			return (perror("55-Minishell% "), data->last_exit = errno, EXIT_FAILURE);
+			return (perror("55-Minishell% "), data->last_exit = errno, 1);
 	if (line[v_end])
 	{
 		line += v_end;
