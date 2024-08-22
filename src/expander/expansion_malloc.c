@@ -37,9 +37,9 @@ int	ft_expansion_malloc(char **dst, t_lexem *src, int *buff, t_data *data)
 	chars = 0;
 	while (src->str && src->str [i])
 	{
-		while (src->str [i] && src->str [i] != '$')
+		while (src->str[i] && src->str[i] != '$')
 			ft_regular_char_count(&i, &chars);
-		if (src->str [i] == '$')
+		if (src->str[i] == '$')
 		{
 			i ++;
 			if (ft_exp_logic(src->str, &i, &chars, data) == EXIT_FAILURE)
