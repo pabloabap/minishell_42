@@ -46,23 +46,21 @@ char **dup_envp(char **envp)
 */
 char **dup_envp(char **envp)
 {
-    int i = 0;
+    int i;
     char **envp_copy;
 
+    i = 0;
     while (envp[i])
         i++;
-
     envp_copy = (char **)malloc(sizeof(char *) * (i + 1));
     if (!envp_copy)
         return NULL;
-
     i = 0;
     while (envp[i])
     {
         envp_copy[i] = ft_strdup(envp[i]);
         if (!envp_copy[i])
         {
-            // En caso de error, liberamos la memoria ya asignada
             while (i-- > 0)
                 free(envp_copy[i]);
             free(envp_copy);
@@ -82,7 +80,6 @@ int	main(int argc, char **argv, char **envp)
 	if (argc == 1 && ft_strnstr(argv[0], "minishell", ft_strlen(argv[0])))
 	{
 		status = init_data(&data);
-		// Inicializamos t_env y duplicamos envp dentro de envp_cpy
         data->env = malloc(sizeof(t_env));
         if (!data->env)
             return (EXIT_FAILURE);
