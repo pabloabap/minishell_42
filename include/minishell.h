@@ -145,6 +145,13 @@ void		builtin_echo(char **args, t_env *env);
 
 typedef void	(*builtin_func)(char **args, t_env *env);
 
+/* Estructura para los built-ins */
+typedef struct s_builtin
+{
+    char        *name;
+    builtin_func func;
+}   t_builtin;
+
 builtin_func		builtin_arr(char *str);
 
 int			is_builtin(char *command);
