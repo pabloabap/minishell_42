@@ -66,3 +66,44 @@ void	add_path_to_env(t_env *env, char *pwd, char *old_pwd)
 	update_pwd(env, pwd);
 	update_oldpwd(env, old_pwd);
 }
+
+/**
+ * Finds the index of the first occurrence of a character in a string.
+ * @param str The string to search.
+ * @param c The character to find.
+ * @return The index of the character, or -1 if not found.
+ */
+int	find_char_index(const char *str, char c)
+{
+	int	i;
+
+	i = 0;
+	while (str[i] != '\0')
+	{
+		if (str[i] == c)
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+/**
+ * Validates if a given environment variable is valid.
+ * @param line The environment variable string.
+ * @return 1 if valid, 0 otherwise.
+ */
+int	is_valid_environment_variable(const char *line)
+{
+	int			eq_idx;
+	const char	*value;
+
+	if (line == NULL || *line == '\0')
+		return (0);
+	eq_idx = find_char_index(line, '=');
+	if (eq_idx == -1)
+		return (0);
+	value = &line[eq_idx + 1];
+	if (value == NULL || *value == '\0')
+		return (0);
+	return (1);
+}

@@ -162,5 +162,8 @@ void		mini_env(t_env *env, t_single_cmd *simple_cmd);
 int 		variable_exist(t_env *env, char *str);
 void		handle_export_errors(char *str);
 int			is_valid_identifier(const char *str);
+char		**replace_envp(char **old_envp, char **new_envp);
+int			find_char_index(const char *str, char c);
+int			is_valid_environment_variable(const char *line);
 
 #endif
