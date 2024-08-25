@@ -158,8 +158,8 @@ int			is_builtin(char *command);
 void		execute_builtin(char **args, t_env *env);
 char		**add_var(char **arr, char *str);
 void		whileloop_add_var(char **arr, char **rtn, char *str);
-
-void		add_path_to_env(t_env *env, char *pwd, char *old_pwd);
+void	update_pwd(t_env *env, char *pwd);
+void	update_oldpwd(t_env *env, char *old_pwd);
 char		**free_arr(char **arr, int len);
 
 // Declaraciones de las funciones faltantes

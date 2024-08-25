@@ -11,16 +11,11 @@
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 
 // Declaraciones de funciones internas
 static char	*find_path_ret(char *str, t_env *env);
 static int	specific_path(t_env *env, char *str);
 static int	change_directory(char *path, char *dir);
-static void	update_paths(t_env *env, char *old_pwd, char *pwd);
 
 // Encuentra el valor de una var de env especificada por `str` en `envp`.
 static char	*find_path_ret(char *str, t_env *env)
@@ -49,6 +44,7 @@ static char	*find_path_ret(char *str, t_env *env)
 /* Cambia el directorio actual al valor de la variable de entorno 
  * especificada por `str`.
  */
+
 static int	specific_path(t_env *env, char *str)
 {
 	char	*tmp;
@@ -97,17 +93,21 @@ void	builtin_cd(char **args, t_env *env)
 		change_directory(args[1], old_pwd);
 	pwd = getcwd(NULL, 0);
 	if (pwd && old_pwd)
-		update_paths(env, old_pwd, pwd);
+	{
+		update_pwd(env, pwd);
+		update_oldpwd(env, old_pwd);
+	}
 	free(pwd);
 	free(old_pwd);
 }
 
-/* Cambia el directorio a una ruta específica y maneja errores.
- */
+// Cambia el directorio a una ruta específica y maneja errores.
+
 static int	change_directory(char *path, char *dir)
 {
 	int	ret;
 
+	(void)dir;
 	ret = chdir(path);
 	if (ret != 0)
 	{
@@ -115,16 +115,7 @@ static int	change_directory(char *path, char *dir)
 			STDERR_FILENO);
 		ft_putstr_fd(path, STDERR_FILENO);
 		perror("");
-		free(dir);
 		return (EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
-}
-
-/* Actualiza las variables de entorno `PWD` y `OLDPWD` en `env`.
- */
-static void	update_paths(t_env *env, char *old_pwd, char *pwd)
-{
-	if (pwd && old_pwd)
-		add_path_to_env(env, pwd, old_pwd);
 }
