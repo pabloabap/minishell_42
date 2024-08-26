@@ -74,6 +74,7 @@ void	builtin_exit(char **args, t_env *env)
 	(void)env;
 	if (args[1] && args[2])
 	{
+		g_error = 1;
 		ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
 		return ;
 	}
