@@ -42,6 +42,7 @@ typedef struct s_env
 typedef enum e_tokens
 {
 	WORD			,
+	COMPLEX_WORD	,
 	SINGLE_QUOTES	,
 	DOUBLE_QUOTES	,
 	PIPE			,
@@ -104,12 +105,15 @@ void			ft_hdoc_close_check(t_lexem *redir, char *line, int *err_n);
 //___________________LEXER___________________
 int				token_lex_fill(char *str, t_lexem **lexem_item, \
 					t_tokens token);
-int				lexer(char *str, t_lexem **head_lex_list);
+int				lexer(char *str, t_lexem **head_lex_list, t_data *data);
 t_lexem			*ft_lstlex(t_lexem *lst);
 void			ft_consecutive_quotes(char **end_quote, char quote_type);
 void			ft_str_lex_check(t_lexem **lexem_item, char quote_type);
 char			**ft_consecutive_split(char const *s, char c);
-
+int				ft_check_complex_str(char	*str);
+int				ft_handle_complex_str(char **str, int parts, \
+					t_lexem **lexem_item, t_data *data);
+int				ft_join_parts(char **src, t_lexem **dst, t_data *data);
 //___________________PARSER___________________
 int				ft_cmd_list_builder(t_lexem *lex_list, t_single_cmd **cmd, \
 					int *err_n);

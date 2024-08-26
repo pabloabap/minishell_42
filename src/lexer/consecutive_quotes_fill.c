@@ -43,7 +43,6 @@ static char	*ft_words_join(char **words_array)
 
 	i = 0;
 	n_chars = ft_count_chars(words_array) + 1;
-	printf("%i\n", n_chars);
 	final_str = (char *)ft_calloc(n_chars, sizeof(char));
 	if (final_str == NULL)
 		err_malloc_fail(&i);

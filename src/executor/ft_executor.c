@@ -103,7 +103,7 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_data *data)
 		EXIT_FAILURE == ft_prepare_redirections(cmd, &(data->last_exit)) || \
 		EXIT_FAILURE == ft_path_finder(cmd, data))
 		return (exit(data->last_exit), EXIT_FAILURE);
-	else if (is_builtin(cmd->str[0]) && cmd->next)
+	else if (is_builtin(cmd->str[0]) && (cmd->next || cmd->prev))
 		execute_builtin(cmd->str, data->env);
 	else if (execve(cmd->cmd_path, cmd->str, data->env->envp_cpy) < 0)
 	{

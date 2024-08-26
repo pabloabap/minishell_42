@@ -15,9 +15,17 @@
 static void	clean_lex_list(t_lexem *list_lexem, int is_redirection);
 static void	clean_cmd_list(t_single_cmd *cmd);
 
-/** Limpieza final antes de salir del programa del todo*/
+/** Limpieza final antes de salir del programa del todo.*/
 void	ft_final_clean(t_data *data)
 {
+	int		i;
+
+	i = 0;
+	while (data->env->envp_cpy[i] != NULL)
+	{
+		free(data->env->envp_cpy[i++]);
+		i++;
+	}
 	free(data->env->envp_cpy);
 	free(data->env);
 	free(data);

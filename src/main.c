@@ -69,7 +69,7 @@ static void	ft_readline(t_data *data)
  */
 static int	ft_preprocesing(t_data *data)
 {
-	if ((EXIT_FAILURE == lexer(data->input, &(data->head_lex_list))) || \
+	if ((EXIT_FAILURE == lexer(data->input, &(data->head_lex_list), data)) || \
 		(EXIT_FAILURE == ft_lex_to_cmd(&(data->head_lex_list), \
 		&(data->head_cmd_list), &data->last_exit)) || \
 		(EXIT_FAILURE == ft_expander(data->head_lex_list, \

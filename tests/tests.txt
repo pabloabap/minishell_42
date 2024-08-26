@@ -39,3 +39,5 @@ cat /dev/urandom | head -n 5
 ./pipex infile "cat /dev/urandom" "head -n 5" outfile
 ----
 sleep 5 | sleep 5
+----
+cd | cd
