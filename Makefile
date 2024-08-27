@@ -82,6 +82,9 @@ $(OBJS_DIR)%.o: $(DEB_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
 	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
+valgrind: $(NAME)
+	valgrind --leak-check=full --track-origins=yes ./$(NAME)
+
 # Utils objects compiler
 $(OBJS_DIR)%.o: $(UTL_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
 	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
