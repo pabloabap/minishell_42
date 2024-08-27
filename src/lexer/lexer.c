@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static int	new_lexem(char **str, t_lexem **lexem_list_last);
+static int	new_lexem(char **str, t_lexem **lexem_list_last, t_data *data);
 static int	quoted_lexer(char quote_type, char **str, \
 	t_lexem **lexem_item);
 static int	unquoted_lexer(char **str, t_lexem **lexem_item);
@@ -31,10 +31,13 @@ static void	token_lexem(char **str, t_lexem **lexem_item);
  * 			nuevos nodos a la lista. Por ello se almacena la posición
  * 			inicial el lex_list_fst para al final de la ejecución
  * 			reubicarlo al principio de la lista.
+ * @param data Puntero a la estructura con información general del programa.
+ * 			Necesaria para actualizar el valor `last_error` o pasarlo como
+ * 			parámetro a funciones que lo necesitan.
  *
  * @return Estado de salida de la función.
  **/
-int	lexer(char *str, t_lexem **head_lex_list)
+int	lexer(char *str, t_lexem **head_lex_list, t_data *data)
 {
 	int		status;
 	t_lexem	*lex_list_fst;
@@ -48,10 +51,12 @@ int	lexer(char *str, t_lexem **head_lex_list)
 		return (free(trim_str), EXIT_FAILURE);
 	if (*trim_str)
 	{
-		status = new_lexem(&trim_str, head_lex_list);
+		status = new_lexem(&trim_str, head_lex_list, data);
 		lex_list_fst = (*head_lex_list);
-		while (*trim_str && status == EXIT_SUCCESS)
-			status = new_lexem(&trim_str, head_lex_list);
+		while (trim_str && *trim_str && status == EXIT_SUCCESS)
+			status = new_lexem(&trim_str, head_lex_list, data);
+		if (status < 0)
+			status = EXIT_FAILURE;
 	}
 	free(head_trim);
 	(*head_lex_list) = lex_list_fst;
@@ -61,30 +66,34 @@ int	lexer(char *str, t_lexem **head_lex_list)
 /** Configura el lexema y lo añade a la lista de lexemas.
  *
  * @param str  Puntero al str de readline para poder modificarlo.
- *
  * @param lexem_list Puntero al puntero al primer elemento de la lista.
- *
+ * @param data Puntero a la estructura con información general del programa.
+ * Necesaria para actualizar el valor `last_error` o pasarlo como parámetro
+ * a funciones que lo necesitan.
+ * 
  * @return Estado de salida de la función. Añade el nuevo nodo al final
  * de la lista de lexemas.
- * */
-static int	new_lexem(char **str, t_lexem **lexem_list_last)
+ */
+static int	new_lexem(char **str, t_lexem **lexem_list_last, t_data *data)
 {
 	t_lexem	*lexem_item;
 	int		status;
 
 	lexem_item = (t_lexem *)malloc(sizeof(t_lexem));
-	status = EXIT_SUCCESS;
 	if (lexem_item == NULL)
-	{
-		perror("234-Minishell: t_lexem malloc fails");
-		return (EXIT_FAILURE);
-	}
+		return (err_malloc_fail(&(data->last_exit)), EXIT_FAILURE);
 	while (is_whitespace(**str))
 		(*str)++;
-	if (*str && (**str == '"' || **str == '\''))
-		status = quoted_lexer(**str, str, &lexem_item);
-	else if (*str)
-		status = unquoted_lexer(str, &lexem_item);
+	status = ft_check_complex_str(*str);
+	if (1 != status)
+		status = ft_handle_complex_str(str, status, &lexem_item, data);
+	else if (1 == status)
+	{
+		if (*str && (**str == '"' || **str == '\''))
+			status = quoted_lexer(**str, str, &lexem_item);
+		else if (*str)
+			status = unquoted_lexer(str, &lexem_item);
+	}
 	if ((*lexem_list_last))
 		(*lexem_list_last)->next = lexem_item;
 	lexem_item->prev = (*lexem_list_last);
@@ -116,17 +125,22 @@ static int	quoted_lexer(char quote_type, char **str, t_lexem **lexem_item)
 	char	*end_quote;
 
 	end_quote = ft_strchr(++(*str), quote_type);
+	ft_consecutive_quotes(&end_quote, quote_type);
 	if (end_quote == NULL)
 	{
 		ft_putendl_fd("-minishell: syntax error: quotes not closed", \
 		STDERR_FILENO);
 		return ((*lexem_item)->str = NULL, EXIT_FAILURE);
 	}
-	(*lexem_item)->str = ft_substr(*str, 0, end_quote - *str);
 	if (quote_type == '"')
 		(*lexem_item)->token = DOUBLE_QUOTES;
 	else
 		(*lexem_item)->token = SINGLE_QUOTES;
+	(*lexem_item)->str = ft_substr(*str, 0, end_quote - *str + \
+		!(*end_quote == quote_type));
+	ft_str_lex_check(lexem_item, quote_type);
+	if ((*lexem_item)->str == NULL)
+		return (EXIT_FAILURE);
 	*str = (*str + (end_quote - *str + 1));
 	return (EXIT_SUCCESS);
 }

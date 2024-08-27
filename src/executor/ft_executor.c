@@ -24,9 +24,9 @@ static int	ft_single_builtin(t_single_cmd *cmd, t_data *data, int std_out);
  * el exit status final.
  *
  * @param head Puntero al primer comando de la lista de comandos
- * @param envp Variables de entorno aplicables.
- * @param err_n Puntero a int que almacena el errno de la ultima ejecucion.
- *
+ * @param data Puntero a la estructura data con datos generales del programa
+ * para utilizar o modificar los atributos last_exit y env.
+ * 
  * @return Resultado de la ejecución.
  */
 int	ft_executor(t_single_cmd *head, t_data *data)
@@ -60,9 +60,10 @@ int	ft_executor(t_single_cmd *head, t_data *data)
  * @param head Puntero al primer elemento de la lista de comandos.
  * @param std_out Referencia al STDOUT para que en caso de que tenga que ser
  * modificado por por algún comando intermedio podamos recuperar el principal.
- * @param err_n Puntero a int que almacena el errno de la ultima ejecucion.
- *
- * @return Resultado de la ejecución e impresión de error si existe.
+ * @param data Puntero a la estructura data con datos generales del programa
+ * para utilizar o modificar los atributos last_exit y env.
+ * 
+ * @return Resultado de la ejecución e impresión de error si existe. 
  */
 static int	ft_prepare_exec(t_single_cmd *head, int *std_out, t_data *data)
 {
@@ -70,7 +71,7 @@ static int	ft_prepare_exec(t_single_cmd *head, int *std_out, t_data *data)
 	{
 		if (head->next)
 			if (-1 == pipe(head->pipe_fd))
-				return (perror("1-Minishell "), data->last_exit = errno,
+				return (perror("1-Minishell "), data->last_exit = errno, \
 					EXIT_FAILURE);
 		if (EXIT_FAILURE == ft_check_hdoc(head, data))
 			return (EXIT_FAILURE);
@@ -78,18 +79,19 @@ static int	ft_prepare_exec(t_single_cmd *head, int *std_out, t_data *data)
 	}
 	*std_out = dup(STDOUT_FILENO);
 	if (*std_out == -1)
-		return (perror("11-Minishell "), data->last_exit = errno, EXIT_FAILURE);
+		return (perror("11-Minishell "), data->last_exit = errno, \
+			EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
 /** Gestiona instrucciones para el proceso hijo de un fork.
  *
  * @param cmd Puntero al comando actual a procesar.
- * @param main_out file descriptor del STDOUT principal.
- * @param envp Puntero de punteros a la lista de variables de entorno.
- * @param en Puntero a int que almacena el errno de la ultima ejecucion
- * para modificar el valor si es necesario.
- *
+*  @param std_out Referencia al STDOUT para que en caso de que tenga que ser 
+ * modificado por por algún comando intermedio podamos recuperar el principal.
+ * @param data Puntero a la estructura data con datos generales del programa
+ * para utilizar o modificar los atributos last_exit y env.
+ *  
  * @return Resultado de ejecición e impresión de errores si procede.
  */
 static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_data *data)
@@ -101,7 +103,7 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_data *data)
 		|| EXIT_FAILURE == ft_prepare_redirections(cmd, &(data->last_exit))
 		|| EXIT_FAILURE == ft_path_finder(cmd, data))
 		return (exit(data->last_exit), EXIT_FAILURE);
-	else if (is_builtin(cmd->str[0]))
+	else if (is_builtin(cmd->str[0]) && (cmd->next || cmd->prev))
 		execute_builtin(cmd->str, data->env);
 	else if (execve(cmd->cmd_path, cmd->str, data->env->envp_cpy) < 0)
 	{
@@ -118,10 +120,12 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_data *data)
  * para actualizarlo si es necesario.
  *
  * @param cmd Doble puntero al comando actual a procesar.
- * @param err_n Puntero a int que almacena el errno de la ultima ejecucion
- * para modificar el valor si es necesario.
- *
- * @return Resultado de ejecición e impresión de errores si procede.
+ * @param data Puntero a la estructura data con datos generales del programa
+ * para utilizar o modificar los atributos last_exit y env.
+ * @param std_out Referencia al STDOUT para que en caso de que tenga que ser 
+ * modificado por por algún comando intermedio podamos recuperar el principal.
+ * 
+ * @return Resultado de ejecición e impresión de errores si procede. 
  */
 static int	ft_parent_mng(t_single_cmd *cmd, t_data *data, int std_out)
 {
@@ -136,13 +140,11 @@ static int	ft_parent_mng(t_single_cmd *cmd, t_data *data, int std_out)
 	{
 		if (tmp->next)
 			if (-1 == close(tmp->pipe_fd[1]))
-				return (perror("3-Minishell "), data->last_exit = errno,
-					EXIT_FAILURE);
+				return (perror("3-Minishell "), data->last_exit = errno, 1);
 		if (tmp->prev)
 			if (-1 == close(tmp->prev->pipe_fd[0]))
-				return (perror("33-Minishell "), data->last_exit = errno,
-					EXIT_FAILURE);
-		tmp = tmp->next;
+				return (perror("33-Minishell "), data->last_exit = errno, 1);
+		tmp = tmp-> next;
 	}
 	while (cmd)
 	{
@@ -160,10 +162,9 @@ static int	ft_parent_mng(t_single_cmd *cmd, t_data *data, int std_out)
  *
  * @param cmd Puntero a la estructura que contiene informacion del
  * comando.
- * @param envp Array a las variables de entorno.
- * @param err_n Puntero al espacio de memoria que almacena el numero del
- * ultimo error de ejecucion.
- * @param std_out File descriptor que apunta al STDOUT por defecto del
+ * @param data Puntero a la estructura data con datos generales del programa
+ * para utilizar o modificar los atributos last_exit y env.
+ * @param std_out File descriptor que apunta al STDOUT por defecto del 
  * terminal, para recuperarlo en caso de que se haya cambiado.
  *
  * @return Resultado de la ejecucion. Actualiza a traves de punteros el
@@ -175,12 +176,12 @@ static int	ft_single_builtin(t_single_cmd *cmd, t_data *data, int std_out)
 
 	default_stdin = dup(STDIN_FILENO);
 	if (0 > default_stdin)
-		return (perror("0000-Minishell "), data->last_exit = errno,
+		return (perror("0000-Minishell "), data->last_exit = errno, \
 			EXIT_FAILURE);
 	if (EXIT_FAILURE == ft_prepare_redirections(cmd, &(data->last_exit)))
 		return (EXIT_FAILURE);
 	if (0 > dup2(default_stdin, STDIN_FILENO))
-		return (close(default_stdin), perror("00000-Minishell "),
+		return (close(default_stdin), perror("00000-Minishell "), \
 			data->last_exit = errno, EXIT_FAILURE);
 	execute_builtin(cmd->str, data->env);
 	if (0 > dup2(std_out, STDOUT_FILENO))

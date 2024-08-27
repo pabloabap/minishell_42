@@ -35,13 +35,14 @@ extern int	g_error;
 /* Estructura para almacenar la copia de las variables de entorno*/
 typedef struct s_env
 {
-    char    **envp_cpy;
-}   t_env;
+	char	**envp_cpy;
+}	t_env;
 
 /*Enumeración de posibles tokens a utilizar*/
 typedef enum e_tokens
 {
 	WORD			,
+	COMPLEX_WORD	,
 	SINGLE_QUOTES	,
 	DOUBLE_QUOTES	,
 	PIPE			,
@@ -85,27 +86,34 @@ typedef struct s_data
 	int				last_exit;	
 }	t_data;
 
-int		init_data(t_data **data);
-int		is_whitespace(char c);
-void	clean_data(t_data *data);
-int		ft_close(int fd, int *err_n);
-void	wait_signal(int main_process);
-int		ft_parent_exit(int wstatus, int *err_n);
-char	*ft_getenv(char *var_name, char **envp);
-
+int				init_data(t_data **data, char **envp);
+int				is_whitespace(char c);
+void			clean_data(t_data *data);
+void			ft_final_clean(t_data *data);
+int				ft_close(int fd, int *err_n);
+void			wait_signal(int main_process);
+int				ft_parent_exit(int wstatus, int *err_n);
+char			*ft_getenv(char *var_name, char **envp);
 
 //Error handling
-void	err_red_no_file(void);
-void	err_pipe_start(void);
-void	err_pipe(void);
-void	err_malloc_fail(int *err_n);
-void	ft_hdoc_close_check(t_lexem *redir, char *line, int *err_n);
+void			err_red_no_file(void);
+void			err_pipe_start(void);
+void			err_pipe(void);
+void			err_malloc_fail(int *err_n);
+void			ft_hdoc_close_check(t_lexem *redir, char *line, int *err_n);
 
 //___________________LEXER___________________
-int		token_lex_fill(char *str, t_lexem **lexem_item, t_tokens token);
-int		lexer(char *str, t_lexem **head_lex_list);
-t_lexem	*ft_lstlex(t_lexem *lst);
-
+int				token_lex_fill(char *str, t_lexem **lexem_item, \
+					t_tokens token);
+int				lexer(char *str, t_lexem **head_lex_list, t_data *data);
+t_lexem			*ft_lstlex(t_lexem *lst);
+void			ft_consecutive_quotes(char **end_quote, char quote_type);
+void			ft_str_lex_check(t_lexem **lexem_item, char quote_type);
+char			**ft_consecutive_split(char const *s, char c);
+int				ft_check_complex_str(char	*str);
+int				ft_handle_complex_str(char **str, int parts, \
+					t_lexem **lexem_item, t_data *data);
+int				ft_join_parts(char **src, t_lexem **dst, t_data *data);
 //___________________PARSER___________________
 int				ft_cmd_list_builder(t_lexem *lex_list, t_single_cmd **cmd, \
 					int *err_n);
@@ -119,58 +127,61 @@ void			ft_redirection_quotes(t_lexem *lex_list);
 int				ft_red_err(t_lexem *lex_list);
 
 //___________________EXPANDER___________________
-int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list, int *exit);
-int	ft_has_expansion(char *str);
-int	ft_expansion_malloc(char **dst, t_lexem *src, int *buff, int *exit);
-int	ft_fill_expansion(char *dst, t_lexem *src, int *buff, int *exit);
-int	ft_expansion_replace(char *exp_malloc, t_lexem *lex_list);
+int				ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list, \
+					t_data *data);
+int				ft_has_expansion(char *str);
+int				ft_expansion_malloc(char **dst, t_lexem *src, int *buff, \
+					t_data *data);
+int				ft_fill_expansion(char *dst, t_lexem *src, int *buff, \
+					t_data *data);
+int				ft_expansion_replace(char *exp_malloc, t_lexem *lex_list);
 
 //___________________EXECUTOR___________________
-int		ft_executor(t_single_cmd *head, t_data	*data);
-int		ft_prepare_redirections(t_single_cmd *cmd, int *err_n);
-int		ft_set_pipes(t_single_cmd *current_cmd, int std_out, \
-		int *err_n, int built);
-int		ft_check_hdoc(t_single_cmd *cmd, t_data *data);
-int		ft_path_finder(t_single_cmd *cmd, t_data *data);
+int				ft_executor(t_single_cmd *head, t_data	*data);
+int				ft_prepare_redirections(t_single_cmd *cmd, int *err_n);
+int				ft_set_pipes(t_single_cmd *current_cmd, int std_out, \
+					int *err_n, int built);
+int				ft_check_hdoc(t_single_cmd *cmd, t_data *data);
+int				ft_path_finder(t_single_cmd *cmd, t_data *data);
 
 //___________________BUILTINS___________________
 // Declaraciones de las funciones internas
-void		builtin_cd(char **args, t_env *env);
-void		builtin_pwd(char **args, t_env *env);
-void		builtin_unset(char **args, t_env *env);
-void		builtin_exit(char **args, t_env *env);
-void		builtin_env(char **args, t_env *env);
-void		builtin_export(char **args, t_env *env);
-void		builtin_echo(char **args, t_env *env);
+void			builtin_cd(char **args, t_env *env);
+void			builtin_pwd(char **args, t_env *env);
+void			builtin_unset(char **args, t_env *env);
+void			builtin_exit(char **args, t_env *env);
+void			builtin_env(char **args, t_env *env);
+void			builtin_export(char **args, t_env *env);
+void			builtin_echo(char **args, t_env *env);
 
 typedef void	(*builtin_func)(char **args, t_env *env);
 
 /* Estructura para los built-ins */
 typedef struct s_builtin
 {
-    char        *name;
-    builtin_func func;
-}   t_builtin;
+	char			*name;
+	builtin_func	func;
+}	t_builtin;
 
-builtin_func		builtin_arr(char *str);
+builtin_func	builtin_arr(char *str);
 
-int			is_builtin(char *command);
-void		execute_builtin(char **args, t_env *env);
-char		**add_var(char **arr, char *str);
-void		whileloop_add_var(char **arr, char **rtn, char *str);
-void	update_pwd(t_env *env, char *pwd);
-void	update_oldpwd(t_env *env, char *old_pwd);
-char		**free_arr(char **arr, int len);
+int				is_builtin(char *command);
+void			execute_builtin(char **args, t_env *env);
+char			**add_var(char **arr, char *str);
+void			whileloop_add_var(char **arr, char **rtn, char *str);
+void			update_pwd(t_env *env, char *pwd);
+void			update_oldpwd(t_env *env, char *old_pwd);
+char			**free_arr(char **arr, int len);
 
 // Declaraciones de las funciones faltantes
-int			equal_sign(const char *str);
-void		delete_quotes(char *str, char quote_char);
-void		mini_env(t_env *env, t_single_cmd *simple_cmd);
-int 		variable_exist(t_env *env, char *str);
-void		handle_export_errors(char *str);
-int			is_valid_identifier(const char *str);
-char		**replace_envp(char **old_envp, char **new_envp);
-int			find_char_index(const char *str, char c);
-int			is_valid_environment_variable(const char *line);
+int				equal_sign(const char *str);
+void			delete_quotes(char *str, char quote_char);
+void			mini_env(t_env *env, t_single_cmd *simple_cmd);
+int				variable_exist(t_env *env, char *str);
+void			handle_export_errors(char *str);
+int				is_valid_identifier(const char *str);
+char			**replace_envp(char **old_envp, char **new_envp);
+int				find_char_index(const char *str, char c);
+int				is_valid_environment_variable(const char *line);
 
 #endif

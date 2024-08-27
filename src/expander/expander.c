@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-static int	ft_str_expander(t_lexem *lex_list, int *exit);
+static int	ft_str_expander(t_lexem *lex_list, t_data *data);
 static void	ft_add_cmd_expansions(t_single_cmd *cmd_list, t_lexem **cmd_args);
 
 /** Expansion de strings del atributo str de los t_single_cmd (equivalente
@@ -20,22 +20,22 @@ static void	ft_add_cmd_expansions(t_single_cmd *cmd_list, t_lexem **cmd_args);
  * 
  * @param lex_list Puntero al primer elemento de la lista de lexemas.
  * @param cmd_list Puntero al primer elemento de la lista de t_single_cmd.
- * @param exit Puntero a direccion de memoria que almacena último error de
- * ejecución.
+ * @param data Puntero a la estructura data con datos generales del programa
+ * para utilizar o modificar los atributos last_exit y env.
  *
  * @returns Estado de salida de la función. 
  **/
-int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list, int *exit)
+int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list, t_data *data)
 {
 	t_lexem	*curr_cmd_args;
 
 	curr_cmd_args = lex_list;
-	if (ft_str_expander(lex_list, exit) == EXIT_FAILURE)
+	if (ft_str_expander(lex_list, data) == EXIT_FAILURE)
 		return (EXIT_FAILURE);
 	while (cmd_list)
 	{
 		ft_add_cmd_expansions(cmd_list, &curr_cmd_args);
-		if (ft_str_expander(cmd_list->redirection, exit) \
+		if (ft_str_expander(cmd_list->redirection, data) \
 		== EXIT_FAILURE)
 			return (EXIT_FAILURE);
 		cmd_list = cmd_list->next;
@@ -45,12 +45,12 @@ int	ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list, int *exit)
 
 /** Funcion de apoyo para expandir el atributo str de estructuras t_lexem.
  * @param lex_list Puntero al primer elemento de la lista de lexemas.
- * @param exit Puntero a direccion de memoria que almacena último error de
- * ejecución.
+ * @param data Puntero a la estructura data con datos generales del programa
+ * para utilizar o modificar los atributos last_exit y env.
  * 
  * @returns Estado de salida de la función. 
  **/
-static int	ft_str_expander(t_lexem *lex_list, int *exit)
+static int	ft_str_expander(t_lexem *lex_list, t_data *data)
 {
 	char	*exp_malloc;
 	int		buffer;
@@ -59,13 +59,14 @@ static int	ft_str_expander(t_lexem *lex_list, int *exit)
 	while (lex_list)
 	{
 		if ((lex_list->token != HERE_DOC && lex_list->token != SINGLE_QUOTES \
+			&& lex_list->token != COMPLEX_WORD \
 			&& lex_list->token < SINGLE_QUO_RED) \
 			&& ft_has_expansion(lex_list->str))
 		{
 			if ((ft_expansion_malloc(&exp_malloc, lex_list, \
-				&buffer, exit) == EXIT_FAILURE) || \
+				&buffer, data) == EXIT_FAILURE) || \
 				(ft_fill_expansion(exp_malloc, lex_list, \
-				&buffer, exit) == EXIT_FAILURE) || \
+				&buffer, data) == EXIT_FAILURE) || \
 				(ft_expansion_replace(exp_malloc, lex_list) == EXIT_FAILURE))
 				return (EXIT_FAILURE);
 			if (lex_list->token > SINGLE_QUO_RED)

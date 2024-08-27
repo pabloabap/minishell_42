@@ -43,7 +43,7 @@ int	ft_parent_exit(int wstatus, int *err_n)
 }
 
 /** Función getenv ajustada a nuestro programa para que 
- * apunte al duplicado de variable de entorno en vez de
+ * apunte al duplicado de variables de entorno en vez de
  * a las reales.
 */
 char	*ft_getenv(char *var_name, char **envp)
@@ -56,7 +56,7 @@ char	*ft_getenv(char *var_name, char **envp)
 	while (envp && envp[i])
 	{
 		if (0 == ft_strncmp(var_name, envp[i], var_name_len))
-			return (&(envp[i][var_name_len]));
+			return (&(envp[i][var_name_len + 1]));
 		i ++;
 	}
 	return (NULL);
