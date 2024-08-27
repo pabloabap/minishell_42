@@ -154,16 +154,16 @@ void			builtin_env(char **args, t_env *env);
 void			builtin_export(char **args, t_env *env);
 void			builtin_echo(char **args, t_env *env);
 
-typedef void	(*builtin_func)(char **args, t_env *env);
+typedef void	(*t_builtin_func)(char **args, t_env *env);
 
 /* Estructura para los built-ins */
 typedef struct s_builtin
 {
 	char			*name;
-	builtin_func	func;
+	t_builtin_func	func;
 }	t_builtin;
 
-builtin_func	builtin_arr(char *str);
+t_builtin_func	builtin_arr(char *str);
 
 int				is_builtin(char *command);
 void			execute_builtin(char **args, t_env *env);

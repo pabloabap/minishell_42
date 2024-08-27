@@ -36,7 +36,7 @@ int	variable_exist(t_env *env, char *str)
 }
 
 // Array de funciones built-in
-builtin_func	builtin_arr(char *str)
+t_builtin_func	builtin_arr(char *str)
 {
 	static t_builtin	builtins[] = {
 	{"echo", builtin_echo},
@@ -73,7 +73,7 @@ int	is_builtin(char *command)
 // Ejecuta el comando interno correspondiente
 void	execute_builtin(char **args, t_env *env)
 {
-	builtin_func	builtin_func;
+	t_builtin_func	builtin_func;
 
 	builtin_func = builtin_arr(args[0]);
 	if (builtin_func != NULL)
