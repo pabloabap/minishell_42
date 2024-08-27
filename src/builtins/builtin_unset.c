@@ -16,6 +16,7 @@
 #include <string.h>
 
 // Encuentra el índice del signo '=' en la variable
+/*
 int	find_env_var_index(char **envp, const char *var)
 {
 	int		i;
@@ -40,6 +41,24 @@ int	find_env_var_index(char **envp, const char *var)
 	}
 	free(var_name);
 	return (-1);
+}
+*/
+// Encuentra el índice de la variable en envp
+int	find_env_var_index(char **envp, const char *var)
+{
+    int		i;
+    int		var_len;
+
+    var_len = ft_strlen(var);  // Obtener la longitud del nombre de la variable
+    i = 0;
+    while (envp[i])
+    {
+        // Comparamos solo el nombre de la variable, hasta el signo '='
+        if (ft_strncmp(envp[i], var, var_len) == 0 && envp[i][var_len] == '=')
+            return (i);
+        i++;
+    }
+    return (-1);
 }
 
 // Elimina una variable del array de entorno
