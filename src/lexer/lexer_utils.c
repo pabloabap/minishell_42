@@ -18,7 +18,7 @@
 */
 int	is_whitespace(char c)
 {
-	return (c == ' ' || (c > 8 && c < 14));
+	return (c == ' ' || (c >= 8 && c < 14));
 }
 
 /** Rellena los atributos str y token de las struct s_lexem de 

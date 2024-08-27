@@ -10,7 +10,7 @@ LIBFT_AR	= ./lib/libft/libft.a
 
 # Compiler and flags
 CC 			= gcc
-CFLAGS 		= -Wall -Wextra -Werror -g
+CFLAGS 		= -Wall -Wextra -Werror
 READLINE	= -lreadline -lhistory
 LIBFT		= -L./lib/libft -lft
 
@@ -34,6 +34,9 @@ SRC			=	src/lexer/lexer.c \
 				src/lexer/consecutive_quotes_utils.c \
 				src/lexer/consecutive_quotes_split.c \
 				src/lexer/consecutive_quotes_fill.c \
+				src/lexer/complex_str_checker.c \
+				src/lexer/complex_str_builder.c \
+				src/lexer/complex_str_utils.c \
 				src/parser/parser_utils.c \
 				src/parser/cmd_split.c \
 				src/parser/redirection_utils.c \

@@ -59,6 +59,7 @@ static int	ft_str_expander(t_lexem *lex_list, t_data *data)
 	while (lex_list)
 	{
 		if ((lex_list->token != HERE_DOC && lex_list->token != SINGLE_QUOTES \
+			&& lex_list->token != COMPLEX_WORD \
 			&& lex_list->token < SINGLE_QUO_RED) \
 			&& ft_has_expansion(lex_list->str))
 		{

@@ -36,6 +36,4 @@ void	ft_consecutive_quotes(char **end_quote, char quote_type)
 		*end_quote = NULL;
 	else if ((*end_quote)[i] == '\0' || is_whitespace((*end_quote)[i]))
 		*end_quote = (*end_quote + i - 1);
-	printf("COUNTER => %i\n", quotes_counter);
-	printf("EOQ => %s\n", *end_quote);
 }
