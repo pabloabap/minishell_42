@@ -35,7 +35,7 @@ int	main(int argc, char **argv, char **envp)
 			}
 			else if (!data->input)
 				return (ft_putendl_fd("exit", STDERR_FILENO), \
-				clean_data(data), free(data), EXIT_SUCCESS);
+				clean_data(data), ft_final_clean(data), EXIT_SUCCESS);
 			clean_data(data);
 		}
 		ft_final_clean(data);

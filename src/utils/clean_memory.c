@@ -23,7 +23,7 @@ void	ft_final_clean(t_data *data)
 	i = 0;
 	while (data->env->envp_cpy[i] != NULL)
 	{
-		free(data->env->envp_cpy[i++]);
+		free(data->env->envp_cpy[i]);
 		i++;
 	}
 	free(data->env->envp_cpy);
