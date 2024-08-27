@@ -1,8 +1,14 @@
-//CABECERA
-
-//MISMO QUE ft_split solo que también se reservan espacios para str vacios,
-//necesarios para saber cuando expandir partes de un str con comillas 
-// consecutivas o no.
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   consecutive_quotes_split.c                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/27 20:39:34 by pabad-ap          #+#    #+#             */
+/*   Updated: 2024/08/27 20:39:49 by pabad-ap         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../../include/minishell.h"
 

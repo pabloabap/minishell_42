@@ -12,6 +12,7 @@
 
 #include "../../include/minishell.h"
 
+static int	ft_initial_checks(t_single_cmd *cmd, t_data *data);
 static int	ft_check_path_env(t_single_cmd *cmd, t_data *data);
 static int	ft_check_path_dir(t_single_cmd *cmd, char *dir, DIR *actual, \
 	int *err_n);
@@ -27,12 +28,46 @@ static int	ft_check_cmd_not_found(t_single_cmd *cmd, int *err_n);
  */
 int	ft_path_finder(t_single_cmd *cmd, t_data *data)
 {
-	if (ft_strnstr(cmd->str[0], "/", ft_strlen(cmd->str[0])))
+	if (EXIT_FAILURE == ft_initial_checks(cmd, data))
+		return (EXIT_FAILURE);
+	else if (ft_strnstr(cmd->str[0], "/", ft_strlen(cmd->str[0])))
 		return (cmd->cmd_path = cmd->str[0], EXIT_SUCCESS);
 	else
 		if (EXIT_FAILURE == ft_check_path_env(cmd, data))
 			return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
+}
+
+/** Checks iniciales. Comprueba si el primer argumento del comando simple
+ * es un directorio, '.' o '..' para gestionar el error.
+ * 
+ * @param cmd Puntero a estrucura single command.
+ * @param data Puntero a la estrcutura con informacion general
+ * del programa, utilizado para actualizar el last_exit status
+ * si es necesario.
+ * 
+ * @return Resultado de la ejecuion. 
+*/
+static int	ft_initial_checks(t_single_cmd *cmd, t_data *data)
+{
+	DIR	*dir;
+
+	dir = opendir(cmd->str[0]);
+	if (0 == ft_strncmp(cmd->str[0], "..", 3) \
+		* ft_strncmp(cmd->str[0], ".", 2))
+	{
+		ft_putstr_fd(cmd->str[0], STDERR_FILENO);
+		ft_putendl_fd(": command not found", STDERR_FILENO);
+		return (free(dir), data->last_exit = 127, EXIT_FAILURE);
+	}
+	else if (dir)
+	{
+		ft_putstr_fd("-Minishell: ", STDERR_FILENO);
+		ft_putstr_fd(cmd->str[0], STDERR_FILENO);
+		ft_putendl_fd(": Is a directory", STDERR_FILENO);
+		return (free(dir), data->last_exit = 126, EXIT_FAILURE);
+	}
+	return (free(dir), EXIT_SUCCESS);
 }
 
 /** Subfunción de `ft_path_finder` encargada de iterar sobre los directorios 
