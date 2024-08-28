@@ -55,4 +55,5 @@ void	ft_hdoc_close_check(t_lexem *redir, char *line, int *err_n)
 		ft_putstr_fd(")\n", STDERR_FILENO);
 		*err_n = 0;
 	}
+	free(line);
 }

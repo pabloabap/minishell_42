@@ -64,8 +64,9 @@ static int	ft_heredoc_creation(t_lexem *redir, t_data *data)
 		if (redir->token >= SINGLE_QUO_RED)
 			ft_putstr_fd(line, w_fd);
 		else if (EXIT_FAILURE == ft_fill_hdoc(line, data, w_fd))
-			return (ft_close(w_fd, &(data->last_exit)), -1);
+			return (free(line), ft_close(w_fd, &(data->last_exit)), -1);
 		write(w_fd, "\n", 1);
+		free(line);
 		line = readline("heredoc> ");
 	}
 	ft_hdoc_close_check (redir, line, &(data->last_exit));
@@ -73,8 +74,7 @@ static int	ft_heredoc_creation(t_lexem *redir, t_data *data)
 	r_fd = open("./tmp.txt", O_RDONLY);
 	if (0 > r_fd)
 		data->last_exit = errno;
-	unlink("tmp.txt");
-	return (r_fd);
+	return (unlink("tmp.txt"), r_fd);
 }
 
 /** Escribe caracteres de un string que no tienen que ser expandidos en
