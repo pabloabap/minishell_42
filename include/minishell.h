@@ -30,7 +30,7 @@
 # include "../lib/libft/libft.h"
 
 /*Variable global que almacena el exit status del último comando ejecutado*/
-extern int	g_error;
+extern int		g_error;
 
 /* Estructura para almacenar la copia de las variables de entorno*/
 typedef struct s_env

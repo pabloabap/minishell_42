@@ -32,9 +32,15 @@ int	ft_path_finder(t_single_cmd *cmd, t_data *data)
 		return (EXIT_FAILURE);
 	else if (ft_strnstr(cmd->str[0], "/", ft_strlen(cmd->str[0])))
 		return (cmd->cmd_path = cmd->str[0], EXIT_SUCCESS);
-	else
-		if (EXIT_FAILURE == ft_check_path_env(cmd, data))
-			return (EXIT_FAILURE);
+	else if (!ft_getenv("PATH", data->env->envp_cpy))
+	{
+		ft_putstr_fd("-Minishell: ", STDERR_FILENO);
+		ft_putstr_fd(cmd->str[0], STDERR_FILENO);
+		ft_putendl_fd(": No such file or directory", STDERR_FILENO);
+		return (data->last_exit = 127, EXIT_FAILURE);
+	}
+	else if (EXIT_FAILURE == ft_check_path_env(cmd, data))
+		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
 
@@ -60,7 +66,7 @@ static int	ft_initial_checks(t_single_cmd *cmd, t_data *data)
 		ft_putendl_fd(": command not found", STDERR_FILENO);
 		return (free(dir), data->last_exit = 127, EXIT_FAILURE);
 	}
-	else if (dir)
+	else if (dir || errno == EACCES)
 	{
 		ft_putstr_fd("-Minishell: ", STDERR_FILENO);
 		ft_putstr_fd(cmd->str[0], STDERR_FILENO);

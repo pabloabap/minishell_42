@@ -74,6 +74,7 @@ static void	child_handler(int signal)
 {
 	if (signal == SIGINT)
 	{
+		write(1, "\n", 1);
 		g_error = SIGINT;
 	}
 	else if (signal == SIGQUIT)

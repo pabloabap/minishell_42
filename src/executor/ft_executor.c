@@ -107,7 +107,9 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_data *data)
 		execute_builtin(cmd->str, data->env);
 	else if (execve(cmd->cmd_path, cmd->str, data->env->envp_cpy) < 0)
 	{
-		if (access(cmd->cmd_path, X_OK) < 0)
+		if (access(cmd->cmd_path, F_OK) < 0)
+			return (perror("2-Minishell "), exit(127), EXIT_FAILURE);
+		else if (access(cmd->cmd_path, X_OK) < 0)
 			return (perror("2-Minishell "), exit(126), EXIT_FAILURE);
 		return (perror("22-Minishell "), exit(errno), EXIT_FAILURE);
 	}
