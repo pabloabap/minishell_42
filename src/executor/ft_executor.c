@@ -96,7 +96,7 @@ static int	ft_prepare_exec(t_single_cmd *head, int *std_out, t_data *data)
  */
 static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_data *data)
 {
-	if (is_builtin(cmd->str[0]) && !cmd->prev && !cmd->next)
+	if (cmd->str && is_builtin(cmd->str[0]) && !cmd->prev && !cmd->next)
 		return (exit(0), EXIT_SUCCESS);
 	else if (!cmd->str || \
 		EXIT_FAILURE == ft_set_pipes(cmd, std_out, &(data->last_exit), 0) || \
@@ -133,7 +133,7 @@ static int	ft_parent_mng(t_single_cmd *cmd, t_data *data, int std_out)
 	int				wstatus;
 
 	tmp = cmd;
-	if (is_builtin(cmd->str[0]) && !cmd->next)
+	if (cmd->str && is_builtin(cmd->str[0]) && !cmd->next)
 		if (EXIT_FAILURE == ft_single_builtin(cmd, data, std_out))
 			return (EXIT_FAILURE);
 	while (tmp)

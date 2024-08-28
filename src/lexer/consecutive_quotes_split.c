@@ -51,9 +51,6 @@ static int	str_array_len(char const *s, char c)
 		while (s[i] != c && s[i] != '\0')
 			i ++;
 	}
-	ft_putchar_fd('_', STDOUT_FILENO);
-	ft_putnbr_fd(words, STDOUT_FILENO);
-	ft_putendl_fd("_", STDOUT_FILENO);
 	return (words);
 }
 
