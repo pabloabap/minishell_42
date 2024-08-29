@@ -78,7 +78,7 @@ int init_data(t_data **data, char **envp)
         free(*data);
         return (EXIT_FAILURE);
     }
-    (*data)->env->export_cpy[0] = NULL;
+    (*data)->env->export_cpy = dup_envp(envp);
 
     (*data)->last_exit = 0;
     wait_signal(1);
