@@ -69,6 +69,7 @@ static void	process_and_update_var(char *str, t_env *env)
 		handle_export_errors(str);
 }
 */
+
 static void process_and_update_var(char *str, t_env *env)
 {
     int eq_idx;
@@ -109,6 +110,7 @@ static void process_and_update_var(char *str, t_env *env)
     }
 }
 
+
 /**
  * Updates the environment with variables specified in the arguments.
  * Iterates over the arguments, starting from the second argument, and
@@ -147,7 +149,7 @@ void	builtin_export(char **args, t_env *env)
 	update_environment(args, env);
 }
 */
-
+/*
 void update_export_list(t_env *env, char *str)
 {
     char **new_export_cpy;
@@ -209,6 +211,167 @@ void update_export_list(t_env *env, char *str)
     free_arr(env->export_cpy, size);
     env->export_cpy = new_export_cpy;
 }
+*/
+/*
+void update_export_list(t_env *env, char *str)
+{
+    char **new_export_cpy;
+    int size;
+    int i;
+
+    // Verificar si export_cpy es NULL y manejar adecuadamente
+    if (!env->export_cpy)
+    {
+        new_export_cpy = malloc(sizeof(char *) * 2);
+        if (!new_export_cpy)
+        {
+            perror("Error al asignar memoria");
+            exit(EXIT_FAILURE);
+        }
+        new_export_cpy[0] = strdup(str);
+        if (!new_export_cpy[0])
+        {
+            perror("Error al duplicar cadena");
+            exit(EXIT_FAILURE);
+        }
+        new_export_cpy[1] = NULL;
+        env->export_cpy = new_export_cpy;
+        return;
+    }
+
+    // Contar el tamaño actual del array
+    size = 0;
+    while (env->export_cpy[size])
+        size++;
+
+    // Reservar memoria para el nuevo array
+    new_export_cpy = malloc(sizeof(char *) * (size + 2));
+    if (!new_export_cpy)
+    {
+        perror("Error al asignar memoria");
+        exit(EXIT_FAILURE);
+    }
+
+    // Copiar elementos existentes y añadir la nueva variable
+    i = 0;
+    while (i < size && strcmp(env->export_cpy[i], str) < 0)
+    {
+        new_export_cpy[i] = strdup(env->export_cpy[i]);
+        if (!new_export_cpy[i])
+        {
+            perror("Error al duplicar cadena");
+            free_arr(new_export_cpy, i);
+            exit(EXIT_FAILURE);
+        }
+        i++;
+    }
+
+    new_export_cpy[i] = strdup(str);
+    if (!new_export_cpy[i])
+    {
+        perror("Error al duplicar cadena");
+        free_arr(new_export_cpy, i);
+        exit(EXIT_FAILURE);
+    }
+    i++;
+
+    while (i <= size)
+    {
+        new_export_cpy[i] = strdup(env->export_cpy[i - 1]);
+        if (!new_export_cpy[i])
+        {
+            perror("Error al duplicar cadena");
+            free_arr(new_export_cpy, i);
+            exit(EXIT_FAILURE);
+        }
+        i++;
+    }
+    new_export_cpy[size + 1] = NULL;
+
+    // Liberar memoria del array anterior
+    free_arr(env->export_cpy, size);
+    env->export_cpy = new_export_cpy;
+}
+*/
+void update_export_list(t_env *env, char *str)
+{
+    char **new_export_cpy;
+    int size;
+    int i;
+
+    // Verificar si export_cpy es NULL y manejar adecuadamente
+    if (!env->export_cpy)
+    {
+        new_export_cpy = malloc(sizeof(char *) * 2);
+        if (!new_export_cpy)
+        {
+            perror("Error al asignar memoria");
+            exit(EXIT_FAILURE);
+        }
+        new_export_cpy[0] = strdup(str);
+        if (!new_export_cpy[0])
+        {
+            perror("Error al duplicar cadena");
+            exit(EXIT_FAILURE);
+        }
+        new_export_cpy[1] = NULL;
+        env->export_cpy = new_export_cpy;
+        return;
+    }
+
+    // Contar el tamaño actual del array
+    size = 0;
+    while (env->export_cpy[size])
+        size++;
+
+    // Reservar memoria para el nuevo array
+    new_export_cpy = malloc(sizeof(char *) * (size + 2));
+    if (!new_export_cpy)
+    {
+        perror("Error al asignar memoria");
+        exit(EXIT_FAILURE);
+    }
+
+    // Copiar elementos existentes y añadir la nueva variable
+    i = 0;
+    while (i < size && strcmp(env->export_cpy[i], str) < 0)
+    {
+        new_export_cpy[i] = strdup(env->export_cpy[i]);
+        if (!new_export_cpy[i])
+        {
+            perror("Error al duplicar cadena");
+            free_arr(new_export_cpy, i);
+            exit(EXIT_FAILURE);
+        }
+        i++;
+    }
+
+    new_export_cpy[i] = strdup(str);
+    if (!new_export_cpy[i])
+    {
+        perror("Error al duplicar cadena");
+        free_arr(new_export_cpy, i);
+        exit(EXIT_FAILURE);
+    }
+    i++;
+
+    while (i <= size)
+    {
+        new_export_cpy[i] = strdup(env->export_cpy[i - 1]);
+        if (!new_export_cpy[i])
+        {
+            perror("Error al duplicar cadena");
+            free_arr(new_export_cpy, i);
+            exit(EXIT_FAILURE);
+        }
+        i++;
+    }
+    new_export_cpy[size + 1] = NULL;
+
+    // Liberar memoria del array anterior
+    free_arr(env->export_cpy, size);
+    env->export_cpy = new_export_cpy;
+}
 
 void print_export_list(t_env *env)
 {
@@ -254,7 +417,7 @@ void builtin_export(char **args, t_env *env)
  * @param str The new variable to add.
  * @return The new array including the new variable, or NULL on failure.
  */
-/*
+
 char	**add_var(char **arr, char *str)
 {
 	int		i;
@@ -280,37 +443,4 @@ char	**add_var(char **arr, char *str)
 		return (free_arr(new_arr, i));
 	new_arr[i + 1] = NULL;
 	return (new_arr);
-}
-*/
-char **add_var(char **arr, char *str)
-{
-    int i;
-    int len;
-    char **new_arr;
-
-    len = 0;
-    while (arr && arr[len] != NULL)
-        len++;
-
-    new_arr = (char **)malloc(sizeof(char *) * (len + 2));
-    if (!new_arr)
-        return (NULL);
-
-    i = 0;
-    while (i < len)
-    {
-        new_arr[i] = ft_strdup(arr[i]);
-        if (!new_arr[i])
-            return (free_arr(new_arr, i));
-        i++;
-    }
-    new_arr[i] = ft_strdup(str);
-    if (!new_arr[i])
-        return (free_arr(new_arr, i));
-    new_arr[i + 1] = NULL;
-
-    if (arr)
-        free(arr);
-
-    return (new_arr);
 }
