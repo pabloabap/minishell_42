@@ -119,10 +119,9 @@ int	is_valid_environment_variable(const char *line)
 		return (0);
 	eq_idx = find_char_index(line, '=');
 	if (eq_idx == -1)
-		return (0);
+		return (1);
 	value = &line[eq_idx + 1];
 	if (value == NULL || *value == '\0')
 		return (0);
 	return (1);
 }
-

@@ -77,7 +77,7 @@ static void process_and_update_var(char *str, t_env *env)
 
     eq_idx = equal_sign(str);
     if (!is_valid_environment_variable(str))
-        return;
+        return ;
 
     if (eq_idx != -1 && str[eq_idx + 1] == '\"')
         delete_quotes(&str[eq_idx + 1], '\"');

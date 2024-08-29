@@ -98,7 +98,7 @@ int	is_valid_identifier(const char *str)
 {
 	int	i;
 
-	if (str == NULL || !ft_isalpha(str[0]))
+	if (str == NULL || (!ft_isalpha(str[0]) && str[0] != '_'))
 		return (0);
 	i = 1;
 	while (str[i] != '\0' && str[i] != '=')
