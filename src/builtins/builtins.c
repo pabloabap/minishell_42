@@ -12,29 +12,6 @@
 
 #include "../../include/minishell.h"
 
-int	variable_exist(t_env *env, char *str)
-{
-	int	i;
-	int	eq_idx;
-
-	eq_idx = equal_sign(str);
-	if (eq_idx != -1 && (str[eq_idx + 1] == '\"' || str[eq_idx + 1] == '\''))
-		delete_quotes(&str[eq_idx + 1], str[eq_idx + 1]);
-	i = 0;
-	while (env->envp_cpy[i])
-	{
-		if (ft_strncmp(env->envp_cpy[i], str,
-				equal_sign(env->envp_cpy[i])) == 0)
-		{
-			free(env->envp_cpy[i]);
-			env->envp_cpy[i] = ft_strdup(str);
-			return (1);
-		}
-		i++;
-	}
-	return (0);
-}
-
 // Array de funciones built-in
 t_builtin_func	builtin_arr(char *str)
 {

@@ -19,6 +19,7 @@
  * @param new_envp The new environment array to return.
  * @return The new environment array.
  */
+/*
 char	**replace_envp(char **old_envp, char **new_envp)
 {
 	int	i;
@@ -32,7 +33,7 @@ char	**replace_envp(char **old_envp, char **new_envp)
 	}
 	return (new_envp);
 }
-
+*/
 /**
  * Processes a variable string and updates the environment if necessary.
  * Checks if the variable string is valid, removes quotes if necessary,
@@ -40,6 +41,7 @@ char	**replace_envp(char **old_envp, char **new_envp)
  * @param str The variable string to process.
  * @param env The environment structure to update.
  */
+/*
 static void	process_and_update_var(char *str, t_env *env)
 {
 	int		eq_idx;
@@ -61,6 +63,225 @@ static void	process_and_update_var(char *str, t_env *env)
 				return ;
 			}
 			env->envp_cpy = replace_envp(env->envp_cpy, new_envp);
+		}
+	}
+	else
+		handle_export_errors(str);
+}
+*/
+/**
+ * Updates the environment with variables specified in the arguments.
+ * Iterates over the arguments, starting from the second argument, and
+ * processes each one to update the environment.
+ * @param args The arguments containing variable strings.
+ * @param env The environment structure to update.
+ */
+/*
+void	update_environment(char **args, t_env *env)
+{
+	int	i;
+
+	i = 1;
+	while (args[i] != NULL)
+	{
+		process_and_update_var(args[i], env);
+		i++;
+	}
+}
+*/
+/**
+ * Implements the 'export' command to update environment variables.
+ * If no additional arguments are provided, it lists the current environment.
+ * Otherwise, it updates the environment with the provided variable strings.
+ * @param args The arguments passed to the 'export' command.
+ * @param env The environment structure to modify.
+ */
+/*
+void	builtin_export(char **args, t_env *env)
+{
+	if (args[1] == NULL)
+	{
+		builtin_env(args, env);
+		return ;
+	}
+	update_environment(args, env);
+}
+*/
+/**
+ * Adds a new variable to an array of environment variables.
+ * Allocates memory for a new array that includes the additional variable and
+ * copies all existing variables to this new array.
+ * @param arr The existing array of environment variables.
+ * @param str The new variable to add.
+ * @return The new array including the new variable, or NULL on failure.
+ */
+/*
+char	**add_var(char **arr, char *str)
+{
+	int		i;
+	int		len;
+	char	**new_arr;
+
+	len = 0;
+	while (arr[len] != NULL)
+		len++;
+	new_arr = (char **)malloc(sizeof(char *) * (len + 2));
+	if (!new_arr)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		new_arr[i] = ft_strdup(arr[i]);
+		if (!new_arr[i])
+			return (free_arr(new_arr, i));
+		i++;
+	}
+	new_arr[i] = ft_strdup(str);
+	if (!new_arr[i])
+		return (free_arr(new_arr, i));
+	new_arr[i + 1] = NULL;
+	return (new_arr);
+}
+*/
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin_export.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/08 20:24:22 by pabad-ap          #+#    #+#             */
+/*   Updated: 2024/08/29 18:00:00 by pabad-ap         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../include/minishell.h"
+
+/**
+ * Replaces an old environment array with a new one.
+ * Frees the memory occupied by the old environment array 
+ * and returns the new array.
+ * @param old_envp The old environment array to free.
+ * @param new_envp The new environment array to return.
+ * @return The new environment array.
+ */
+
+char **replace_envp(char **old_envp, char **new_envp)
+{
+    int i;
+
+    if (old_envp)
+    {
+        i = 0;
+        while (old_envp[i])
+        {
+            free(old_envp[i]);
+            i++;
+        }
+        free(old_envp);
+    }
+    return new_envp;
+}
+
+
+/**
+ * Adds a variable to the export_cpy array, ensuring it's sorted alphabetically.
+ * This mimics the behavior of the 'export' command in Bash.
+ * @param env The environment structure to update.
+ * @param str The variable string to add.
+ */
+void update_export_list(t_env *env, char *str)
+{
+    char **new_export_cpy;
+    int size;
+    int i;
+
+    if (!env->export_cpy) // Verifica que export_cpy no sea NULL
+    {
+        env->export_cpy = malloc(sizeof(char *));
+        if (!env->export_cpy)
+        {
+            perror("Error al asignar memoria");
+            exit(EXIT_FAILURE);
+        }
+        env->export_cpy[0] = NULL;
+    }
+
+    size = 0;
+    while (env->export_cpy[size])
+        size++;
+
+    new_export_cpy = malloc((size + 2) * sizeof(char *));
+    if (!new_export_cpy)
+    {
+        perror("Error al asignar memoria");
+        exit(EXIT_FAILURE);
+    }
+
+    i = 0;
+    while (i < size && strcmp(env->export_cpy[i], str) < 0)
+    {
+        new_export_cpy[i] = strdup(env->export_cpy[i]);
+        if (!new_export_cpy[i])
+        {
+            perror("Error al duplicar cadena");
+            exit(EXIT_FAILURE);
+        }
+        i++;
+    }
+    new_export_cpy[i] = strdup(str);
+    if (!new_export_cpy[i])
+    {
+        perror("Error al duplicar cadena");
+        exit(EXIT_FAILURE);
+    }
+    while (i < size)
+    {
+        new_export_cpy[i + 1] = strdup(env->export_cpy[i]);
+        if (!new_export_cpy[i + 1])
+        {
+            perror("Error al duplicar cadena");
+            exit(EXIT_FAILURE);
+        }
+        i++;
+    }
+    new_export_cpy[size + 1] = NULL;
+
+    // Actualizar export_cpy
+    free_arr(env->export_cpy, size); // Asegúrate de usar la función correcta para liberar memoria
+    env->export_cpy = new_export_cpy;
+}
+
+
+/**
+ * Processes a variable string and updates the environment if necessary.
+ * Updates both envp_cpy and export_cpy.
+ * @param str The variable string to process.
+ * @param env The environment structure to update.
+ */
+
+static void	process_and_update_var(char *str, t_env *env)
+{
+	int		eq_idx;
+	char	**new_envp;
+
+	eq_idx = equal_sign(str);
+	if (!is_valid_environment_variable(str))
+		return ;
+	if (eq_idx != -1 && str[eq_idx + 1] == '\"')
+		delete_quotes(&str[eq_idx + 1], '\"');
+	if (is_valid_identifier(str))
+	{
+		if (!variable_exist(env, str))
+		{
+			new_envp = add_var(env->envp_cpy, str);
+			if (new_envp == NULL)
+			{
+				perror("Error al agregar variable de entorno");
+				return ;
+			}
+			env->envp_cpy = replace_envp(env->envp_cpy, new_envp);
+			update_export_list(env, str);
 		}
 	}
 	else
@@ -88,52 +309,92 @@ void	update_environment(char **args, t_env *env)
 
 /**
  * Implements the 'export' command to update environment variables.
- * If no additional arguments are provided, it lists the current environment.
+ * If no additional arguments are provided, it lists the current export_cpy.
  * Otherwise, it updates the environment with the provided variable strings.
  * @param args The arguments passed to the 'export' command.
  * @param env The environment structure to modify.
  */
-void	builtin_export(char **args, t_env *env)
+void print_export_list(t_env *env)
 {
-	if (args[1] == NULL)
-	{
-		builtin_env(args, env);
-		return ;
-	}
-	update_environment(args, env);
+    int i;
+
+    if (env->export_cpy == NULL)
+    {
+        printf("export_cpy is NULL\n");
+        return;
+    }
+
+    i = 0;
+    while (env->export_cpy[i])
+    {
+        printf("declare -x %s\n", env->export_cpy[i]);
+        i++;
+    }
 }
 
-/**
- * Adds a new variable to an array of environment variables.
- * Allocates memory for a new array that includes the additional variable and
- * copies all existing variables to this new array.
- * @param arr The existing array of environment variables.
- * @param str The new variable to add.
- * @return The new array including the new variable, or NULL on failure.
- */
-char	**add_var(char **arr, char *str)
-{
-	int		i;
-	int		len;
-	char	**new_arr;
 
-	len = 0;
-	while (arr[len] != NULL)
-		len++;
-	new_arr = (char **)malloc(sizeof(char *) * (len + 2));
-	if (!new_arr)
-		return (NULL);
-	i = 0;
-	while (i < len)
-	{
-		new_arr[i] = ft_strdup(arr[i]);
-		if (!new_arr[i])
-			return (free_arr(new_arr, i));
-		i++;
-	}
-	new_arr[i] = ft_strdup(str);
-	if (!new_arr[i])
-		return (free_arr(new_arr, i));
-	new_arr[i + 1] = NULL;
-	return (new_arr);
+void builtin_export(char **args, t_env *env)
+{
+    int i;
+
+    if (!args[1]) // Si no hay argumentos, se deben imprimir todas las variables exportadas
+    {
+        print_export_list(env);
+    }
+    else
+    {
+        for (i = 1; args[i]; i++)
+        {
+            process_and_update_var(args[i], env);
+        }
+    }
+}
+
+
+char **add_var(char **arr, char *str)
+{
+    int     i;
+    char    **new_arr;
+    int     count;
+
+    // Contar cuántas variables hay actualmente en arr
+    count = 0;
+    if (arr)
+    {
+        while (arr[count])
+            count++;
+    }
+
+    // Crear una nueva lista con espacio para una variable más
+    new_arr = malloc(sizeof(char *) * (count + 2));
+    if (!new_arr)
+    {
+        perror("Error al asignar memoria");
+        exit(EXIT_FAILURE);
+    }
+
+    // Copiar las variables existentes a la nueva lista
+    for (i = 0; i < count; i++)
+    {
+        new_arr[i] = arr[i];
+    }
+
+    // Añadir la nueva variable
+    new_arr[count] = ft_strdup(str);
+    if (!new_arr[count])
+    {
+        perror("Error al duplicar cadena");
+        exit(EXIT_FAILURE);
+    }
+
+    new_arr[count + 1] = NULL;
+
+    // Liberar la lista anterior si existía
+    if (arr)
+    {
+        free(arr);
+    }
+
+    // Devolver la nueva lista
+    return new_arr;
 }

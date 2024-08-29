@@ -22,6 +22,7 @@
  * @param len The number of elements in the array.
  * @return NULL.
  */
+
 char	**free_arr(char **arr, int len)
 {
 	int	i;
@@ -36,12 +37,14 @@ char	**free_arr(char **arr, int len)
 	return (NULL);
 }
 
+
 /**
  * Finds the index of the first '=' character in a string.
  * 
  * @param str The string to search.
  * @return The index of the '=' character, or -1 if not found.
  */
+
 int	equal_sign(const char *str)
 {
 	int	i;
@@ -64,6 +67,7 @@ int	equal_sign(const char *str)
  * @param str The string from which to remove quotes.
  * @param quote_char The quote character to remove.
  */
+
 void	delete_quotes(char *str, char quote_char)
 {
 	int	i;
@@ -89,6 +93,7 @@ void	delete_quotes(char *str, char quote_char)
  * @param str The string to check.
  * @return 1 if the string is a valid identifier, 0 otherwise.
  */
+
 int	is_valid_identifier(const char *str)
 {
 	int	i;
@@ -112,6 +117,7 @@ int	is_valid_identifier(const char *str)
  * 
  * @param str The string to check and print errors for.
  */
+
 void	handle_export_errors(char *str)
 {
 	if (!is_valid_identifier(str))

@@ -26,6 +26,7 @@ static char	**dup_envp(char **envp);
  * 
  * @return Resultado de la ejecución de la función.
  * */
+/*
 int	init_data(t_data **data, char **envp)
 {
 	(*data) = (t_data *)malloc(sizeof(t_data));
@@ -41,9 +42,47 @@ int	init_data(t_data **data, char **envp)
 	if (!(*data)->env)
 		return (EXIT_FAILURE);
 	(*data)->env->envp_cpy = dup_envp(envp);
+	(*data)->env->export_cpy = NULL;
 	(*data)->last_exit = 0;
 	wait_signal(1);
 	return (EXIT_SUCCESS);
+}
+*/
+int init_data(t_data **data, char **envp)
+{
+    (*data) = (t_data *)malloc(sizeof(t_data));
+    if (!(*data))
+    {
+        perror("456-Minishell: t_data malloc fails");
+        return (EXIT_FAILURE);
+    }
+    (*data)->head_lex_list = NULL;
+    (*data)->head_cmd_list = NULL;
+    (*data)->input = NULL;
+    (*data)->env = malloc(sizeof(t_env));
+    if (!(*data)->env)
+        return (EXIT_FAILURE);
+    
+    (*data)->env->envp_cpy = dup_envp(envp);
+    if (!(*data)->env->envp_cpy)
+    {
+        free(*data);
+        return (EXIT_FAILURE);
+    }
+
+    (*data)->env->export_cpy = malloc(sizeof(char *));
+    if (!(*data)->env->export_cpy)
+    {
+        free((*data)->env->envp_cpy);
+        free((*data)->env);
+        free(*data);
+        return (EXIT_FAILURE);
+    }
+    (*data)->env->export_cpy[0] = NULL;
+
+    (*data)->last_exit = 0;
+    wait_signal(1);
+    return (EXIT_SUCCESS);
 }
 
 static char	**dup_envp(char **envp)

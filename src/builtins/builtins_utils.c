@@ -12,6 +12,29 @@
 
 #include "../../include/minishell.h"
 
+int	variable_exist(t_env *env, char *str)
+{
+	int	i;
+	int	eq_idx;
+
+	eq_idx = equal_sign(str);
+	if (eq_idx != -1 && (str[eq_idx + 1] == '\"' || str[eq_idx + 1] == '\''))
+		delete_quotes(&str[eq_idx + 1], str[eq_idx + 1]);
+	i = 0;
+	while (env->envp_cpy[i])
+	{
+		if (ft_strncmp(env->envp_cpy[i], str,
+				equal_sign(env->envp_cpy[i])) == 0)
+		{
+			free(env->envp_cpy[i]);
+			env->envp_cpy[i] = ft_strdup(str);
+			return (1);
+		}
+		i++;
+	}
+	return (0);
+}
+
 // Actualiza la variable de entorno `PWD` en `envp`.
 void	update_pwd(t_env *env, char *pwd)
 {
@@ -66,6 +89,7 @@ void	update_oldpwd(t_env *env, char *old_pwd)
  * @param c The character to find.
  * @return The index of the character, or -1 if not found.
  */
+
 int	find_char_index(const char *str, char c)
 {
 	int	i;
@@ -85,6 +109,7 @@ int	find_char_index(const char *str, char c)
  * @param line The environment variable string.
  * @return 1 if valid, 0 otherwise.
  */
+
 int	is_valid_environment_variable(const char *line)
 {
 	int			eq_idx;
@@ -100,3 +125,4 @@ int	is_valid_environment_variable(const char *line)
 		return (0);
 	return (1);
 }
+
