@@ -88,7 +88,10 @@ void	builtin_cd(char **args, t_env *env)
 	if (!args[1])
 		specific_path(env, "HOME=");
 	else if (ft_strncmp(args[1], "-", 1) == 0)
+	{
 		specific_path(env, "OLDPWD=");
+		builtin_pwd(args, env);
+	}
 	else
 		change_directory(args[1], old_pwd);
 	pwd = getcwd(NULL, 0);
