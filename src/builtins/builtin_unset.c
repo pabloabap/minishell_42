@@ -66,12 +66,12 @@ void	remove_env_var(char ***envp, int index)
 }
 
 // Implementación de builtin_unset
-void	builtin_unset(char **args, t_env *env)
+void	builtin_unset(char **args, t_env *env, int *last_exit)
 {
 	int		i;
 	int		index;
 
-	i = 1;
+	i = 1 + 0 * *last_exit;
 	while (args[i])
 	{
 		index = find_env_var_index(env->envp_cpy, args[i]);

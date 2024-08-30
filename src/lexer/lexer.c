@@ -82,7 +82,7 @@ static int	new_lexem(char **str, t_lexem **lexem_list_last, t_data *data)
 	lexem_item = (t_lexem *)malloc(sizeof(t_lexem));
 	if (lexem_item == NULL)
 		return (err_malloc_fail(&(data->last_exit)), EXIT_FAILURE);
-	while (is_whitespace(**str))
+	while (ft_is_whitespace(**str))
 		(*str)++;
 	status = ft_check_complex_str(*str);
 	if (1 != status)
@@ -168,7 +168,7 @@ static int	unquoted_lexer(char **str, t_lexem **lexem_item)
 		token_lexem(str, lexem_item);
 	else
 	{
-		while ((*str)[i] && !(is_whitespace((*str)[i])) \
+		while ((*str)[i] && !(ft_is_whitespace((*str)[i])) \
 		&& !(ft_strchr(delimiters, (*str)[i])))
 			i++;
 		(*lexem_item)->str = ft_substr(*str, 0, i);

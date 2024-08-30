@@ -15,7 +15,7 @@
 // Declaraciones de funciones internas
 static char	*find_path_ret(char *str, t_env *env);
 static int	specific_path(t_env *env, char *str);
-static int	change_directory(char *path, char *dir);
+static int	change_directory(char *path, char *dir, int *last_exit);
 
 // Encuentra el valor de una var de env especificada por `str` en `envp`.
 static char	*find_path_ret(char *str, t_env *env)
@@ -27,7 +27,7 @@ static char	*find_path_ret(char *str, t_env *env)
 	envp = env->envp_cpy;
 	if (!envp)
 	{
-		ft_putendl_fd("minishell: envp is NULL", STDERR_FILENO);
+		ft_putendl_fd("-minishell: envp is NULL", STDERR_FILENO);
 		return (NULL);
 	}
 	while (envp[i])
@@ -73,7 +73,7 @@ static int	specific_path(t_env *env, char *str)
 /* Maneja el comando `cd`, cambiando el directorio actual y actualizando el 
  * entorno.
  */
-void	builtin_cd(char **args, t_env *env)
+void	builtin_cd(char **args, t_env *env, int *last_exit)
 {
 	char	*pwd;
 	char	*old_pwd;
@@ -90,10 +90,10 @@ void	builtin_cd(char **args, t_env *env)
 	else if (ft_strncmp(args[1], "-", 1) == 0)
 	{
 		specific_path(env, "OLDPWD=");
-		builtin_pwd(args, env);
+		builtin_pwd(args, env, last_exit);
 	}
 	else
-		change_directory(args[1], old_pwd);
+		change_directory(args[1], old_pwd, last_exit);
 	pwd = getcwd(NULL, 0);
 	if (pwd && old_pwd)
 	{
@@ -106,19 +106,17 @@ void	builtin_cd(char **args, t_env *env)
 
 // Cambia el directorio a una ruta específica y maneja errores.
 
-static int	change_directory(char *path, char *dir)
+static int	change_directory(char *path, char *dir, int *last_exit)
 {
 	int	ret;
 
 	(void)dir;
 	ret = chdir(path);
-	if (ret != 0)
+	if (ret != 0 && path[0])
 	{
-		ft_putstr_fd("minishell: error cambiando de directorio a ", \
-			STDERR_FILENO);
-		ft_putstr_fd(path, STDERR_FILENO);
-		perror("");
-		return (EXIT_FAILURE);
+		ft_putstr_fd("-minishell: cd: ", STDERR_FILENO);
+		perror(path);
+		return (*last_exit = 1, EXIT_FAILURE);
 	}
 	return (EXIT_SUCCESS);
 }

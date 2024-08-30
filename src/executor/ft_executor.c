@@ -104,7 +104,7 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_data *data)
 		EXIT_FAILURE == ft_path_finder(cmd, data))
 		return (exit(data->last_exit), EXIT_FAILURE);
 	else if (is_builtin(cmd->str[0]) && (cmd->next || cmd->prev))
-		execute_builtin(cmd->str, data->env);
+		execute_builtin(cmd->str, data->env, &(data->last_exit));
 	else if (execve(cmd->cmd_path, cmd->str, data->env->envp_cpy) < 0)
 	{
 		if (access(cmd->cmd_path, F_OK) < 0)
@@ -175,6 +175,7 @@ static int	ft_parent_mng(t_single_cmd *cmd, t_data *data, int std_out)
 static int	ft_single_builtin(t_single_cmd *cmd, t_data *data, int std_out)
 {
 	int	default_stdin;
+	int	exit_status;
 
 	default_stdin = dup(STDIN_FILENO);
 	if (0 > default_stdin)
@@ -185,10 +186,10 @@ static int	ft_single_builtin(t_single_cmd *cmd, t_data *data, int std_out)
 	if (0 > dup2(default_stdin, STDIN_FILENO))
 		return (close(default_stdin), perror("00000-Minishell "), \
 			data->last_exit = errno, EXIT_FAILURE);
-	execute_builtin(cmd->str, data->env);
+	exit_status = execute_builtin(cmd->str, data->env, &(data->last_exit));
 	if (0 > dup2(std_out, STDOUT_FILENO))
 		return (close(default_stdin), perror("000000-Minishell "), \
 			data->last_exit = errno, EXIT_FAILURE);
 	ft_close(default_stdin, &(data->last_exit));
-	return (EXIT_SUCCESS);
+	return (exit_status);
 }

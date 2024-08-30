@@ -37,7 +37,7 @@ int	ft_check_complex_str(char	*str)
 	i = 0;
 	if (ft_strchr("|<>", str[i]) != NULL && str[i] != '\0')
 		return (1);
-	while (str && str[i] != '\0' && !is_whitespace(str[i]) && \
+	while (str && str[i] != '\0' && !ft_is_whitespace(str[i]) && \
 		ft_strchr("|<>", str[i]) == NULL)
 	{
 		if (str[i] == '\'' || str[i] == '"')
@@ -89,7 +89,7 @@ static int	ft_move_to_close(char *str, int *i, char character)
  */
 static void	ft_move_to_delimiter(char *str, int *i, int *counter)
 {
-	while (str && str[*i] != '\0' && !is_whitespace(str[*i]) && \
+	while (str && str[*i] != '\0' && !ft_is_whitespace(str[*i]) && \
 		ft_strchr("|<>'\"", str[*i]) == NULL)
 		*i += 1;
 	*counter += 1;

@@ -16,7 +16,7 @@
  * 
  * @return 1 si es espacio, 0 si no.
 */
-int	is_whitespace(char c)
+int	ft_is_whitespace(char c)
 {
 	return (c == ' ' || (c >= 8 && c < 14));
 }

@@ -28,7 +28,7 @@ static void	print_lines(int start_index, char **args, int fd)
 }
 
 // Implementación del comando 'echo'
-void	builtin_echo(char **args, t_env *env)
+void	builtin_echo(char **args, t_env *env, int *last_exit)
 {
 	int	i;
 	int	j;
@@ -36,7 +36,7 @@ void	builtin_echo(char **args, t_env *env)
 
 	(void)env;
 	i = 1;
-	n_option = 0;
+	n_option = 0 * *last_exit;
 	while (args[i] != NULL && args[i][0] == '-' && args[i][1] == 'n')
 	{
 		j = 1;

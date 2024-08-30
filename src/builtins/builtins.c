@@ -48,11 +48,17 @@ int	is_builtin(char *command)
 }
 
 // Ejecuta el comando interno correspondiente
-void	execute_builtin(char **args, t_env *env)
+int	execute_builtin(char **args, t_env *env, int *last_exit)
 {
 	t_builtin_func	builtin_func;
+	int				tmp_last_exit;
 
+	tmp_last_exit = *last_exit;
 	builtin_func = builtin_arr(args[0]);
 	if (builtin_func != NULL)
-		builtin_func(args, env);
+		builtin_func(args, env, last_exit);
+	if (tmp_last_exit == 0 && tmp_last_exit != *last_exit)
+		return (EXIT_FAILURE);
+	else
+		return (EXIT_SUCCESS);
 }

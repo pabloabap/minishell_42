@@ -36,7 +36,7 @@ void	ft_consecutive_quotes(char **end_quote, char quote_type)
 	i = 0;
 	quotes_counter = 1;
 	while (*end_quote && (*end_quote)[i] != '\0' \
-		&& !is_whitespace((*end_quote)[i]))
+		&& !ft_is_whitespace((*end_quote)[i]))
 	{
 		if ((*end_quote)[i] == quote_type)
 			quotes_counter ++;
@@ -44,6 +44,6 @@ void	ft_consecutive_quotes(char **end_quote, char quote_type)
 	}
 	if (quotes_counter % 2 != 0)
 		*end_quote = NULL;
-	else if ((*end_quote)[i] == '\0' || is_whitespace((*end_quote)[i]))
+	else if ((*end_quote)[i] == '\0' || ft_is_whitespace((*end_quote)[i]))
 		*end_quote = (*end_quote + i - 1);
 }

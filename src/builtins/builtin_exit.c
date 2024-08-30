@@ -15,14 +15,18 @@
 #include <stdio.h>
 
 // Función para verificar si una cadena es numérica
-static int	is_str_digit(char *str)
+static int	ft_is_str_zero(char *str)
 {
 	int	i;
 
 	i = 0;
+	while (ft_is_whitespace(str[i]))
+		i++;
+	if (str[i] == '+' || str[i] == '-')
+		i++;
 	while (str[i])
 	{
-		if (!ft_isdigit(str[i]))
+		if (str[i] != '0')
 			return (0);
 		i++;
 	}
@@ -53,14 +57,23 @@ void	determine_exit_code(char **args)
 
 	if (!args[1])
 		exit_code = 0;
-	else if (is_str_digit(args[1]))
-		exit_code = ft_atoi(args[1]);
+	else if (ft_atoi(args[1]) != 0 \
+		|| (ft_atoi(args[1]) == 0 && ft_is_str_zero(args[1])))
+	{
+		if (ft_atoi(args[1]) < 0)
+			exit_code = 255 + (ft_atoi(args[1])) + 1;
+		else if (ft_atoi(args[1]) > 255)
+			exit_code = 0 + ft_atoi(args[1]) % 255;
+		else
+			exit_code = ft_atoi(args[1]);
+	}
 	else
 	{
+		ft_putendl_fd("exit: ", STDERR_FILENO);
 		ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
 		ft_putstr_fd(args[1], STDERR_FILENO);
 		ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
-		exit_code = 255;
+		exit_code = 2;
 	}
 	free_arr_exit(args);
 	exit(exit_code);
@@ -69,13 +82,14 @@ void	determine_exit_code(char **args)
 /** Implementación del comando 'exit' ajustada para aceptar args como argumento
  *  global o externo.
 */
-void	builtin_exit(char **args, t_env *env)
+void	builtin_exit(char **args, t_env *env, int *last_exit)
 {
 	(void)env;
 	if (args[1] && args[2])
 	{
-		g_error = 1;
-		ft_putstr_fd("minishell: exit: too many arguments\n", STDERR_FILENO);
+		*last_exit = 1;
+		ft_putendl_fd("exit", STDERR_FILENO);
+		ft_putstr_fd("-minishell: exit: too many arguments\n", STDERR_FILENO);
 		return ;
 	}
 	determine_exit_code(args);
