@@ -34,103 +34,58 @@ char	**replace_envp(char **old_envp, char **new_envp)
 	return (new_envp);
 }
 
-
-static void ft_update_var(char *str, t_env *env, int eq_idx)
+static void	ft_update_var(char *str, t_env *env, int eq_idx)
 {
-    char **new_envp;
-    if (eq_idx == -1)
-        update_export_list(env, str);
-    else
-    {
-        if (!variable_exist(env, str))
-        {
-            new_envp = add_var(env->envp_cpy, str);
-            if (new_envp == NULL)
-            {
-                perror("Error al agregar variable de entorno");
-                return ;
-            }
-            env->envp_cpy = replace_envp(env->envp_cpy, new_envp);
-        }
-        update_export_list(env, str);
-    }
+	char	**new_envp;
+
+	if (eq_idx == -1)
+		update_export_list(env, str);
+	else
+	{
+		if (!variable_exist(env, str))
+		{
+			new_envp = add_var(env->envp_cpy, str);
+			if (new_envp == NULL)
+			{
+				perror("Error al agregar variable de entorno");
+				return ;
+			}
+			env->envp_cpy = replace_envp(env->envp_cpy, new_envp);
+		}
+		update_export_list(env, str);
+	}
 }
 
-
-static void process_and_update_var(char *str, t_env *env)
+static void	process_and_update_var(char *str, t_env *env)
 {
-    int eq_idx;
+	int	eq_idx;
 
-    eq_idx = equal_sign(str);
-    if (!is_valid_environment_variable(str))
-        return ;
-    if (eq_idx != -1 && str[eq_idx + 1] == '\"')
-        delete_quotes(&str[eq_idx + 1], '\"');
-    if (is_valid_identifier(str))
-        ft_update_var(str, env, eq_idx);
-    else
-        handle_export_errors(str);
+	eq_idx = equal_sign(str);
+	if (!is_valid_environment_variable(str))
+		return ;
+	if (eq_idx != -1 && str[eq_idx + 1] == '\"')
+		delete_quotes(&str[eq_idx + 1], '\"');
+	if (is_valid_identifier(str))
+		ft_update_var(str, env, eq_idx);
+	else
+		handle_export_errors(str);
 }
 
-void update_export_list(t_env *env, char *str)
+void	builtin_export(char **args, t_env *env)
 {
-    char **new_export_cpy;
+	int	i;
 
-    if (!env->export_cpy)
-    {
-        new_export_cpy = add_var(NULL, str);
-        if (!new_export_cpy)
-        {
-            perror("Error al agregar variable de entorno");
-            exit(EXIT_FAILURE);
-        }
-        env->export_cpy = new_export_cpy;
-        return;
-    }
-
-    new_export_cpy = add_var(env->export_cpy, str);
-    if (!new_export_cpy)
-    {
-        perror("Error al agregar variable de entorno");
-        exit(EXIT_FAILURE);
-    }
-    env->export_cpy = replace_envp(env->export_cpy, new_export_cpy);
-}
-
-void print_export_list(t_env *env)
-{
-    int i;
-
-    if (env->export_cpy == NULL)
-    {
-        printf("export_cpy is NULL\n");
-        return ;
-    }
-    i = 0;
-    while (env->export_cpy[i])
-    {
-        if (strcmp(env->export_cpy[i], "export") != 0)
-            printf("declare -x %s\n", env->export_cpy[i]);
-        i++;
-    }
-}
-
-
-void builtin_export(char **args, t_env *env)
-{
-    int i;
-
-    i = 0;
-    if (!args[1])
-        print_export_list(env);
-    else
-    {
-        while (args[i])
-        {
-            process_and_update_var(args[i], env);
-            i++;
-        }
-    }
+	i = 0;
+	if (!args[1])
+		print_export_list(env);
+	else
+	{
+		while (args[i])
+		{
+			process_and_update_var(args[i], env);
+			i++;
+		}
+	}
 }
 
 /**

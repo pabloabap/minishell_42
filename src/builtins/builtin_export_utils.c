@@ -37,7 +37,6 @@ char	**free_arr(char **arr, int len)
 	return (NULL);
 }
 
-
 /**
  * Finds the index of the first '=' character in a string.
  * 
