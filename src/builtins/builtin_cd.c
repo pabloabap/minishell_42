@@ -70,6 +70,11 @@ static int	specific_path(t_env *env, char *str)
 	return (EXIT_SUCCESS);
 }
 
+static void	print_error(char *msg)
+{
+	ft_putendl_fd(msg, STDERR_FILENO);
+}
+
 /* Maneja el comando `cd`, cambiando el directorio actual y actualizando el 
  * entorno.
  */
@@ -78,13 +83,9 @@ void	builtin_cd(char **args, t_env *env, int *last_exit)
 	char	*pwd;
 	char	*old_pwd;
 
-	pwd = NULL;
 	old_pwd = getcwd(NULL, 0);
 	if (!old_pwd)
-	{
-		ft_putendl_fd("minishell: error obteniendo old_pwd", STDERR_FILENO);
-		return ;
-	}
+		return (print_error("minishell: error obteniendo old_pwd"));
 	if (!args[1])
 		specific_path(env, "HOME=");
 	else if (ft_strncmp(args[1], "-", 1) == 0)
@@ -104,7 +105,7 @@ void	builtin_cd(char **args, t_env *env, int *last_exit)
 	free(old_pwd);
 }
 
-// Cambia el directorio a una ruta específica y maneja errores.
+// Cambite vuea el directorio a una ruta específica y maneja errores.
 
 static int	change_directory(char *path, char *dir, int *last_exit)
 {
