@@ -42,7 +42,7 @@ int	ft_executor(t_single_cmd *head, t_data *data)
 	{
 		pid = fork();
 		if (pid == -1)
-			return (perror("00-Minishell"), data->last_exit = errno, \
+			return (perror("-minishell"), data->last_exit = errno, \
 				EXIT_FAILURE);
 		if (pid == 0)
 			if (EXIT_FAILURE == ft_child_mng(head, std_out, data))
@@ -72,7 +72,7 @@ static int	ft_prepare_exec(t_single_cmd *head, int *std_out, t_data *data)
 	{
 		if (head->next)
 			if (-1 == pipe(head->pipe_fd))
-				return (perror("1-Minishell "), data->last_exit = errno, \
+				return (perror("-minishell "), data->last_exit = errno, \
 					EXIT_FAILURE);
 		if (EXIT_FAILURE == ft_check_hdoc(head, data))
 			return (EXIT_FAILURE);
@@ -80,7 +80,7 @@ static int	ft_prepare_exec(t_single_cmd *head, int *std_out, t_data *data)
 	}
 	*std_out = dup(STDOUT_FILENO);
 	if (*std_out == -1)
-		return (perror("11-Minishell "), data->last_exit = errno, \
+		return (perror("-minishell "), data->last_exit = errno, \
 			EXIT_FAILURE);
 	return (EXIT_SUCCESS);
 }
@@ -112,10 +112,10 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_data *data)
 	else if (execve(cmd->cmd_path, cmd->str, data->env->envp_cpy) < 0)
 	{
 		if (access(cmd->cmd_path, F_OK) < 0)
-			return (perror("2-Minishell "), exit(127), EXIT_FAILURE);
+			return (perror("-minishell "), exit(127), EXIT_FAILURE);
 		else if (access(cmd->cmd_path, X_OK) < 0)
-			return (perror("2-Minishell "), exit(126), EXIT_FAILURE);
-		return (perror("22-Minishell "), exit(errno), EXIT_FAILURE);
+			return (perror("-minishell "), exit(126), EXIT_FAILURE);
+		return (perror("-minishell "), exit(errno), EXIT_FAILURE);
 	}
 	return (exit(0), EXIT_SUCCESS);
 }
@@ -146,10 +146,10 @@ static int	ft_parent_mng(t_single_cmd *cmd, t_data *data, int std_out)
 	{
 		if (tmp->next)
 			if (-1 == close(tmp->pipe_fd[1]))
-				return (perror("3-Minishell "), data->last_exit = errno, 1);
+				return (perror("-minishell "), data->last_exit = errno, 1);
 		if (tmp->prev)
 			if (-1 == close(tmp->prev->pipe_fd[0]))
-				return (perror("33-Minishell "), data->last_exit = errno, 1);
+				return (perror("-minishell "), data->last_exit = errno, 1);
 		tmp = tmp-> next;
 	}
 	while (cmd)
@@ -183,16 +183,16 @@ static int	ft_single_builtin(t_single_cmd *cmd, t_data *data, int std_out)
 
 	default_stdin = dup(STDIN_FILENO);
 	if (0 > default_stdin)
-		return (perror("0000-Minishell "), data->last_exit = errno, \
+		return (perror("-minishell "), data->last_exit = errno, \
 			EXIT_FAILURE);
 	if (EXIT_FAILURE == ft_prepare_redirections(cmd, &(data->last_exit)))
 		return (EXIT_FAILURE);
 	if (0 > dup2(default_stdin, STDIN_FILENO))
-		return (close(default_stdin), perror("00000-Minishell "), \
+		return (close(default_stdin), perror("-minishell "), \
 			data->last_exit = errno, EXIT_FAILURE);
 	exit_status = execute_builtin(cmd->str, data->env, &(data->last_exit));
 	if (0 > dup2(std_out, STDOUT_FILENO))
-		return (close(default_stdin), perror("000000-Minishell "), \
+		return (close(default_stdin), perror("-minishell "), \
 			data->last_exit = errno, EXIT_FAILURE);
 	ft_close(default_stdin, &(data->last_exit));
 	return (exit_status);

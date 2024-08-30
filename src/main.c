@@ -21,7 +21,7 @@ int	main(int argc, char **argv, char **envp)
 	t_data	*data;
 	int		status;
 
-	if (argc == 1 && ft_strnstr(argv[0], "minishell", ft_strlen(argv[0])))
+	if (argc == 1 && ft_strlen(argv[0]) > 0)
 	{
 		status = init_data(&data, envp);
 		while (EXIT_SUCCESS == status)

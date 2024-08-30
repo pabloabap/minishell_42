@@ -29,7 +29,7 @@ int	init_data(t_data **data, char **envp)
 {
 	(*data) = (t_data *)malloc(sizeof(t_data));
 	if (!(*data))
-		return (perror("456-Minishell: t_data malloc fails"), EXIT_FAILURE);
+		return (perror("-minishell: t_data malloc fails"), EXIT_FAILURE);
 	(*data)->head_lex_list = NULL;
 	(*data)->head_cmd_list = NULL;
 	(*data)->input = NULL;

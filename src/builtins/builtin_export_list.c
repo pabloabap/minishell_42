@@ -21,7 +21,7 @@ void	update_export_list(t_env *env, char *str)
 		new_export_cpy = add_var(NULL, str);
 		if (!new_export_cpy)
 		{
-			perror("Error al agregar variable de entorno");
+			perror("Failure adding envirnomental variable");
 			exit(EXIT_FAILURE);
 		}
 		env->export_cpy = new_export_cpy;
@@ -30,7 +30,7 @@ void	update_export_list(t_env *env, char *str)
 	new_export_cpy = add_var(env->export_cpy, str);
 	if (!new_export_cpy)
 	{
-		perror("Error al agregar variable de entorno");
+		perror("Failure adding envirnomental variable");
 		exit(EXIT_FAILURE);
 	}
 	env->export_cpy = replace_envp(env->export_cpy, new_export_cpy);

@@ -53,7 +53,7 @@ static int	specific_path(t_env *env, char *str)
 	tmp = find_path_ret(str, env);
 	if (!tmp)
 	{
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd("-minishell: ", STDERR_FILENO);
 		ft_putstr_fd(str, STDERR_FILENO);
 		ft_putendl_fd(" not found", STDERR_FILENO);
 		return (EXIT_FAILURE);
@@ -62,7 +62,7 @@ static int	specific_path(t_env *env, char *str)
 	free(tmp);
 	if (ret != 0)
 	{
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd("-minishell: ", STDERR_FILENO);
 		ft_putstr_fd(str, STDERR_FILENO);
 		ft_putendl_fd(" not set", STDERR_FILENO);
 		return (EXIT_FAILURE);
@@ -85,7 +85,7 @@ void	builtin_cd(char **args, t_env *env, int *last_exit)
 
 	old_pwd = getcwd(NULL, 0);
 	if (!old_pwd)
-		return (print_error("minishell: error obteniendo old_pwd"));
+		return (print_error("-minishell: Failure getting old_pwd"));
 	if (!args[1])
 		specific_path(env, "HOME=");
 	else if (ft_strncmp(args[1], "-", 1) == 0)

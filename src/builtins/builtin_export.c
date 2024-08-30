@@ -47,7 +47,7 @@ static void	ft_update_var(char *str, t_env *env, int eq_idx)
 			new_envp = add_var(env->envp_cpy, str);
 			if (new_envp == NULL)
 			{
-				perror("Error al agregar variable de entorno");
+				perror("Failure adding envirnomental variable");
 				return ;
 			}
 			env->envp_cpy = replace_envp(env->envp_cpy, new_envp);

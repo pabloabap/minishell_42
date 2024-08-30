@@ -11,8 +11,6 @@
 /* ************************************************************************** */
 
 #include "../../include/minishell.h"
-#include <stdlib.h>
-#include <stdio.h>
 
 // Función para verificar si una cadena es numérica
 static int	ft_is_str_zero(char *str)
@@ -70,7 +68,7 @@ void	determine_exit_code(char **args)
 	else
 	{
 		ft_putendl_fd("exit: ", STDERR_FILENO);
-		ft_putstr_fd("minishell: exit: ", STDERR_FILENO);
+		ft_putstr_fd("-minishell: exit: ", STDERR_FILENO);
 		ft_putstr_fd(args[1], STDERR_FILENO);
 		ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
 		exit_code = 2;

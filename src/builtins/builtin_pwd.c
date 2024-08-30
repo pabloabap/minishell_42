@@ -25,7 +25,7 @@ void	builtin_pwd(char **args, t_env *env, int *last_exit)
 		ft_putendl_fd(cwd, STDOUT_FILENO);
 	else
 	{
-		error_msg = "minishell: pwd: Error al obtener el directorio actual\n";
+		error_msg = "-minishell: pwd: Failure getting the current directory\n";
 		write(STDERR_FILENO, error_msg, strlen(error_msg));
 		*last_exit = 1;
 	}

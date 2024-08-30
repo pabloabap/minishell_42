@@ -34,7 +34,7 @@ int	ft_path_finder(t_single_cmd *cmd, t_data *data)
 		return (cmd->cmd_path = cmd->str[0], EXIT_SUCCESS);
 	else if (!ft_getenv("PATH", data->env->envp_cpy))
 	{
-		ft_putstr_fd("-Minishell: ", STDERR_FILENO);
+		ft_putstr_fd("-minishell: ", STDERR_FILENO);
 		ft_putstr_fd(cmd->str[0], STDERR_FILENO);
 		ft_putendl_fd(": No such file or directory", STDERR_FILENO);
 		return (data->last_exit = 127, EXIT_FAILURE);
@@ -68,7 +68,7 @@ static int	ft_initial_checks(t_single_cmd *cmd, t_data *data)
 	}
 	else if (dir || errno == EACCES)
 	{
-		ft_putstr_fd("-Minishell: ", STDERR_FILENO);
+		ft_putstr_fd("-minishell: ", STDERR_FILENO);
 		ft_putstr_fd(cmd->str[0], STDERR_FILENO);
 		ft_putendl_fd(": Is a directory", STDERR_FILENO);
 		return (free(dir), data->last_exit = 126, EXIT_FAILURE);
@@ -102,7 +102,7 @@ static int	ft_check_path_env(t_single_cmd *cmd, t_data *data)
 		{
 			actual = opendir(dirs[i]);
 			if (actual == NULL && dirs[i] == NULL)
-				return (perror("12-Minishell "), data->last_exit = errno, 1);
+				return (perror("-minishell "), data->last_exit = errno, 1);
 			else if (actual != NULL)
 				ft_check_path_dir(cmd, dirs[i], actual, &(data->last_exit));
 			free(dirs[i]);
@@ -136,7 +136,7 @@ static int	ft_check_path_dir(t_single_cmd *cmd, char *dir, DIR *actual,
 
 	subdir = readdir(actual);
 	if (subdir == NULL && *err_n != errno)
-		return (perror("123-Minishell "), *err_n = errno, EXIT_FAILURE);
+		return (perror("-minishell "), *err_n = errno, EXIT_FAILURE);
 	while (subdir)
 	{
 		if (!ft_strncmp(subdir->d_name, cmd->str[0], ft_strlen(cmd->str[0])
@@ -170,7 +170,7 @@ static int	ft_check_cmd_not_found(t_single_cmd *cmd, int *err_n)
 {
 	if (cmd->cmd_path == NULL)
 	{
-		ft_putstr_fd("-Minishell: ", STDERR_FILENO);
+		ft_putstr_fd("-minishell: ", STDERR_FILENO);
 		ft_putstr_fd(cmd->str[0], STDERR_FILENO);
 		ft_putendl_fd(": command not found", STDERR_FILENO);
 		*err_n = 127;
