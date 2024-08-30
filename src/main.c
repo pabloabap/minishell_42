@@ -6,15 +6,15 @@
 /*   By: pabad-ap <pabad-ap@student.42barcel>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/29 16:36:28 by pabad-ap          #+#    #+#             */
-/*   Updated: 2024/06/13 12:37:20 by pabad-ap         ###   ########.fr       */
+/*   Updated: 2024/08/26 11:09:42 by anguil-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/minishell.h"
 
+int			g_error = 0;
 static void	ft_readline(t_data *data);
 static int	ft_preprocesing(t_data *data);
-int	g_error = 0;
 
 int	main(int argc, char **argv, char **envp)
 {
@@ -29,8 +29,8 @@ int	main(int argc, char **argv, char **envp)
 			ft_readline(data);
 			if (data->input && *(data->input) != '\0')
 			{
-				if (EXIT_SUCCESS == ft_preprocesing(data) && EXIT_SUCCESS == \
-				ft_executor(data->head_cmd_list, data))
+				if (EXIT_SUCCESS == ft_preprocesing(data)
+					&& EXIT_SUCCESS == ft_executor(data->head_cmd_list, data))
 					data->last_exit = 0;
 			}
 			else if (!data->input)
@@ -44,11 +44,11 @@ int	main(int argc, char **argv, char **envp)
 }
 
 /** Función que lee y almacena en historial inputs dados por el usuario.
- * En caso de que la variable global de error sea distinta de cero, 
+ * En caso de que la variable global de error sea distinta de cero,
  * actualiza el último estado de salida del programa.
- * 
+ *
  * @param data	Puntero a las estructuras de datos utilizadas en el programa.
- * 
+ *
  *  @return Nada, actualiza el último estado de salida del programa si
  *  la variable gloabl de error es distinta de cero.
  */
@@ -62,9 +62,9 @@ static void	ft_readline(t_data *data)
 
 /** Función que agrupa las aciones de lexing, parsing y actualiza el exit
  * status en caso de error.
- * 
+ *
  * 	@param data	Puntero a las estructuras de datos utilizadas en el programa.
- * 
+ *
  *  @return Estado de salida de la función.
  */
 static int	ft_preprocesing(t_data *data)

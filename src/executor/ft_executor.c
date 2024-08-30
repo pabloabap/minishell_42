@@ -6,7 +6,7 @@
 /*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/07/24 20:22:37 by pabad-ap          #+#    #+#             */
-/*   Updated: 2024/08/08 19:16:40 by pabad-ap         ###   ########.fr       */
+/*   Updated: 2024/08/26 12:32:51 by anguil-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,19 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_data *data);
 static int	ft_parent_mng(t_single_cmd *cmd, t_data *data, int std_out);
 static int	ft_single_builtin(t_single_cmd *cmd, t_data *data, int std_out);
 
-/** Funcion principal executor. Crea un proceso hijo por comando 
- * a ejecutar, configura su entrada, salida y redirecciones y los ejecuta 
+/** Funcion principal executor. Crea un proceso hijo por comando
+ * a ejecutar, configura su entrada, salida y redirecciones y los ejecuta
  * en paralelo.
  * El padre espera la finalizacion de todos los hijos para recoger
  * el exit status final.
- * 
+ *
  * @param head Puntero al primer comando de la lista de comandos
  * @param data Puntero a la estructura data con datos generales del programa
  * para utilizar o modificar los atributos last_exit y env.
  * 
  * @return Resultado de la ejecución.
  */
-int	ft_executor(t_single_cmd *head, t_data	*data)
+int	ft_executor(t_single_cmd *head, t_data *data)
 {
 	int				std_out;
 	int				pid;
@@ -54,11 +54,11 @@ int	ft_executor(t_single_cmd *head, t_data	*data)
 	return (EXIT_SUCCESS);
 }
 
-/** Crea los pipes necesarios en la ejecución (uno menos que el número de 
+/** Crea los pipes necesarios en la ejecución (uno menos que el número de
  * comandos).
- * 
+ *
  * @param head Puntero al primer elemento de la lista de comandos.
- * @param std_out Referencia al STDOUT para que en caso de que tenga que ser 
+ * @param std_out Referencia al STDOUT para que en caso de que tenga que ser
  * modificado por por algún comando intermedio podamos recuperar el principal.
  * @param data Puntero a la estructura data con datos generales del programa
  * para utilizar o modificar los atributos last_exit y env.
@@ -85,7 +85,7 @@ static int	ft_prepare_exec(t_single_cmd *head, int *std_out, t_data *data)
 }
 
 /** Gestiona instrucciones para el proceso hijo de un fork.
- * 
+ *
  * @param cmd Puntero al comando actual a procesar.
 *  @param std_out Referencia al STDOUT para que en caso de que tenga que ser 
  * modificado por por algún comando intermedio podamos recuperar el principal.
@@ -118,9 +118,9 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_data *data)
 
 /** Gestiona instrucciones para el proceso padre en un fork.
  * Cierra todos los pipes ya que no son utilizados en el padre.
- * Espera a que los procesos hijos terminen y comprueba el exit status 
+ * Espera a que los procesos hijos terminen y comprueba el exit status
  * para actualizarlo si es necesario.
- * 
+ *
  * @param cmd Doble puntero al comando actual a procesar.
  * @param data Puntero a la estructura data con datos generales del programa
  * para utilizar o modificar los atributos last_exit y env.
@@ -154,21 +154,21 @@ static int	ft_parent_mng(t_single_cmd *cmd, t_data *data, int std_out)
 		wait(&wstatus);
 		cmd = cmd->next;
 	}
-	close (std_out);
+	close(std_out);
 	return (ft_parent_exit(wstatus, &(data->last_exit)));
 }
 
 /** Gestiona los casos en los que solo se recibe un comando builtin como input.
  * Cuando minishell recibe un solo comando y es una builtin function
  * el programa ejecuta la funcion en el mismo proceso, no crea un subproceso.
- * 
- * @param cmd Puntero a la estructura que contiene informacion del 
+ *
+ * @param cmd Puntero a la estructura que contiene informacion del
  * comando.
  * @param data Puntero a la estructura data con datos generales del programa
  * para utilizar o modificar los atributos last_exit y env.
  * @param std_out File descriptor que apunta al STDOUT por defecto del 
  * terminal, para recuperarlo en caso de que se haya cambiado.
- * 
+ *
  * @return Resultado de la ejecucion. Actualiza a traves de punteros el
  * err_n en caso de fallo.
  */

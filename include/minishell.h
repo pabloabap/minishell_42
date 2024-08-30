@@ -36,6 +36,7 @@ extern int		g_error;
 typedef struct s_env
 {
 	char	**envp_cpy;
+	char	**export_cpy;
 }	t_env;
 
 /*Enumeración de posibles tokens a utilizar*/
@@ -154,19 +155,37 @@ void			builtin_env(char **args, t_env *env);
 void			builtin_export(char **args, t_env *env);
 void			builtin_echo(char **args, t_env *env);
 
-typedef void	(*builtin_func)(char **args, t_env *env);
+typedef void	(*t_builtin_func)(char **args, t_env *env);
 
-builtin_func	builtin_arr(char *str);
+/* Estructura para los built-ins */
+typedef struct s_builtin
+{
+	char			*name;
+	t_builtin_func	func;
+}	t_builtin;
+
+t_builtin_func	builtin_arr(char *str);
 
 int				is_builtin(char *command);
 void			execute_builtin(char **args, t_env *env);
 char			**add_var(char **arr, char *str);
 void			whileloop_add_var(char **arr, char **rtn, char *str);
+void			update_pwd(t_env *env, char *pwd);
+void			update_oldpwd(t_env *env, char *old_pwd);
+char			**free_arr(char **arr, int len);
 
 // Declaraciones de las funciones faltantes
 int				equal_sign(const char *str);
 void			delete_quotes(char *str, char quote_char);
 void			mini_env(t_env *env, t_single_cmd *simple_cmd);
+void			print_export_list(t_env *env);
 int				variable_exist(t_env *env, char *str);
+void			handle_export_errors(char *str);
+int				is_valid_identifier(const char *str);
+char			**replace_envp(char **old_envp, char **new_envp);
+int				find_char_index(const char *str, char c);
+int				is_valid_environment_variable(const char *line);
+void			update_export_list(t_env *env, char *str);
+void			print_export_list(t_env *env);
 
 #endif

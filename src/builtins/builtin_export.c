@@ -6,237 +6,120 @@
 /*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/08 20:24:22 by pabad-ap          #+#    #+#             */
-/*   Updated: 2024/08/08 20:34:39 by pabad-ap         ###   ########.fr       */
+/*   Updated: 2024/08/22 20:34:39 by pabad-ap         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 #include "../../include/minishell.h"
 
-// Devuelve el índice del primer signo '=' en la cadena, o -1 si no se encuentra
-int equal_sign(const char *str)
-{
-    int i = 0;
+/**
+ * Replaces an old environment array with a new one.
+ * Frees the memory occupied by the old environment array 
+ * and returns the new array.
+ * @param old_envp The old environment array to free.
+ * @param new_envp The new environment array to return.
+ * @return The new environment array.
+ */
 
-    while (str[i] != '\0')
-    {
-        if (str[i] == '=')
-            return i;
-        i++;
-    }
-    return -1;
+char	**replace_envp(char **old_envp, char **new_envp)
+{
+	int	i;
+
+	i = 0;
+	if (old_envp)
+	{
+		while (old_envp[i])
+			free(old_envp[i++]);
+		free(old_envp);
+	}
+	return (new_envp);
 }
 
-// Verifica si el identificador es válido
-int is_valid_identifier(const char *str)
+static void	ft_update_var(char *str, t_env *env, int eq_idx)
 {
-    int i;
+	char	**new_envp;
 
-    if (str == NULL || !ft_isalpha(str[0]))
-        return (0);
-    i = 1;
-    while (str[i] != '\0' && str[i] != '=')
-    {
-        if (!ft_isalnum(str[i]) && str[i] != '_')
-            return (0);
-        i++;
-    }
-    return (1);
+	if (eq_idx == -1)
+		update_export_list(env, str);
+	else
+	{
+		if (!variable_exist(env, str))
+		{
+			new_envp = add_var(env->envp_cpy, str);
+			if (new_envp == NULL)
+			{
+				perror("Error al agregar variable de entorno");
+				return ;
+			}
+			env->envp_cpy = replace_envp(env->envp_cpy, new_envp);
+		}
+		update_export_list(env, str);
+	}
 }
 
-// Elimina las comillas de una cadena
-void delete_quotes(char *str, char quote_char)
+static void	process_and_update_var(char *str, t_env *env)
 {
-    int i, j;
+	int	eq_idx;
 
-    i = 0;
-    j = 0;
-    while (str[i] != '\0')
-    {
-        if (str[i] != quote_char)
-            str[j++] = str[i];
-        i++;
-    }
-    str[j] = '\0';
+	eq_idx = equal_sign(str);
+	if (!is_valid_environment_variable(str))
+		return ;
+	if (eq_idx != -1 && str[eq_idx + 1] == '\"')
+		delete_quotes(&str[eq_idx + 1], '\"');
+	if (is_valid_identifier(str))
+		ft_update_var(str, env, eq_idx);
+	else
+		handle_export_errors(str);
 }
 
-// Duplica el array de variables de entorno y agrega una nueva variable
-/*
-char **add_var(char **arr, char *str)
+void	builtin_export(char **args, t_env *env)
 {
-    int i;
-    int len;
-    char **new_arr;
+	int	i;
 
-    len = 0;
-    while (arr[len] != NULL)
-        len++;
-
-    new_arr = (char **)malloc(sizeof(char *) * (len + 2));
-    if (!new_arr)
-        return NULL;
-
-    for (i = 0; i < len; i++)
-        new_arr[i] = ft_strdup(arr[i]);  // Duplica las cadenas existentes
-
-    new_arr[i] = ft_strdup(str);  // Duplica la nueva cadena
-    new_arr[i + 1] = NULL;
-
-    // Limpia la memoria antigua
-    for (i = 0; i < len; i++)
-        free(arr[i]);
-    free(arr);
-
-    return new_arr;
+	i = 0;
+	if (!args[1])
+		print_export_list(env);
+	else
+	{
+		while (args[i])
+		{
+			process_and_update_var(args[i], env);
+			i++;
+		}
+	}
 }
 
-// Reemplaza el array de variables de entorno antiguo con el nuevo
-char **replace_envp(char **old_envp, char **new_envp)
+/**
+ * Adds a new variable to an array of environment variables.
+ * Allocates memory for a new array that includes the additional variable and
+ * copies all existing variables to this new array.
+ * @param arr The existing array of environment variables.
+ * @param str The new variable to add.
+ * @return The new array including the new variable, or NULL on failure.
+ */
+
+char	**add_var(char **arr, char *str)
 {
-    int i = 0;
+	int		i;
+	int		len;
+	char	**new_arr;
 
-    if (old_envp)
-    {
-        while (old_envp[i])
-            free(old_envp[i++]);
-        free(old_envp);
-    }
-    return new_envp;
-}
-*/
-
-char **add_var(char **arr, char *str)
-{
-    int i;
-    int len;
-    char **new_arr;
-
-    len = 0;
-    while (arr[len] != NULL)
-        len++;
-
-    new_arr = (char **)malloc(sizeof(char *) * (len + 2));
-    if (!new_arr)
-        return NULL;
-
-    for (i = 0; i < len; i++)
-    {
-        new_arr[i] = ft_strdup(arr[i]);
-        if (!new_arr[i])
-        {
-            // En caso de fallo, liberar la memoria asignada
-            while (i-- > 0)
-                free(new_arr[i]);
-            free(new_arr);
-            return NULL;
-        }
-    }
-
-    new_arr[i] = ft_strdup(str);
-    if (!new_arr[i])
-    {
-        // En caso de fallo, liberar la memoria asignada
-        while (i-- > 0)
-            free(new_arr[i]);
-        free(new_arr);
-        return NULL;
-    }
-
-    new_arr[i + 1] = NULL;
-    return new_arr;
-}
-
-char **replace_envp(char **old_envp, char **new_envp)
-{
-    int i = 0;
-
-    if (old_envp)
-    {
-        while (old_envp[i])
-            free(old_envp[i++]);
-        free(old_envp);
-    }
-    return new_envp;
-}
-// Implementación de la función builtin_export
-/*
-void builtin_export(char **args, char **envp)
-{
-    int i;
-    char *str;
-    int eq_idx;
-    char **new_envp;
-
-    if (args[1] == NULL)
-    {
-        // Mostrar las variables de entorno
-        builtin_env(args, envp);
-        return;
-    }
-
-    for (i = 1; args[i] != NULL; i++)
-    {
-        if (is_valid_identifier(args[i]))
-        {
-            str = args[i];
-            eq_idx = equal_sign(str);
-
-            if (eq_idx != -1 && str[eq_idx + 1] == '\"')
-                delete_quotes(&str[eq_idx + 1], '\"');
-
-            new_envp = add_var(envp, str);
-            if (new_envp == NULL)
-            {
-                perror("Error al agregar variable de entorno");
-                return;
-            }
-            envp = new_envp;  // Actualiza el puntero envp original
-        }
-        else
-            printf("export: '%s': not a valid identifier\n", args[i]);
-    }
-}
-*/
-void builtin_export(char **args, t_env *env)
-{
-    int i;
-    char *str;
-    int eq_idx;
-    char **new_envp;
-
-    if (args[1] == NULL)
-    {
-        // Mostrar las variables de entorno
-        builtin_env(args, env);
-        return;
-    }
-
-    for (i = 1; args[i] != NULL; i++)
-    {
-        if (is_valid_identifier(args[i]))
-        {
-            str = args[i];
-            eq_idx = equal_sign(str);
-
-            if (eq_idx != -1 && str[eq_idx + 1] == '\"')
-                delete_quotes(&str[eq_idx + 1], '\"');
-
-            // Primero, verificamos si la variable ya existe
-            if (!variable_exist(env, str))
-            {
-                // Si no existe, intentamos agregarla
-                new_envp = add_var(env->envp_cpy, str);
-                if (new_envp == NULL)
-                {
-                    perror("Error al agregar variable de entorno");
-                    return;
-                }
-                // Aquí actualizamos el puntero envp con el nuevo array
-                env->envp_cpy = replace_envp(env->envp_cpy, new_envp);
-            }
-        }
-        else
-        {
-            printf("export: '%s': not a valid identifier\n", args[i]);
-        }
-    }
+	len = 0;
+	while (arr[len] != NULL)
+		len++;
+	new_arr = (char **)malloc(sizeof(char *) * (len + 2));
+	if (!new_arr)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		new_arr[i] = ft_strdup(arr[i]);
+		if (!new_arr[i])
+			return (free_arr(new_arr, i));
+		i++;
+	}
+	new_arr[i] = ft_strdup(str);
+	if (!new_arr[i])
+		return (free_arr(new_arr, i));
+	new_arr[i + 1] = NULL;
+	return (new_arr);
 }

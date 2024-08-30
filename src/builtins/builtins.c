@@ -12,57 +12,30 @@
 
 #include "../../include/minishell.h"
 
-int variable_exist(t_env *env, char *str)
-{
-    int i;
-    int eq_idx;
-
-    eq_idx = equal_sign(str);
-    if (eq_idx != -1 && (str[eq_idx + 1] == '\"' || str[eq_idx + 1] == '\''))
-        delete_quotes(&str[eq_idx + 1], str[eq_idx + 1]);
-
-    i = 0;
-    while (env->envp_cpy[i])
-    {
-        if (ft_strncmp(env->envp_cpy[i], str, equal_sign(env->envp_cpy
-		[i])) == 0)
-        {
-            free(env->envp_cpy[i]);
-            env->envp_cpy[i] = ft_strdup(str);
-            return (1);
-        }
-        i++;
-    }
-    return (0);
-}
-#include "../../include/minishell.h"
-
 // Array de funciones built-in
-builtin_func	builtin_arr(char *str)
+t_builtin_func	builtin_arr(char *str)
 {
-	static struct 
-	{
-		char		*name;
-		builtin_func	func;
-	}	builtins[] = {
-		{"echo", builtin_echo},
-		{"cd", builtin_cd},
-		{"pwd", builtin_pwd},
-		{"export", builtin_export},
-		{"unset", builtin_unset},
-		{"env", builtin_env},
-		{"exit", builtin_exit}
+	static t_builtin	builtins[] = {
+	{"echo", builtin_echo},
+	{"cd", builtin_cd},
+	{"pwd", builtin_pwd},
+	{"export", builtin_export},
+	{"unset", builtin_unset},
+	{"env", builtin_env},
+	{"exit", builtin_exit}
 	};
-	size_t	num_builtins;
-	size_t	i;
+	size_t				num_builtins;
+	size_t				i;
 
 	num_builtins = sizeof(builtins) / sizeof(builtins[0]);
 	i = 0;
 	while (i < num_builtins)
 	{
-		if (str && !ft_strncmp(builtins[i].name, str, \
-					ft_strlen(builtins[i].name) + 1))
+		if (str && !ft_strncmp(builtins[i].name, str,
+				ft_strlen(builtins[i].name) + 1))
+		{
 			return (builtins[i].func);
+		}
 		i++;
 	}
 	return (NULL);
@@ -75,23 +48,11 @@ int	is_builtin(char *command)
 }
 
 // Ejecuta el comando interno correspondiente
-/*
-void	execute_builtin(char **args, char **envp)
+void	execute_builtin(char **args, t_env *env)
 {
-	builtin_func	builtin_func;
+	t_builtin_func	builtin_func;
 
 	builtin_func = builtin_arr(args[0]);
 	if (builtin_func != NULL)
-		builtin_func(args, envp);
-}
-*/
-void execute_builtin(char **args, t_env *env)
-{
-    builtin_func builtin_func;
-
-    builtin_func = builtin_arr(args[0]);
-    if (builtin_func != NULL)
-    {
-        builtin_func(args, env); // Se ejecuta la función builtin con envp (que será data->envp_cpy)
-    }
+		builtin_func(args, env);
 }

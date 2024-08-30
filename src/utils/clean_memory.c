@@ -6,7 +6,7 @@
 /*   By: pabad-ap <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/06/13 14:24:07 by pabad-ap          #+#    #+#             */
-/*   Updated: 2024/06/13 14:24:12 by pabad-ap         ###   ########.fr       */
+/*   Updated: 2024/08/26 10:42:21 by anguil-l         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,14 @@ void	ft_final_clean(t_data *data)
 		free(data->env->envp_cpy[i]);
 		i++;
 	}
+	i = 0;
+	while (data->env->export_cpy[i] != NULL)
+	{
+		free(data->env->export_cpy[i]);
+		i++;
+	}
 	free(data->env->envp_cpy);
+	free(data->env->export_cpy);
 	free(data->env);
 	free(data);
 }

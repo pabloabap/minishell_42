@@ -62,6 +62,9 @@ SRC			=	src/lexer/lexer.c \
 				src/builtins/builtin_exit.c \
 				src/builtins/builtin_env.c \
 				src/builtins/builtins.c \
+				src/builtins/builtins_utils.c \
+				src/builtins/builtin_export_utils.c \
+				src/builtins/builtin_export_list.c \
 				src/main.c
 
 # Object files
@@ -85,6 +88,9 @@ $(OBJS_DIR):
 $(OBJS_DIR)%.o: $(DEB_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
 	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
+
+valgrind: $(NAME)
+	valgrind --leak-check=full --track-origins=yes ./$(NAME)
 
 # Utils objects compiler
 $(OBJS_DIR)%.o: $(UTL_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)

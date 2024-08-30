@@ -17,12 +17,12 @@ static int	ft_fill_hdoc(char *line, t_data *data, int fd_hdoc);
 static int	ft_write_char(char *line, int *i, int fd_hdoc, int *err_n);
 static int	ft_write_env_var(char *line, int v_start, t_data *data, int hdoc);
 
-/** Crea un heredoc(fichero temporal) en el que almacenar el input recibido 
+/** Crea un heredoc(fichero temporal) en el que almacenar el input recibido
  *  por el usuario hasta llegar a un string marcado como indicador de final de
- *  fichero. Se expanden variable de entorno del fichero salvo si el indicador 
+ *  fichero. Se expanden variable de entorno del fichero salvo si el indicador
  *  de final de fichero es entrecomillado (`redir->token` >= SINGLE_QUO_RED).
- * 	
- *	@param	redir estructura `t_lexem` que contiene informacion del tipo de 
+ *
+ *	@param	redir estructura `t_lexem` que contiene informacion del tipo de
  *	redireccion (atributo `token`) y el indicador de final del fichero
  *  (atributo `str`).
  *  @param data Puntero a la estructura data con datos generales del programa
@@ -55,7 +55,7 @@ static int	ft_heredoc_creation(t_lexem *redir, t_data *data)
 	char	*line;
 
 	w_fd = open("./tmp.txt", O_WRONLY | O_CREAT | O_TRUNC, \
-		S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+			S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
 	if (w_fd < 0)
 		return (perror("4-Minishell% "), w_fd);
 	line = readline("heredoc> ");
@@ -69,7 +69,7 @@ static int	ft_heredoc_creation(t_lexem *redir, t_data *data)
 		free(line);
 		line = readline("heredoc> ");
 	}
-	ft_hdoc_close_check (redir, line, &(data->last_exit));
+	ft_hdoc_close_check(redir, line, &(data->last_exit));
 	ft_close(w_fd, &(data->last_exit));
 	r_fd = open("./tmp.txt", O_RDONLY);
 	if (0 > r_fd)
@@ -79,14 +79,14 @@ static int	ft_heredoc_creation(t_lexem *redir, t_data *data)
 
 /** Escribe caracteres de un string que no tienen que ser expandidos en
  * 	el fichero al que apunta fd_hdoc.
- * 	
+ *
  *	@param	line String a procesar.
  *  @param data Puntero a la estructura data con datos generales del programa
  *  para utilizar o modificar los atributos last_exit y env.
  *	@param	fd_hdoc fd en modo escritura del heredoc.
  * 	para modificar el valor si es necesario.
- * 
- * 	@return Resultado de ejecucion. 
+ *
+ * 	@return Resultado de ejecucion.
  */
 static int	ft_fill_hdoc(char *line, t_data *data, int fd_hdoc)
 {
@@ -101,7 +101,7 @@ static int	ft_fill_hdoc(char *line, t_data *data, int fd_hdoc)
 		return (free(char_exit), EXIT_FAILURE);
 	if (line[i] == '$')
 	{
-		i ++;
+		i++;
 		if (line[i] == '?')
 		{
 			if (-1 == write(fd_hdoc, char_exit, ft_strlen(char_exit)))
@@ -110,24 +110,23 @@ static int	ft_fill_hdoc(char *line, t_data *data, int fd_hdoc)
 			if (EXIT_FAILURE == ft_fill_hdoc(line, data, fd_hdoc))
 				return (free(char_exit), EXIT_FAILURE);
 		}
-		else
-			if (EXIT_FAILURE == ft_write_env_var(line, i, data, fd_hdoc))
-				return (free(char_exit), EXIT_FAILURE);
+		else if (EXIT_FAILURE == ft_write_env_var(line, i, data, fd_hdoc))
+			return (free(char_exit), EXIT_FAILURE);
 	}
 	return (free(char_exit), EXIT_SUCCESS);
 }
 
 /** Escribe caracteres de un string que no tienen que ser expandidos en
  * 	el fichero al que apunta fd_hdoc.
- * 	
+ *
  *	@param	line String a procesar.
  *	@param	i Indice del caracter a procesar.
  *	@param	fd_hdoc fd en modo escritura del heredoc.
  * 	para modificar el valor si es necesario.
  *	@param 	err_n Puntero a int que almacena el errno de la ultima ejecucion
  *	para modificar el valor si es necesario.
- * 
- * 	@return Resultado de ejecucion. 
+ *
+ * 	@return Resultado de ejecucion.
  */
 static int	ft_write_char(char *line, int *i, int fd_hdoc, int *err_n)
 {
@@ -142,15 +141,15 @@ static int	ft_write_char(char *line, int *i, int fd_hdoc, int *err_n)
 
 /** Escribe el valor de una variable de entorno que se encuentra
  *  en un string en el fichero al que apunta hdoc.
- * 	
+ *
  *	@param	line String que contiene una variable de entorno.
  *	@param	v_start Indice del comienzo del VAR_NAME.
  *  @param data Puntero a la estructura data con datos generales del programa
  *  para utilizar o modificar los atributos last_exit y env.
  *	@param	hdoc fd en modo escritura del heredoc.
  * 	para modificar el valor si es necesario.
- * 
- * 	@return Resultado de ejecucion. 
+ *
+ * 	@return Resultado de ejecucion.
  */
 static int	ft_write_env_var(char *line, int v_start, t_data *data, int hdoc)
 {

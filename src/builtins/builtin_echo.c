@@ -30,14 +30,13 @@ static void	print_lines(int start_index, char **args, int fd)
 // Implementación del comando 'echo'
 void	builtin_echo(char **args, t_env *env)
 {
-	(void)env; // Ignoramos env ya que no se utiliza en esta función
 	int	i;
 	int	j;
 	int	n_option;
 
+	(void)env;
 	i = 1;
 	n_option = 0;
-	// Manejo de la opción '-n'
 	while (args[i] != NULL && args[i][0] == '-' && args[i][1] == 'n')
 	{
 		j = 1;
@@ -49,9 +48,7 @@ void	builtin_echo(char **args, t_env *env)
 			break ;
 		i++;
 	}
-	// Imprimir los argumentos
-	print_lines(i, args, STDOUT_FILENO);
-	// Imprimir salto de línea si no se ha especificado la opción '-n'
+	print_lines (i, args, STDOUT_FILENO);
 	if (!n_option)
 		ft_putchar_fd('\n', STDOUT_FILENO);
 }
