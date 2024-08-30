@@ -20,6 +20,8 @@ PAR_SRC_DIR	= ./src/parser/
 DEB_SRC_DIR	= ./src/debug/
 UTL_SRC_DIR	= ./src/utils/
 EXP_SRC_DIR	= ./src/expander/
+EXE_SRC_DIR	= ./src/executor/
+BUI_SRC_DIR	= ./src/builtins/
 LIBFT_DIR	= ./lib/libft/
 OBJS_DIR	= ./build/
 
@@ -27,19 +29,42 @@ OBJS_DIR	= ./build/
 INCLUDE		= -Iinclude -I$(LIBFT_DIR)
 
 # Source files
-SRC			=	src/debug/debug.c \
-				src/lexer/lexer.c \
+SRC			=	src/lexer/lexer.c \
 				src/lexer/lexer_utils.c \
+				src/lexer/consecutive_quotes_utils.c \
+				src/lexer/consecutive_quotes_split.c \
+				src/lexer/consecutive_quotes_fill.c \
+				src/lexer/complex_str_checker.c \
+				src/lexer/complex_str_builder.c \
+				src/lexer/complex_str_utils.c \
 				src/parser/parser_utils.c \
 				src/parser/cmd_split.c \
 				src/parser/redirection_utils.c \
 				src/utils/initializer.c \
+				src/utils/utils.c \
 				src/utils/clean_memory.c \
 				src/utils/error.c \
+				src/utils/signals.c \
 				src/expander/expander.c \
 				src/expander/expander_utils.c \
 				src/expander/expansion_malloc.c \
 				src/expander/fill_expansion.c \
+				src/executor/ft_executor.c \
+				src/executor/ft_path_finder.c \
+				src/executor/ft_mng_redirs.c \
+				src/executor/ft_mng_cmds.c \
+				src/executor/ft_hdoc.c \
+				src/builtins/builtin_pwd.c \
+				src/builtins/builtin_cd.c \
+				src/builtins/builtin_export.c \
+				src/builtins/builtin_echo.c \
+				src/builtins/builtin_unset.c \
+				src/builtins/builtin_exit.c \
+				src/builtins/builtin_env.c \
+				src/builtins/builtins.c \
+				src/builtins/builtins_utils.c \
+				src/builtins/builtin_export_utils.c \
+				src/builtins/builtin_export_list.c \
 				src/main.c
 
 # Object files
@@ -47,9 +72,7 @@ OBJS		=	$(addprefix $(OBJS_DIR), \
 				$(notdir $(patsubst %.c, %.o, $(SRC))))
 
 # Header files
-HEADERS		=	./include/minishell.h \
-				./include/lexer.h \
-				./include/parser.h	
+HEADERS		=	./include/minishell.h
 
 all: $(NAME)
 
@@ -65,6 +88,9 @@ $(OBJS_DIR):
 $(OBJS_DIR)%.o: $(DEB_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
 	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
+
+valgrind: $(NAME)
+	valgrind --leak-check=full --track-origins=yes ./$(NAME)
 
 # Utils objects compiler
 $(OBJS_DIR)%.o: $(UTL_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
@@ -83,6 +109,16 @@ $(OBJS_DIR)%.o: $(PAR_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
 
 # Expander objects compiler
 $(OBJS_DIR)%.o: $(EXP_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
+	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
+
+# Executor objects compiler
+$(OBJS_DIR)%.o: $(EXE_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
+	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
+
+# Builtins objects compiler
+$(OBJS_DIR)%.o: $(BUI_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
 	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 

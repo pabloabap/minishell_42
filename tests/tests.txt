@@ -1,0 +1,43 @@
+___MINISHELL TESTS___
+< t.txt wc
+wc < t.txt
+---
+DEBERIAN RETORNAR LO MISMO
+	cat t.txt
+	> t.txt cat
+	cat > t.txt 
+---
+NO TENDRIA QUE HACER CASO A LAS REDIRECIONES
+	< t.txt ls
+	ls > t.txt
+---
+DEVUELE TODO POR STDERR
+	mv
+	mv < t.txt
+	mv > t.txt
+---
+LEE INPUT Y ESCRIBE OUTPUT
+	sort
+---
+sort | grep ea
+
+----
+PROGRAM WITH REDIRECTIONS
+|_Create input file
+|	echo <list of colors repeated> > colors.txt
+|_CMD
+|	< colors.txt sort | uniq -c | sort -r | head -3 > favcolor.txt
+---
+cat -> Tiene que esperar a que introduzcas argumentos
+cat | cat | ls
+
+----
+cat | ls
+cat | cat | ls
+cat /dev/urandom | head -n 5
+----
+./pipex infile "cat /dev/urandom" "head -n 5" outfile
+----
+sleep 5 | sleep 5
+----
+cd | cd
