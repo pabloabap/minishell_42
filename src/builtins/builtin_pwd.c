@@ -12,7 +12,7 @@
 
 #include "../../include/minishell.h"
 
-void	builtin_pwd(char **args, t_env *env)
+void	builtin_pwd(char **args, t_env *env, int *last_exit)
 {
 	char		cwd[1024];
 	char		*result;
@@ -27,5 +27,6 @@ void	builtin_pwd(char **args, t_env *env)
 	{
 		error_msg = "minishell: pwd: Error al obtener el directorio actual\n";
 		write(STDERR_FILENO, error_msg, strlen(error_msg));
+		*last_exit = 1;
 	}
 }

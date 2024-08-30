@@ -26,11 +26,10 @@ static t_single_cmd	*ft_head_cmd(t_single_cmd *curr_cmd);
  * 
  * @return Resultado de la ejecución e impresión de errores sin procede.
 */
-int	ft_set_pipes(t_single_cmd *current_cmd, int std_out, int *err_n, int built)
+int	ft_set_pipes(t_single_cmd *current_cmd, int std_out, int *err_n)
 {
-	if (!built)
-		if (EXIT_FAILURE == ft_close_unused_pipes(current_cmd, err_n))
-			return (EXIT_FAILURE);
+	if (EXIT_FAILURE == ft_close_unused_pipes(current_cmd, err_n))
+		return (EXIT_FAILURE);
 	if (current_cmd->prev)
 	{
 		if (-1 == dup2(current_cmd->prev->pipe_fd[0], STDIN_FILENO))

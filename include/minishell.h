@@ -88,13 +88,14 @@ typedef struct s_data
 }	t_data;
 
 int				init_data(t_data **data, char **envp);
-int				is_whitespace(char c);
+int				ft_is_whitespace(char c);
 void			clean_data(t_data *data);
 void			ft_final_clean(t_data *data);
 int				ft_close(int fd, int *err_n);
 void			wait_signal(int main_process);
 int				ft_parent_exit(int wstatus, int *err_n);
 char			*ft_getenv(char *var_name, char **envp);
+void			ft_sleep(int seconds);
 
 //Error handling
 void			err_red_no_file(void);
@@ -141,21 +142,21 @@ int				ft_expansion_replace(char *exp_malloc, t_lexem *lex_list);
 int				ft_executor(t_single_cmd *head, t_data	*data);
 int				ft_prepare_redirections(t_single_cmd *cmd, int *err_n);
 int				ft_set_pipes(t_single_cmd *current_cmd, int std_out, \
-					int *err_n, int built);
+					int *err_n);
 int				ft_check_hdoc(t_single_cmd *cmd, t_data *data);
 int				ft_path_finder(t_single_cmd *cmd, t_data *data);
 
 //___________________BUILTINS___________________
 // Declaraciones de las funciones internas
-void			builtin_cd(char **args, t_env *env);
-void			builtin_pwd(char **args, t_env *env);
-void			builtin_unset(char **args, t_env *env);
-void			builtin_exit(char **args, t_env *env);
-void			builtin_env(char **args, t_env *env);
-void			builtin_export(char **args, t_env *env);
-void			builtin_echo(char **args, t_env *env);
+void			builtin_cd(char **args, t_env *env, int *last_exit);
+void			builtin_pwd(char **args, t_env *env, int *last_exit);
+void			builtin_unset(char **args, t_env *env, int *last_exit);
+void			builtin_exit(char **args, t_env *env, int *last_exit);
+void			builtin_env(char **args, t_env *env, int *last_exit);
+void			builtin_export(char **args, t_env *env, int *last_exit);
+void			builtin_echo(char **args, t_env *env, int *last_exit);
 
-typedef void	(*t_builtin_func)(char **args, t_env *env);
+typedef void	(*t_builtin_func)(char **args, t_env *env, int *last_exit);
 
 /* Estructura para los built-ins */
 typedef struct s_builtin
@@ -167,7 +168,7 @@ typedef struct s_builtin
 t_builtin_func	builtin_arr(char *str);
 
 int				is_builtin(char *command);
-void			execute_builtin(char **args, t_env *env);
+int				execute_builtin(char **args, t_env *env, int *last_exit);
 char			**add_var(char **arr, char *str);
 void			whileloop_add_var(char **arr, char **rtn, char *str);
 void			update_pwd(t_env *env, char *pwd);

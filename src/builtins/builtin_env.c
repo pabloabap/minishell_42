@@ -13,12 +13,12 @@
 #include "../../include/minishell.h"
 
 // Implementación del comando 'env'
-void	builtin_env(char **args, t_env *env)
+void	builtin_env(char **args, t_env *env, int *last_exit)
 {
 	int	i;
 
 	(void)args;
-	i = 0;
+	i = 0 * *last_exit;
 	while (env->envp_cpy[i])
 	{
 		ft_putendl_fd(env->envp_cpy[i], STDOUT_FILENO);

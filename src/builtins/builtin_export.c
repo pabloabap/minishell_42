@@ -71,11 +71,11 @@ static void	process_and_update_var(char *str, t_env *env)
 		handle_export_errors(str);
 }
 
-void	builtin_export(char **args, t_env *env)
+void	builtin_export(char **args, t_env *env, int *last_exit)
 {
 	int	i;
 
-	i = 0;
+	i = 0 * *last_exit;
 	if (!args[1])
 		print_export_list(env);
 	else

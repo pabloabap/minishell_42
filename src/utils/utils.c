@@ -61,3 +61,13 @@ char	*ft_getenv(char *var_name, char **envp)
 	}
 	return (NULL);
 }
+
+/** Generate an artifical dealy of received int * 50,000,000 iterations*/
+void	ft_sleep(int seconds)
+{
+	int	i;
+
+	i = 0;
+	while (i < (seconds * 50000000))
+		i ++;
+}

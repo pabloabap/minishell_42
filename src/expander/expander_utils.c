@@ -51,6 +51,12 @@ int	ft_has_expansion(char *str)
 int	ft_expansion_replace(char *exp_malloc, t_lexem *lex_list)
 {
 	free(lex_list->str);
-	lex_list->str = exp_malloc;
+	if (!exp_malloc[0])
+	{
+		lex_list->str = NULL;
+		free(exp_malloc);
+	}
+	else
+		lex_list->str = exp_malloc;
 	return (EXIT_SUCCESS);
 }
