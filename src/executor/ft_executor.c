@@ -49,6 +49,7 @@ int	ft_executor(t_single_cmd *head, t_data *data)
 				return (EXIT_FAILURE);
 		head = head->next;
 	}
+	ft_sleep(2);
 	if (EXIT_FAILURE == ft_parent_mng(tmp, data, std_out))
 		return (EXIT_FAILURE);
 	return (EXIT_SUCCESS);
@@ -99,12 +100,15 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_data *data)
 	if (cmd->str && is_builtin(cmd->str[0]) && !cmd->prev && !cmd->next)
 		return (exit(0), EXIT_SUCCESS);
 	else if (!cmd->str || \
-		EXIT_FAILURE == ft_set_pipes(cmd, std_out, &(data->last_exit), 0) || \
+		EXIT_FAILURE == ft_set_pipes(cmd, std_out, &(data->last_exit)) || \
 		EXIT_FAILURE == ft_prepare_redirections(cmd, &(data->last_exit)) || \
 		EXIT_FAILURE == ft_path_finder(cmd, data))
 		return (exit(data->last_exit), EXIT_FAILURE);
 	else if (is_builtin(cmd->str[0]) && (cmd->next || cmd->prev))
+	{
 		execute_builtin(cmd->str, data->env, &(data->last_exit));
+		exit(data->last_exit);
+	}
 	else if (execve(cmd->cmd_path, cmd->str, data->env->envp_cpy) < 0)
 	{
 		if (access(cmd->cmd_path, F_OK) < 0)

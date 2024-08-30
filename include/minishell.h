@@ -95,6 +95,7 @@ int				ft_close(int fd, int *err_n);
 void			wait_signal(int main_process);
 int				ft_parent_exit(int wstatus, int *err_n);
 char			*ft_getenv(char *var_name, char **envp);
+void			ft_sleep(int seconds);
 
 //Error handling
 void			err_red_no_file(void);
@@ -141,7 +142,7 @@ int				ft_expansion_replace(char *exp_malloc, t_lexem *lex_list);
 int				ft_executor(t_single_cmd *head, t_data	*data);
 int				ft_prepare_redirections(t_single_cmd *cmd, int *err_n);
 int				ft_set_pipes(t_single_cmd *current_cmd, int std_out, \
-					int *err_n, int built);
+					int *err_n);
 int				ft_check_hdoc(t_single_cmd *cmd, t_data *data);
 int				ft_path_finder(t_single_cmd *cmd, t_data *data);
 
