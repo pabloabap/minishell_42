@@ -25,7 +25,8 @@ int	find_env_var_index(char **envp, const char *var)
 	i = 0;
 	while (envp[i])
 	{
-		if (ft_strncmp(envp[i], var, var_len) == 0 && envp[i][var_len] == '=')
+		if ((ft_strncmp(envp[i], var, var_len) == 0 && envp[i][var_len] == '=') ||
+            (ft_strncmp(envp[i], var, var_len) == 0 && envp[i][var_len] == '\0'))
 			return (i);
 		i++;
 	}
@@ -74,8 +75,9 @@ void	builtin_unset(char **args, t_env *env)
 		index = find_env_var_index(env->envp_cpy, args[i]);
 		if (index != -1)
 			remove_env_var(&env->envp_cpy, index);
-		else
-			printf("unset: '%s': not found\n", args[i]);
+		index = find_env_var_index(env->export_cpy, args[i]);
+        if (index != -1)
+            remove_env_var(&env->export_cpy, index);
 		i++;
 	}
 }
