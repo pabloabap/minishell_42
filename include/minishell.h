@@ -189,7 +189,7 @@ void			handle_export_errors(char *str, int *last_exit);
 int				is_valid_identifier(const char *str);
 char			**replace_envp(char **old_envp, char **new_envp);
 int				find_char_index(const char *str, char c);
-int				is_valid_environment_variable(const char *line);
+//int				is_valid_environment_variable(const char *line);
 void			update_export_list(t_env *env, char *str);
 void			print_export_list(t_env *env);
 

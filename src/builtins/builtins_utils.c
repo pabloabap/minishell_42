@@ -28,11 +28,11 @@
 int	variable_exist(t_env *env, char *str)
 {
 	int	i;
-	int	eq_idx;
+	//int	eq_idx;
 
-	eq_idx = equal_sign(str);
-	if (eq_idx != -1 && (str[eq_idx + 1] == '\"' || str[eq_idx + 1] == '\''))
-		delete_quotes(&str[eq_idx + 1], str[eq_idx + 1]);
+	//heq_idx = equal_sign(str);
+	/*if (eq_idx != -1 && (str[eq_idx + 1] == '\"' || str[eq_idx + 1] == '\''))
+		delete_quotes(&str[eq_idx + 1], str[eq_idx + 1]);*/
 	i = 0;
 	while (env->envp_cpy[i])
 	{
@@ -146,6 +146,7 @@ int	find_char_index(const char *str, char c)
  *  - 1 si la variable es válida (contiene un '=' y tiene un valor no vacío), 
  *    0 en caso contrario.
  */
+/*
 int	is_valid_environment_variable(const char *line)
 {
 	int			eq_idx;
@@ -161,3 +162,4 @@ int	is_valid_environment_variable(const char *line)
 		return (0);
 	return (1);
 }
+*/
