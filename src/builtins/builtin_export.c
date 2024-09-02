@@ -14,7 +14,7 @@
 // Prototipos de funciones internas
 char		**replace_envp(char **old_envp, char **new_envp);
 static void	ft_update_var(char *str, t_env *env, int eq_idx);
-static void	process_and_update_var(char *str, t_env *env);
+static void	process_and_update_var(char *str, t_env *env, int *last_exit);
 char		**add_var(char **arr, char *str);
 
 /**
@@ -40,7 +40,7 @@ void	builtin_export(char **args, t_env *env, int *last_exit)
 	{
 		while (args[i])
 		{
-			process_and_update_var(args[i], env);
+			process_and_update_var(args[i], env, last_exit);
 			i++;
 		}
 	}
@@ -110,7 +110,7 @@ static void	ft_update_var(char *str, t_env *env, int eq_idx)
  * @param env Puntero a la estructura `t_env` que contiene el array de 
  *            entorno `envp_cpy`.
  */
-static void	process_and_update_var(char *str, t_env *env)
+static void	process_and_update_var(char *str, t_env *env, int *last_exit)
 {
 	int	eq_idx;
 
@@ -122,7 +122,7 @@ static void	process_and_update_var(char *str, t_env *env)
 	if (is_valid_identifier(str))
 		ft_update_var(str, env, eq_idx);
 	else
-		handle_export_errors(str);
+		handle_export_errors(str, last_exit);
 }
 
 /**

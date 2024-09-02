@@ -185,7 +185,7 @@ void			delete_quotes(char *str, char quote_char);
 void			mini_env(t_env *env, t_single_cmd *simple_cmd);
 void			print_export_list(t_env *env);
 int				variable_exist(t_env *env, char *str);
-void			handle_export_errors(char *str);
+void			handle_export_errors(char *str, int *last_exit);
 int				is_valid_identifier(const char *str);
 char			**replace_envp(char **old_envp, char **new_envp);
 int				find_char_index(const char *str, char c);

@@ -113,8 +113,13 @@ int	is_valid_identifier(const char *str)
  * 
  * @param str La cadena a verificar e imprimir errores.
  */
-void	handle_export_errors(char *str)
+void	handle_export_errors(char *str, int *last_exit)
 {
 	if (!is_valid_identifier(str))
-		printf("export: '%s': not a valid identifier\n", str);
+	{
+		*last_exit = 1;
+		ft_putstr_fd("-minishell: export: `", STDERR_FILENO);
+		ft_putstr_fd(str, STDERR_FILENO);
+		ft_putendl_fd("': not a valid identifier", STDERR_FILENO);
+	}
 }
