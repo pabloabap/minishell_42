@@ -104,6 +104,10 @@ void			err_pipe(void);
 void			err_malloc_fail(int *err_n);
 void			ft_hdoc_close_check(t_lexem *redir, char *line, int *err_n);
 
+//__________________FT_READLINE______________
+void			ft_readline(t_data *data);
+int				ft_jump_irrelevant_character(char *str, int *i);
+
 //___________________LEXER___________________
 int				token_lex_fill(char *str, t_lexem **lexem_item, \
 					t_tokens token);
