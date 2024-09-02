@@ -12,17 +12,17 @@
 
 #include "../../include/minishell.h"
 
+
 /**
- * Frees the memory allocated for an array of strings.
+ * Libera la memoria asignada para un arreglo de cadenas.
  * 
- * Iterates through the array, frees each string, and then 
- * frees the array itself.
+ * Itera a través del arreglo, libera cada cadena, y luego
+ * libera el arreglo en sí.
  * 
- * @param arr The array of strings to free.
- * @param len The number of elements in the array.
+ * @param arr El arreglo de cadenas a liberar.
+ * @param len El número de elementos en el arreglo.
  * @return NULL.
  */
-
 char	**free_arr(char **arr, int len)
 {
 	int	i;
@@ -38,12 +38,11 @@ char	**free_arr(char **arr, int len)
 }
 
 /**
- * Finds the index of the first '=' character in a string.
+ * Encuentra el índice del primer carácter '=' en una cadena.
  * 
- * @param str The string to search.
- * @return The index of the '=' character, or -1 if not found.
+ * @param str La cadena en la que buscar.
+ * @return El índice del carácter '=', o -1 si no se encuentra.
  */
-
 int	equal_sign(const char *str)
 {
 	int	i;
@@ -59,14 +58,13 @@ int	equal_sign(const char *str)
 }
 
 /**
- * Removes all occurrences of a specified quote character from a string.
+ * Elimina todas las ocurrencias de un carácter de comilla específico de una cadena.
  * 
- * This function modifies the string in place and adjusts its length.
+ * Esta función modifica la cadena en el lugar y ajusta su longitud.
  * 
- * @param str The string from which to remove quotes.
- * @param quote_char The quote character to remove.
+ * @param str La cadena de la cual eliminar las comillas.
+ * @param quote_char El carácter de comilla a eliminar.
  */
-
 void	delete_quotes(char *str, char quote_char)
 {
 	int	i;
@@ -84,15 +82,14 @@ void	delete_quotes(char *str, char quote_char)
 }
 
 /**
- * Checks if a string is a valid identifier for an environment variable.
+ * Verifica si una cadena es un identificador válido para una variable de entorno.
  * 
- * A valid identifier must start with a letter and may contain letters,
- * digits, and underscores.
+ * Un identificador válido debe comenzar con una letra y puede contener letras,
+ * dígitos y guiones bajos.
  * 
- * @param str The string to check.
- * @return 1 if the string is a valid identifier, 0 otherwise.
+ * @param str La cadena a verificar.
+ * @return 1 si la cadena es un identificador válido, 0 en caso contrario.
  */
-
 int	is_valid_identifier(const char *str)
 {
 	int	i;
@@ -110,13 +107,12 @@ int	is_valid_identifier(const char *str)
 }
 
 /**
- * Handles errors related to invalid environment variable identifiers.
+ * Maneja los errores relacionados con identificadores no válidos de variables de entorno.
  * 
- * Prints an error message if the provided string is not a valid identifier.
+ * Imprime un mensaje de error si la cadena proporcionada no es un identificador válido.
  * 
- * @param str The string to check and print errors for.
+ * @param str La cadena a verificar e imprimir errores.
  */
-
 void	handle_export_errors(char *str)
 {
 	if (!is_valid_identifier(str))

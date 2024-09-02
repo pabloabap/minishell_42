@@ -12,6 +12,17 @@
 
 #include "../../include/minishell.h"
 
+/**
+ * Actualiza la lista de variables de entorno exportadas.
+ * 
+ * Esta función agrega una nueva variable de entorno a la lista exportada.
+ * Si la lista aún no existe, la crea y agrega la variable.
+ * En caso de que ocurra un error durante la adición, se imprime un mensaje
+ * de error y se finaliza el programa.
+ * 
+ * @param env Estructura que contiene las variables de entorno.
+ * @param str La variable de entorno a agregar en formato "NOMBRE=valor".
+ */
 void	update_export_list(t_env *env, char *str)
 {
 	char	**new_export_cpy;
@@ -36,6 +47,15 @@ void	update_export_list(t_env *env, char *str)
 	env->export_cpy = replace_envp(env->export_cpy, new_export_cpy);
 }
 
+/**
+ * Imprime la lista de variables de entorno exportadas.
+ * 
+ * Esta función recorre y muestra todas las variables de la lista exportada,
+ * excepto la cadena "export". Imprime cada variable en formato "declare -x NOMBRE=valor".
+ * Si la lista export_cpy es NULL, se notifica al usuario.
+ * 
+ * @param env Estructura que contiene las variables de entorno.
+ */
 void	print_export_list(t_env *env)
 {
 	int	i;

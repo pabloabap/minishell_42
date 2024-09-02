@@ -12,6 +12,12 @@
 
 #include "../../include/minishell.h"
 
+/*
+ * Implementación del comando `pwd`, que muestra el directorio de trabajo 
+ * actual en la salida estándar. La función utiliza `getcwd` para obtener 
+ * la ruta absoluta del directorio actual y la imprime. Si `getcwd` falla, 
+ * se muestra un mensaje de error y se establece el código de salida en 1.
+ */
 void	builtin_pwd(char **args, t_env *env, int *last_exit)
 {
 	char		cwd[1024];

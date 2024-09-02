@@ -12,7 +12,42 @@
 
 #include "../../include/minishell.h"
 
-// Array de funciones built-in
+/**
+ * Ejecuta el comando interno correspondiente, si existe.
+ * 
+ * @param args Arreglo de cadenas que contiene el comando y sus argumentos.
+ * @param env Puntero a la estructura de entorno, que contiene las variables
+ * de entorno actuales.
+ * @param last_exit Puntero a un entero que almacena el estado de salida del 
+ * último comando ejecutado.
+ * 
+ * @return EXIT_SUCCESS si el comando se ejecuta exitosamente o no cambia el 
+ * valor de last_exit,
+ *         y EXIT_FAILURE si el comando falla y cambia el valor de last_exit.
+ */
+int	execute_builtin(char **args, t_env *env, int *last_exit)
+{
+	t_builtin_func	builtin_func;
+	int				tmp_last_exit;
+
+	tmp_last_exit = *last_exit;
+	builtin_func = builtin_arr(args[0]);
+	if (builtin_func != NULL)
+		builtin_func(args, env, last_exit);
+	if (tmp_last_exit == 0 && tmp_last_exit != *last_exit)
+		return (EXIT_FAILURE);
+	else
+		return (EXIT_SUCCESS);
+}
+
+/**
+ * Devuelve la función correspondiente al comando interno especificado.
+ * 
+ * @param str Cadena que contiene el nombre del comando interno.
+ * 
+ * @return Un puntero a la función del comando interno si se encuentra, 
+ *         o NULL si no se encuentra.
+ */
 t_builtin_func	builtin_arr(char *str)
 {
 	static t_builtin	builtins[] = {
@@ -41,24 +76,14 @@ t_builtin_func	builtin_arr(char *str)
 	return (NULL);
 }
 
-// Verifica si el comando es una función interna
+/**
+ * Verifica si el comando proporcionado es una función interna (builtin).
+ * 
+ * @param command Cadena que contiene el nombre del comando a verificar.
+ * 
+ * @return 1 si el comando es una función interna, o 0 si no lo es.
+ */
 int	is_builtin(char *command)
 {
 	return (builtin_arr(command) != NULL);
-}
-
-// Ejecuta el comando interno correspondiente
-int	execute_builtin(char **args, t_env *env, int *last_exit)
-{
-	t_builtin_func	builtin_func;
-	int				tmp_last_exit;
-
-	tmp_last_exit = *last_exit;
-	builtin_func = builtin_arr(args[0]);
-	if (builtin_func != NULL)
-		builtin_func(args, env, last_exit);
-	if (tmp_last_exit == 0 && tmp_last_exit != *last_exit)
-		return (EXIT_FAILURE);
-	else
-		return (EXIT_SUCCESS);
 }

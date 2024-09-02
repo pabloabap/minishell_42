@@ -12,7 +12,13 @@
 
 #include "../../include/minishell.h"
 
-// Implementación del comando 'env'
+/* 
+ * Implementación del comando `env`, que imprime todas las variables de 
+ * entorno almacenadas en `env->envp_cpy`. La función itera a través de la 
+ * copia del entorno y escribe cada variable en la salida estándar, una por 
+ * línea. No toma en cuenta los argumentos pasados, ya que simplemente 
+ * muestra el entorno actual.
+ */
 void	builtin_env(char **args, t_env *env, int *last_exit)
 {
 	int	i;

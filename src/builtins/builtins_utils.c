@@ -12,6 +12,19 @@
 
 #include "../../include/minishell.h"
 
+/*
+ * Verifica si una variable de entorno especificada por `str` existe en 
+ * el array `envp_cpy` de la estructura `env`. Si la variable existe, 
+ * se actualiza con el nuevo valor de `str`. Si no existe, se añade al 
+ * array.
+ * @Parámetros:
+ *  - env: puntero a la estructura `t_env` que contiene el array de entorno 
+ *    `envp_cpy`.
+ *  - str: cadena que representa la variable de entorno a buscar o actualizar.
+ * @Devuelve:
+ *  - 1 si la variable de entorno fue encontrada y actualizada, 
+ *    0 si no fue encontrada.
+ */
 int	variable_exist(t_env *env, char *str)
 {
 	int	i;
@@ -35,7 +48,15 @@ int	variable_exist(t_env *env, char *str)
 	return (0);
 }
 
-// Actualiza la variable de entorno `PWD` en `envp`.
+/*
+ * Actualiza la variable de entorno `PWD` en el array `envp_cpy` con el nuevo 
+ * valor `pwd`. Si `PWD` ya existe en `envp_cpy`, se reemplaza su valor 
+ * con el nuevo valor.
+ * @Parámetros:
+ *  - env: puntero a la estructura `t_env` que contiene el array de entorno 
+ *    `envp_cpy`.
+ *  - pwd: nueva cadena que representa el valor del directorio actual.
+ */
 void	update_pwd(t_env *env, char *pwd)
 {
 	int		i;
@@ -59,7 +80,15 @@ void	update_pwd(t_env *env, char *pwd)
 	}
 }
 
-// Actualiza la variable de entorno `OLDPWD` en `envp`.
+/*
+ * Actualiza la variable de entorno `OLDPWD` en el array `envp_cpy` con el 
+ * nuevo valor `old_pwd`. Si `OLDPWD` ya existe en `envp_cpy`, se reemplaza 
+ * su valor con el nuevo valor.
+ * @Parámetros:
+ *  - env: puntero a la estructura `t_env` que contiene el array de entorno 
+ *    `envp_cpy`.
+ *  - old_pwd: nueva cadena que representa el valor del directorio anterior.
+ */
 void	update_oldpwd(t_env *env, char *old_pwd)
 {
 	int		i;
@@ -83,13 +112,16 @@ void	update_oldpwd(t_env *env, char *old_pwd)
 	}
 }
 
-/**
- * Finds the index of the first occurrence of a character in a string.
- * @param str The string to search.
- * @param c The character to find.
- * @return The index of the character, or -1 if not found.
+/*
+ * Encuentra el índice de la primera ocurrencia de un carácter `c` en la 
+ * cadena `str`.
+ * @Parámetros:
+ *  - str: cadena en la que se buscará el carácter.
+ *  - c: carácter que se desea encontrar.
+ * @Devuelve:
+ *  - El índice del carácter en la cadena si se encuentra; 
+ *    -1 si el carácter no se encuentra.
  */
-
 int	find_char_index(const char *str, char c)
 {
 	int	i;
@@ -104,12 +136,16 @@ int	find_char_index(const char *str, char c)
 	return (-1);
 }
 
-/**
- * Validates if a given environment variable is valid.
- * @param line The environment variable string.
- * @return 1 if valid, 0 otherwise.
+/*
+ * Valida si una cadena de variable de entorno `line` es válida. La variable 
+ * es considerada válida si contiene un signo '=' y tiene un valor no vacío 
+ * después del signo.
+ * @Parámetros:
+ *  - line: cadena que representa la variable de entorno a validar.
+ * @Devuelve:
+ *  - 1 si la variable es válida (contiene un '=' y tiene un valor no vacío), 
+ *    0 en caso contrario.
  */
-
 int	is_valid_environment_variable(const char *line)
 {
 	int			eq_idx;

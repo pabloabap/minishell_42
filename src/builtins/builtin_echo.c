@@ -12,22 +12,15 @@
 
 #include "../../include/minishell.h"
 
-// Función auxiliar para imprimir líneas
-static void	print_lines(int start_index, char **args, int fd)
-{
-	int	i;
+// Prototipo de función auxiliar
+static void	print_lines(int start_index, char **args, int fd);
 
-	i = start_index;
-	while (args[i] != NULL)
-	{
-		ft_putstr_fd(args[i], fd);
-		if (args[i + 1] != NULL)
-			ft_putchar_fd(' ', fd);
-		i++;
-	}
-}
-
-// Implementación del comando 'echo'
+/* 
+ * Implementa el comando `echo`, que imprime los argumentos en la salida 
+ * estándar. Soporta la opción `-n` para suprimir el salto de línea final. 
+ * La función detecta y maneja múltiples instancias de `-n` seguidas y 
+ * gestiona el caso en que no se pasen argumentos.
+ */
 void	builtin_echo(char **args, t_env *env, int *last_exit)
 {
 	int	i;
@@ -51,4 +44,23 @@ void	builtin_echo(char **args, t_env *env, int *last_exit)
 	print_lines (i, args, STDOUT_FILENO);
 	if (!n_option)
 		ft_putchar_fd('\n', STDOUT_FILENO);
+}
+
+/* 
+ * Esta función auxiliar imprime los argumentos pasados a partir de 
+ * `start_index` en el descriptor de archivo `fd`. Añade un espacio 
+ * entre los argumentos y evita un espacio adicional al final de la línea.
+ */
+static void	print_lines(int start_index, char **args, int fd)
+{
+	int	i;
+
+	i = start_index;
+	while (args[i] != NULL)
+	{
+		ft_putstr_fd(args[i], fd);
+		if (args[i + 1] != NULL)
+			ft_putchar_fd(' ', fd);
+		i++;
+	}
 }
