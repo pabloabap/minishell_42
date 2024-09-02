@@ -13,7 +13,6 @@
 #include "../include/minishell.h"
 
 int			g_error = 0;
-static void	ft_readline(t_data *data);
 static int	ft_preprocesing(t_data *data);
 
 int	main(int argc, char **argv, char **envp)
@@ -51,14 +50,7 @@ int	main(int argc, char **argv, char **envp)
  *
  *  @return Nada, actualiza el último estado de salida del programa si
  *  la variable gloabl de error es distinta de cero.
- */
-static void	ft_readline(t_data *data)
-{
-	data->input = readline("Minishell% ");
-	if (g_error != 0)
-		data->last_exit = g_error + 128;
-	add_history(data->input);
-}
+*/
 
 /** Función que agrupa las aciones de lexing, parsing y actualiza el exit
  * status en caso de error.

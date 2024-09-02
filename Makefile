@@ -41,6 +41,8 @@ SRC			=	src/lexer/lexer.c \
 				src/parser/cmd_split.c \
 				src/parser/redirection_utils.c \
 				src/utils/initializer.c \
+				src/utils/ft_readline.c \
+				src/utils/ft_readline_utils.c \
 				src/utils/utils.c \
 				src/utils/clean_memory.c \
 				src/utils/error.c \
@@ -86,7 +88,6 @@ $(OBJS_DIR):
 
 # Debuger
 $(OBJS_DIR)%.o: $(DEB_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
-	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 valgrind: $(NAME)
@@ -94,37 +95,30 @@ valgrind: $(NAME)
 
 # Utils objects compiler
 $(OBJS_DIR)%.o: $(UTL_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
-	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 # Lexer objects compiler
 $(OBJS_DIR)%.o: $(LEX_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
-	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 # Parser objects compiler
 $(OBJS_DIR)%.o: $(PAR_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
-	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 # Expander objects compiler
 $(OBJS_DIR)%.o: $(EXP_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
-	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 # Executor objects compiler
 $(OBJS_DIR)%.o: $(EXE_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
-	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 # Builtins objects compiler
 $(OBJS_DIR)%.o: $(BUI_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
-	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 # main objects compiler
 $(OBJS_DIR)%.o: ./src/main.c $(HEADERS) | $(OBJS_DIR)
-	@echo "Compiling ${notdir $<} in $(OBJS_DIR)"
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 
