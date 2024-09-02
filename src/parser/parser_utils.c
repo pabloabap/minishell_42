@@ -117,8 +117,7 @@ int	ft_lex_to_cmd(t_lexem **lex_list, t_single_cmd **cmd, int *err_n)
 	t_lexem	*cmds_start;
 
 	cmds_start = *lex_list;
-	if (grammar_checks(*lex_list) == EXIT_SUCCESS && \
-	ft_red_err(*lex_list) == EXIT_SUCCESS)
+	if (grammar_checks(*lex_list) == EXIT_SUCCESS)
 	{
 		while (cmds_start && cmds_start->token >= IN_REDIR \
 		&& cmds_start->next->token <= DOUBLE_QUOTES)
