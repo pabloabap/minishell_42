@@ -37,7 +37,8 @@ void	err_pipe(void)
 void	err_malloc_fail(int *err_n)
 {
 	perror("-minishell: malloc fails");
-	*err_n = ENOMEM;
+	if (err_n != NULL)
+		*err_n = ENOMEM;
 }
 
 /** Gestion del cierre de un HEREDOC por la recepción de una señal de EOF.*/
