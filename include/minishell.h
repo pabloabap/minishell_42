@@ -130,7 +130,6 @@ int				cmd_len(t_lexem *lex_list);
 int				ft_lex_to_cmd(t_lexem **head_lex_list, t_single_cmd **cmd, \
 					int *err_n);
 void			ft_redirection_quotes(t_lexem *lex_list);
-int				ft_red_err(t_lexem *lex_list);
 
 //___________________EXPANDER___________________
 int				ft_expander(t_lexem *lex_list, t_single_cmd *cmd_list, \

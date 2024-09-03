@@ -99,9 +99,10 @@ static int	ft_child_mng(t_single_cmd *cmd, int std_out, t_data *data)
 {
 	if (cmd->str && is_builtin(cmd->str[0]) && !cmd->prev && !cmd->next)
 		return (exit(0), EXIT_SUCCESS);
-	else if (!cmd->str || \
+	else if (
 		EXIT_FAILURE == ft_set_pipes(cmd, std_out, &(data->last_exit)) || \
 		EXIT_FAILURE == ft_prepare_redirections(cmd, &(data->last_exit)) || \
+		!cmd->str || \
 		EXIT_FAILURE == ft_path_finder(cmd, data))
 		return (exit(data->last_exit), EXIT_FAILURE);
 	else if (is_builtin(cmd->str[0]) && (cmd->next || cmd->prev))
