@@ -48,14 +48,6 @@ void	update_export_list(t_env *env, char *str)
 	env->export_cpy = replace_envp(env->export_cpy, new_export_cpy);
 }
 */
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
-// Supongamos que estas funciones están definidas en otro lugar
-extern char **add_var(char **envp, char *str);
-extern char **replace_envp(char **old_envp, char **new_envp);
-
 void update_export_list(t_env *env, char *str)
 {
     char **new_export_cpy;
@@ -92,7 +84,6 @@ void update_export_list(t_env *env, char *str)
             if (strncmp(env->export_cpy[i], name, name_len) == 0 && 
                 (env->export_cpy[i][name_len] == '=' || env->export_cpy[i][name_len] == '\0'))
             {
-                // La variable ya existe, actualizar su valor
                 free(env->export_cpy[i]);
                 env->export_cpy[i] = strdup(str);
                 if (!env->export_cpy[i])
@@ -118,8 +109,6 @@ void update_export_list(t_env *env, char *str)
             }
         }
     }
-
-    // Si la variable no existe, agregarla
     new_export_cpy = add_var(env->export_cpy, str);
     if (!new_export_cpy)
     {
@@ -128,6 +117,7 @@ void update_export_list(t_env *env, char *str)
     }
     env->export_cpy = replace_envp(env->export_cpy, new_export_cpy);
 }
+
 
 /**
  * Imprime la lista de variables de entorno exportadas.
@@ -157,7 +147,7 @@ void	print_export_list(t_env *env)
 	}
 }
 */
-
+/*
 void print_export_list(t_env *env)
 {
     int i;
@@ -184,6 +174,76 @@ void print_export_list(t_env *env)
 
                 // Imprimir nombre y valor entre comillas, incluso si el valor es una cadena vacía
                 printf("declare -x %s=\"%s\"\n", name, value);
+
+                // Restaurar el carácter '='
+                *equal_sign = '=';
+            }
+            else
+            {
+                // Si no hay '=', solo imprimir el nombre
+                printf("declare -x %s\n", entry);
+            }
+        }
+        i++;
+    }
+}
+*/
+void print_export_list(t_env *env)
+{
+    int i;
+
+    if (env->export_cpy == NULL)
+    {
+        printf("export_cpy is NULL\n");
+        return;
+    }
+    i = 0;
+    while (env->export_cpy[i])
+    {
+        if (ft_strncmp(env->export_cpy[i], "export", 6) != 0)
+        {
+            char *entry = env->export_cpy[i];
+            char *equal_sign = ft_strchr(entry, '=');
+
+            if (equal_sign != NULL)
+            {
+                *equal_sign = '\0';
+                char *name = entry;
+                char *value = equal_sign + 1;
+
+                if (value[0] == '"' && value[strlen(value) - 1] == '"')
+                {
+                    char *escaped_value = malloc(strlen(value) * 2 + 1);
+                    if (!escaped_value)
+                    {
+                        perror("Failure allocating memory");
+                        exit(EXIT_FAILURE);
+                    }
+
+                    // Escapar comillas dobles
+                    char *src = value;
+                    char *dst = escaped_value;
+                    while (*src)
+                    {
+                        if (*src == '"')
+                        {
+                            *dst++ = '\\';
+                        }
+                        *dst++ = *src++;
+                    }
+                    *dst = '\0';
+
+                    // Imprimir nombre y valor escapado entre comillas
+                    printf("declare -x %s=\"%s\"\n", name, escaped_value);
+
+                    // Liberar el buffer de valor escapado
+                    free(escaped_value);
+                }
+                else
+                {
+                    // Imprimir nombre y valor entre comillas, incluso si el valor es una cadena vacía
+                    printf("declare -x %s=\"%s\"\n", name, value);
+                }
 
                 // Restaurar el carácter '='
                 *equal_sign = '=';
