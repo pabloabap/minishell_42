@@ -83,7 +83,6 @@ static void	ft_update_var(char *str, t_env *env, int eq_idx)
 {
 	char	**new_envp;
 
-	//if (eq_idx == -1 || str[ft_strlen(str) - 1] == '=')
 	if (eq_idx == -1)
 		update_export_list(env, str);
 	else
@@ -116,8 +115,6 @@ static void	process_and_update_var(char *str, t_env *env, int *last_exit)
 	int	eq_idx;
 
 	eq_idx = equal_sign(str);
-	/*if (eq_idx != -1 && str[eq_idx + 1] == '\"')
-		delete_quotes(&str[eq_idx + 1], '\"');*/
 	if (is_valid_identifier(str))
 		ft_update_var(str, env, eq_idx);
 	else

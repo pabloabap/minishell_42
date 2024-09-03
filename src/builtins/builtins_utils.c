@@ -28,11 +28,7 @@
 int	variable_exist(t_env *env, char *str)
 {
 	int	i;
-	//int	eq_idx;
 
-	//heq_idx = equal_sign(str);
-	/*if (eq_idx != -1 && (str[eq_idx + 1] == '\"' || str[eq_idx + 1] == '\''))
-		delete_quotes(&str[eq_idx + 1], str[eq_idx + 1]);*/
 	i = 0;
 	while (env->envp_cpy[i])
 	{
