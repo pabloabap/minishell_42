@@ -12,7 +12,6 @@
 
 #include "../../include/minishell.h"
 
-
 /**
  * Libera la memoria asignada para un arreglo de cadenas.
  * 
@@ -58,7 +57,8 @@ int	equal_sign(const char *str)
 }
 
 /**
- * Elimina todas las ocurrencias de un carácter de comilla específico de una cadena.
+ * Elimina todas las ocurrencias de un carácter de comilla específico de una 
+ * cadena.
  * 
  * Esta función modifica la cadena en el lugar y ajusta su longitud.
  * 
@@ -82,7 +82,8 @@ void	delete_quotes(char *str, char quote_char)
 }
 
 /**
- * Verifica si una cadena es un identificador válido para una variable de entorno.
+ * Verifica si una cadena es un identificador válido para una variable de 
+ * entorno.
  * 
  * Un identificador válido debe comenzar con una letra y puede contener letras,
  * dígitos y guiones bajos.
@@ -107,9 +108,10 @@ int	is_valid_identifier(const char *str)
 }
 
 /**
- * Maneja los errores relacionados con identificadores no válidos de variables de entorno.
- * 
- * Imprime un mensaje de error si la cadena proporcionada no es un identificador válido.
+ * Maneja los errores relacionados con identificadores no válidos de variables
+ * de entorno.  
+ * Imprime un mensaje de error si la cadena proporcionada no es un 
+ * identificador válido.
  * 
  * @param str La cadena a verificar e imprimir errores.
  */
