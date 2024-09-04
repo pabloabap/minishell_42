@@ -14,8 +14,9 @@
 
 static int	ft_fill_empty_export_cpy(t_env *env, char ***new_export_cpy, \
 	char *str);
-static int	ft_update_var_without_value(t_env *env, char *str, \
+static int	ft_update_var_value(t_env *env, char *str, \
 	size_t name_len);
+static int	ft_check_existing_var(t_env *env, char *str);
 
 /**
  * Actualiza la lista de variables de entorno exportadas.
@@ -31,32 +32,27 @@ static int	ft_update_var_without_value(t_env *env, char *str, \
 void	update_export_list(t_env *env, char *str)
 {
 	char	**new_export_cpy;
-	int		i;
 	char	*equal_sign;
 
-	i = 0;
 	if (1 == ft_fill_empty_export_cpy(env, &new_export_cpy, str))
 		return ;
 	equal_sign = ft_strchr(str, '=');
 	if (equal_sign != NULL \
-		&& 1 == ft_update_var_without_value(env, str, equal_sign - str))
+		&& 1 == ft_update_var_value(env, str, equal_sign - str))
 		return ;
 	else
-	{
-		while (env->export_cpy[i] != NULL)
-		{
-			if (ft_strncmp(env->export_cpy[i], str, \
-				ft_strlen(env->export_cpy[i])) == 0)
-				return ;
-			i++;
-		}
-	}
+		if (1 == ft_check_existing_var(env, str))
+			return ;
 	new_export_cpy = add_var(env->export_cpy, str);
 	if (!new_export_cpy)
 		return (err_malloc_fail(NULL), exit(EXIT_FAILURE));
 	env->export_cpy = replace_envp(env->export_cpy, new_export_cpy);
 }
 
+/**
+ * Genera el array de string env->export_cpy en caso de que no exista.
+ * Retorna 1 si tenido que generarlo o 0 si no.
+ */
 static int	ft_fill_empty_export_cpy(t_env *env, char ***new_export_cpy, \
 	char *str)
 {
@@ -72,7 +68,11 @@ static int	ft_fill_empty_export_cpy(t_env *env, char ***new_export_cpy, \
 	return (0);
 }
 
-static int	ft_update_var_without_value(t_env *env, char *str, size_t name_len)
+/**
+ * Actualiza el valor de una variable ya existente.
+ */
+
+static int	ft_update_var_value(t_env *env, char *str, size_t name_len)
 {
 	int		i;
 	char	*name;
@@ -97,4 +97,26 @@ static int	ft_update_var_without_value(t_env *env, char *str, size_t name_len)
 		i++;
 	}
 	return (free(name), 0);
+}
+
+/**
+ * Checkea si existe la variable str (del tipo `export a`, sin igual) en env.
+ * En caso de que exista(con valor o sin valor asignado) retorna 1 para que
+ * no sea actualizada.
+ */
+static int	ft_check_existing_var(t_env *env, char *str)
+{
+	int		i;
+
+	i = 0;
+	while (env->export_cpy[i] != NULL)
+	{
+		if ((ft_strncmp(env->export_cpy[i], str, \
+			ft_strlen(env->export_cpy[i])) == 0) \
+			|| (ft_strncmp(env->export_cpy[i], str, \
+			ft_strlen(str)) == 0 && env->export_cpy[i][ft_strlen(str)] == '='))
+			return (1);
+		i++;
+	}
+	return (0);
 }
