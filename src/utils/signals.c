@@ -79,7 +79,7 @@ static void	child_handler(int signal)
 	}
 	else if (signal == SIGQUIT)
 	{
-		write(1, "Quit\n", 5);
+		write(1, "Quit (core dumped)\n", 20);
 		g_error = SIGQUIT;
 	}
 	return ;

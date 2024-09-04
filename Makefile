@@ -88,38 +88,38 @@ $(OBJS_DIR):
 	mkdir $(OBJS_DIR)
 
 # Debuger
-$(OBJS_DIR)%.o: $(DEB_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+$(OBJS_DIR)%.o: $(DEB_SRC_DIR)%.c $(HEADERS) Makefile | $(OBJS_DIR)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 valgrind: $(NAME)
 	valgrind --leak-check=full --track-origins=yes ./$(NAME)
 
 # Utils objects compiler
-$(OBJS_DIR)%.o: $(UTL_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+$(OBJS_DIR)%.o: $(UTL_SRC_DIR)%.c $(HEADERS) Makefile | $(OBJS_DIR)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 # Lexer objects compiler
-$(OBJS_DIR)%.o: $(LEX_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+$(OBJS_DIR)%.o: $(LEX_SRC_DIR)%.c $(HEADERS) Makefile | $(OBJS_DIR)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 # Parser objects compiler
-$(OBJS_DIR)%.o: $(PAR_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+$(OBJS_DIR)%.o: $(PAR_SRC_DIR)%.c $(HEADERS) Makefile | $(OBJS_DIR)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 # Expander objects compiler
-$(OBJS_DIR)%.o: $(EXP_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+$(OBJS_DIR)%.o: $(EXP_SRC_DIR)%.c $(HEADERS) Makefile | $(OBJS_DIR)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 # Executor objects compiler
-$(OBJS_DIR)%.o: $(EXE_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+$(OBJS_DIR)%.o: $(EXE_SRC_DIR)%.c $(HEADERS) Makefile | $(OBJS_DIR)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 # Builtins objects compiler
-$(OBJS_DIR)%.o: $(BUI_SRC_DIR)%.c $(HEADERS) | $(OBJS_DIR)
+$(OBJS_DIR)%.o: $(BUI_SRC_DIR)%.c $(HEADERS) Makefile | $(OBJS_DIR)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 # main objects compiler
-$(OBJS_DIR)%.o: ./src/main.c $(HEADERS) | $(OBJS_DIR)
+$(OBJS_DIR)%.o: ./src/main.c $(HEADERS) Makefile | $(OBJS_DIR)
 	$(CC) -c $(CFLAGS) $(INCLUDE) $< -o $@
 
 

@@ -58,7 +58,6 @@ static void	determine_exit_code(char **args)
 	}
 	else
 	{
-		ft_putendl_fd("exit: ", STDERR_FILENO);
 		ft_putstr_fd("-minishell: exit: ", STDERR_FILENO);
 		ft_putstr_fd(args[1], STDERR_FILENO);
 		ft_putstr_fd(": numeric argument required\n", STDERR_FILENO);
