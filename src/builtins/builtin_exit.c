@@ -32,6 +32,7 @@ void	builtin_exit(char **args, t_env *env, int *last_exit)
 		ft_putstr_fd("-minishell: exit: too many arguments\n", STDERR_FILENO);
 		return ;
 	}
+	ft_putendl_fd("exit", STDOUT_FILENO);
 	determine_exit_code(args);
 }
 
