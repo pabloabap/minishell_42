@@ -28,11 +28,7 @@
 int	variable_exist(t_env *env, char *str)
 {
 	int	i;
-	int	eq_idx;
 
-	eq_idx = equal_sign(str);
-	if (eq_idx != -1 && (str[eq_idx + 1] == '\"' || str[eq_idx + 1] == '\''))
-		delete_quotes(&str[eq_idx + 1], str[eq_idx + 1]);
 	i = 0;
 	while (env->envp_cpy[i])
 	{
@@ -134,30 +130,4 @@ int	find_char_index(const char *str, char c)
 		i++;
 	}
 	return (-1);
-}
-
-/*
- * Valida si una cadena de variable de entorno `line` es válida. La variable 
- * es considerada válida si contiene un signo '=' y tiene un valor no vacío 
- * después del signo.
- * @Parámetros:
- *  - line: cadena que representa la variable de entorno a validar.
- * @Devuelve:
- *  - 1 si la variable es válida (contiene un '=' y tiene un valor no vacío), 
- *    0 en caso contrario.
- */
-int	is_valid_environment_variable(const char *line)
-{
-	int			eq_idx;
-	const char	*value;
-
-	if (line == NULL || *line == '\0')
-		return (0);
-	eq_idx = find_char_index(line, '=');
-	if (eq_idx == -1)
-		return (1);
-	value = &line[eq_idx + 1];
-	if (value == NULL || *value == '\0')
-		return (0);
-	return (1);
 }

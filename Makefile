@@ -66,7 +66,8 @@ SRC			=	src/lexer/lexer.c \
 				src/builtins/builtins.c \
 				src/builtins/builtins_utils.c \
 				src/builtins/builtin_export_utils.c \
-				src/builtins/builtin_export_list.c \
+				src/builtins/builtin_update_export_list.c \
+				src/builtins/builtin_print_export_list.c \
 				src/main.c
 
 # Object files
